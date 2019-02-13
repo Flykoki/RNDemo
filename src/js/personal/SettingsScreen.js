@@ -5,6 +5,7 @@ import PersonalPanel from "./PersonalPanel";
 export default class SettingsScreen extends Component {
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
+      console.warn("settings page focus");
       StatusBar.setBarStyle("light-content");
       StatusBar.setBackgroundColor("#F1314B");
     });

@@ -7,12 +7,10 @@
  * @lint-ignore-every XPLATJSCOPYRIGHT1
  */
 
-import React, { Component } from "react";
+import React from "react";
 import { createBottomTabNavigator, createAppContainer } from "react-navigation";
-import HomePage from "./src/js/home/HomePage";
-import { HomeStack } from "./src/js/home/HomeStack";
+import HomeStack from "./src/js/home/HomeStack";
 import SettingsScreen from "./src/js/personal/SettingsScreen";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
 const TabNavigator = createBottomTabNavigator(
   {
