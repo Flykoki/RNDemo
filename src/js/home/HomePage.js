@@ -71,8 +71,8 @@ export class HomePage extends Component {
           dataBlob.push(item);
         });
         let foot = 0;
-        // if (this.state.page >= 5) {
-        if (this.state.page >= data.pageCount) {
+        if (this.state.page >= 5) {
+          // if (this.state.page >= data.pageCount) {
           foot = 1; //listView底部显示没有更多数据了
         }
         this.setState({
@@ -101,7 +101,6 @@ export class HomePage extends Component {
   renderData() {
     return (
       <View style={styles.flatListContain}>
-        <StatusBar barStyle="light-content" backgroundColor="white" />
         <FlatList
           data={this.state.dataArray}
           renderItem={this._renderItemView.bind(this)}
@@ -127,18 +126,20 @@ export class HomePage extends Component {
     );
   }
   //key
-  _keyExtractor = (item, index) => index;
-  gotoDetails = ({ item }) => {
+  _keyExtractor = (item, index) => item.key;
+  //item点击事件
+  _onPress = ({ item }) => {
     console.log("home item onpress");
     const ret = _navigation.navigate("Detail");
   };
+
   //返回itemView
   _renderItemView({ item }) {
     let imageKey = item.key;
     //跳转并传值
     return (
       // <TouchableNativeFeedback onPress={() => {Actions.news({'url':item.url})}} >////切记不能带（）不能写成gotoDetails()
-      <TouchableNativeFeedback onPress={{ item }}>
+      <TouchableNativeFeedback onPress={this._onPress}>
         <View style={styles.flatListItemWithShadow}>
           <Image
             style={{
@@ -218,21 +219,42 @@ export class HomePage extends Component {
       return (
         <View
           style={{
-            height: 30,
+            flex: 1,
             alignItems: "center",
-            justifyContent: "flex-start"
+            marginTop: 20,
+            marginBottom: 20,
+            justifyContent: "center",
+            flexDirection: "row"
           }}
         >
+          <View
+            style={{
+              flex: 2,
+              height: 1,
+              backgroundColor: "#DADADF",
+              marginLeft: 15,
+              marginRight: 11
+            }}
+          />
           <Text
             style={{
+              flex: 1,
               color: "#999999",
-              fontSize: 14,
-              marginTop: 5,
-              marginBottom: 5
+              fontSize: 14
             }}
           >
-            没有更多数据了
+            到底啦
           </Text>
+          <View
+            style={{
+              flex: 2,
+              height: 1,
+
+              backgroundColor: "#DADADF",
+              marginLeft: 11,
+              marginRight: 15
+            }}
+          />
         </View>
       );
     } else if (this.state.showFoot === 2) {
@@ -314,7 +336,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
-    height: 24,
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10
