@@ -16,6 +16,7 @@ import {
 import HomeStack from "./src/js/home/HomeStack";
 import { MineScreen } from "./src/js/mine/MineScreen";
 import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
+import FeedbackScreen from "./src/js/mine/Feedback";
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -32,6 +33,7 @@ const TabNavigator = createBottomTabNavigator(
 
 const StackContainer = createStackNavigator(
   {
+    Feedback: FeedbackScreen,
     Settings: SettingsScreen,
     HomeTab: {
       screen: TabNavigator,
@@ -41,7 +43,10 @@ const StackContainer = createStackNavigator(
     }
   },
   {
-    initialRouteName: "HomeTab"
+    initialRouteName: "HomeTab",
+    defaultNavigationOptions: {
+      headerTitleStyle: { flex: 1, textAlign: "center" }
+    }
   }
 );
 

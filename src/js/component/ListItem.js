@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 
 export default class ListItem extends Component {
   constructor(props) {
@@ -9,32 +9,18 @@ export default class ListItem extends Component {
     const { name, value, showArrow, onPress, style } = this.props;
     return (
       <TouchableOpacity
-        style={[
-          style,
-          {
-            height: 50,
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexDirection: "row",
-            paddingRight: 16,
-            paddingLeft: 16,
-            backgroundColor: "white"
-          }
-        ]}
+        style={[style, styles.containerStyle]}
         onPress={onPress}
       >
-        <Text
-          style={{
-            fontSize: 15
-          }}
-        >
-          {name}
-        </Text>
+        <Text style={styles.textStyle}>{name}</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text
-            style={{
-              fontSize: 15
-            }}
+            style={[
+              styles.textStyle,
+              {
+                marginRight: 10
+              }
+            ]}
           >
             {value}
           </Text>
@@ -51,3 +37,19 @@ export default class ListItem extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  textStyle: {
+    color: "#333333",
+    fontSize: 15
+  },
+  containerStyle: {
+    height: 50,
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    paddingRight: 16,
+    paddingLeft: 16,
+    backgroundColor: "white"
+  }
+});
