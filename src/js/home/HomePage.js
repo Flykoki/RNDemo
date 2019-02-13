@@ -5,15 +5,17 @@ import {
   Image,
   FlatList,
   StatusBar,
+  Dimensions,
   ActivityIndicator,
   TouchableNativeFeedback,
   StyleSheet
 } from "react-native";
-import { fetchRequest } from "../../utils/FetchUtil";
-
+import { fetchRequest } from "../utils/FetchUtil";
+import { PullFlatList } from "react-native-rk-pull-to-refresh";
 let _navigation;
 let imageUrlIndex = 0;
-
+const width = Dimensions.get("window").width;
+const topIndicatorHeight = 25;
 export class HomePage extends Component {
   static navigationOptions = {
     title: "政策公告",
@@ -71,8 +73,8 @@ export class HomePage extends Component {
           dataBlob.push(item);
         });
         let foot = 0;
-        if (this.state.page >= 5) {
-          // if (this.state.page >= data.pageCount) {
+        // if (this.state.page >= 5) {
+        if (this.state.page >= data.pageCount) {
           foot = 1; //listView底部显示没有更多数据了
         }
         this.setState({
@@ -101,6 +103,23 @@ export class HomePage extends Component {
   renderData() {
     return (
       <View style={styles.flatListContain}>
+        {/* <PullFlatList
+          ref={c => (this.pull = c)}
+          data={this.state.dataArray}
+          renderItem={this._renderItemView.bind(this)}
+          ListFooterComponent={this._renderFooter}
+          onEndReached={this._onEndReached}
+          onEndReachedThreshold={0.1}
+          refreshing={this.state.isRefreshing}
+          onRefresh={this.handleRefresh} //因为涉及到this.state
+          keyExtractor={this._keyExtractor}
+          ItemSeparatorComponent={this._separator}
+          style={{ flex: 1, width: width }}
+          isContentScroll={true}
+          topIndicatorRender={this.topIndicatorRender}
+          topIndicatorHeight={topIndicatorHeight}
+          onPullStateChangeHeight={this.onPullStateChangeHeight}
+        /> */}
         <FlatList
           data={this.state.dataArray}
           renderItem={this._renderItemView.bind(this)}
@@ -112,15 +131,6 @@ export class HomePage extends Component {
           onRefresh={this.handleRefresh} //因为涉及到this.state
           ItemSeparatorComponent={this._separator}
           keyExtractor={this._keyExtractor}
-          //为刷新设置颜色
-          // refreshControl={
-          //   <RefreshControl
-          //     refreshing={this.state.isRefreshing}
-          //     onRefresh={this.handleRefresh} //因为涉及到this.state
-          //     colors={["#0000ff", "#ff0000", "#00ff00", "#3ad564"]}
-          //     progressBackgroundColor="#ffffff"
-          //   />
-          // }
         />
       </View>
     );
@@ -195,16 +205,22 @@ export class HomePage extends Component {
 
   //头部控件
   _renderHeader = () => {
+    console.log("lfj showhearder:", this.state.showHeader);
     if (this.state.showHeader === 0) {
       return (
-        <View style={styles.footer}>
+        <View style={{ height: 0, width: 0 }}>
           <Text />
         </View>
       );
     } else if (this.state.showHeader === 1) {
       return (
         <View
-          style={{ height: 50, flexDirection: "row", justifyContent: "center" }}
+          style={{
+            height: 50,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
         >
           <ActivityIndicator />
           <Text>加载中...</Text>
@@ -229,7 +245,7 @@ export class HomePage extends Component {
         >
           <View
             style={{
-              flex: 2,
+              flex: 1,
               height: 1,
               backgroundColor: "#DADADF",
               marginLeft: 15,
@@ -240,14 +256,15 @@ export class HomePage extends Component {
             style={{
               flex: 1,
               color: "#999999",
-              fontSize: 14
+              fontSize: 14,
+              textAlign: "center"
             }}
           >
             到底啦
           </Text>
           <View
             style={{
-              flex: 2,
+              flex: 1,
               height: 1,
 
               backgroundColor: "#DADADF",
@@ -258,6 +275,7 @@ export class HomePage extends Component {
         </View>
       );
     } else if (this.state.showFoot === 2) {
+      console.log("lfj showfoot===2");
       return (
         <View style={styles.footer}>
           <ActivityIndicator />
@@ -265,6 +283,7 @@ export class HomePage extends Component {
         </View>
       );
     } else if (this.state.showFoot === 0) {
+      console.log("lfj showfoot===0");
       return (
         <View style={styles.footer}>
           <Text />
@@ -314,11 +333,95 @@ export class HomePage extends Component {
       </View>
     );
   }
+  //header在不同的pullstate下的展示
+  onPullStateChangeHeight = (pullState, moveHeight) => {
+    if (pullState == "pulling") {
+      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
+      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
+      this.txtPullrelease &&
+        this.txtPullrelease.setNativeProps({ style: styles.hide });
 
+      //设置img
+      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.show });
+      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
+      this.imgPullrelease &&
+        this.imgPullrelease.setNativeProps({ style: styles.hide });
+    } else if (pullState == "pullok") {
+      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
+      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.show });
+      this.txtPullrelease &&
+        this.txtPullrelease.setNativeProps({ style: styles.hide });
+      //设置img
+      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
+      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.show });
+      this.imgPullrelease &&
+        this.imgPullrelease.setNativeProps({ style: styles.hide });
+    } else if (pullState == "pullrelease") {
+      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
+      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
+      this.txtPullrelease &&
+        this.txtPullrelease.setNativeProps({ style: styles.show });
+      //设置img
+      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
+      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
+      this.imgPullrelease &&
+        this.imgPullrelease.setNativeProps({ style: styles.show });
+    }
+  };
+
+  //header view
+  topIndicatorRender = () => {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          height: topIndicatorHeight
+        }}
+      >
+        <Image
+          style={styles.hide}
+          ref={c => (this.imgPulling = c)}
+          source={require("../../res/img/icon_arrow_down.png")}
+        />
+        <Text ref={c => (this.txtPulling = c)} style={styles.hide}>
+          下拉可以刷新
+        </Text>
+        <Image
+          style={styles.hide}
+          ref={c => (this.imgPullok = c)}
+          source={require("../../res/img/icon_arrow_up.png")}
+        />
+        <Text ref={c => (this.txtPullok = c)} style={styles.hide}>
+          释放立即刷新
+        </Text>
+        <ActivityIndicator
+          style={styles.hide}
+          ref={c => (this.imgPullrelease = c)}
+          size="small"
+          color="gray"
+          style={{ marginRight: 5 }}
+        />
+        <Text ref={c => (this.txtPullrelease = c)} style={styles.hide}>
+          正在刷新...
+        </Text>
+      </View>
+    );
+  };
   //=========================== 自定义方法 =========================
 }
 
 const styles = StyleSheet.create({
+  hide: {
+    position: "absolute",
+    left: 10000
+  },
+  show: {
+    position: "relative",
+    left: 0,
+    backgroundColor: "transparent"
+  },
   container: {
     padding: 10,
     flex: 1,
