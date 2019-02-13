@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,PureComponent } from "react";
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ let _navigation;
 let imageUrlIndex = 0;
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 25;
-export class HomePage extends Component {
+export class HomePage extends PureComponent {
   static navigationOptions = {
     title: "政策公告",
     headerTitleStyle: { flex: 1, textAlign: "center" }
