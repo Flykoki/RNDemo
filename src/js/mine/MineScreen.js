@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Image, View, Text, StatusBar } from "react-native";
+import { View, Text, StatusBar } from "react-native";
+import { createStackNavigator, createAppContainer } from "react-navigation";
 import ListItem from "./ListItem";
 import PersonalPanel from "./PersonalPanel";
-export default class SettingsScreen extends Component {
+import SettingsScreen from "./settings/SettingsScreen";
+export class MineScreen extends Component {
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      console.warn("settings page focus");
       StatusBar.setBarStyle("light-content");
       StatusBar.setBackgroundColor("#F1314B");
     });
@@ -14,6 +15,7 @@ export default class SettingsScreen extends Component {
   componentWillUnmount = () => {
     this._navListener.remove();
   };
+
   render() {
     return (
       <View
@@ -22,8 +24,7 @@ export default class SettingsScreen extends Component {
           flexDirection: "column",
           justifyContent: "flex-start",
           alignItems: "stretch",
-          backgroundColor: "#F8F8F8",
-          marginBottom: 10
+          backgroundColor: "#F8F8F8"
         }}
       >
         <View
@@ -59,7 +60,7 @@ export default class SettingsScreen extends Component {
             name="设置"
             showArrow="1"
             onPress={() => {
-              console.warn(`setting screen click`);
+              this.props.navigation.navigate("Settings");
             }}
           />
           <View

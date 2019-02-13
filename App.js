@@ -8,14 +8,19 @@
  */
 
 import React from "react";
-import { createBottomTabNavigator, createAppContainer } from "react-navigation";
+import {
+  createBottomTabNavigator,
+  createAppContainer,
+  createStackNavigator
+} from "react-navigation";
 import HomeStack from "./src/js/home/HomeStack";
-import SettingsScreen from "./src/js/personal/SettingsScreen";
+import { MineScreen } from "./src/js/mine/MineScreen";
+import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
 
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomeStack,
-    设置: SettingsScreen
+    我的: MineScreen
   },
   {
     tabBarOptions: {
@@ -25,7 +30,22 @@ const TabNavigator = createBottomTabNavigator(
   }
 );
 
-const AppContainer = createAppContainer(TabNavigator);
+const StackContainer = createStackNavigator(
+  {
+    Settings: SettingsScreen,
+    HomeTab: {
+      screen: TabNavigator,
+      navigationOptions: {
+        header: null
+      }
+    }
+  },
+  {
+    initialRouteName: "HomeTab"
+  }
+);
+
+const AppContainer = createAppContainer(StackContainer);
 
 export default class App extends React.Component {
   render() {
