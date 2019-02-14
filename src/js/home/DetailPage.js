@@ -18,6 +18,7 @@ export class DetailPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       title: "政策公告",
+      headerTitleStyle: { flex: 1, textAlign: "center" },
       headerRight: <View />,
       headerLeft: (
         <TouchableOpacity
