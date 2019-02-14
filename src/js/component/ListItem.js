@@ -11,6 +11,7 @@ export default class ListItem extends Component {
       <TouchableOpacity
         style={[style, styles.containerStyle]}
         onPress={onPress}
+        activeOpacity={1}
       >
         <Text style={styles.textStyle}>{name}</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
