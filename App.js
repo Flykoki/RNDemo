@@ -27,7 +27,8 @@ const TabNavigator = createBottomTabNavigator(
     tabBarOptions: {
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
-    }
+    },
+    initialRouteName: "我的"
   }
 );
 
