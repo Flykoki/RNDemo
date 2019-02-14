@@ -4,7 +4,8 @@ import {
   View,
   TouchableOpacity,
   Image,
-  StatusBar
+  StatusBar,
+  Clipboard
 } from "react-native";
 import SettingsList from "../../component/SettingsList";
 
@@ -51,7 +52,7 @@ export default class PersonalInfoScreen extends Component {
       {
         key: "2",
         name: "二维码",
-        value: "立即设置",
+        rightIcon: require("../../../res/img/qr_code.png"),
         type: "item"
       },
       {
@@ -62,7 +63,11 @@ export default class PersonalInfoScreen extends Component {
         key: "3",
         name: "邀请码",
         value: "22233232",
-        type: "item"
+        rightIcon: require("../../../res/img/copy.png"),
+        type: "item",
+        onPress: () => {
+          Clipboard.setString("22233232");
+        }
       },
       {
         key: "0",
