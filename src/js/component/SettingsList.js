@@ -11,6 +11,7 @@ export default class SettingsList extends Component {
           value={item.value}
           showArrow={item.showArrow}
           onPress={item.onPress}
+          rightIcon={item.rightIcon}
         />
       );
     }
