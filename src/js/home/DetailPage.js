@@ -9,7 +9,7 @@ import {
   TouchableNativeFeedback,
   Dimensions
 } from "react-native";
-
+import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "react-native-rk-pull-to-refresh";
 import reactNavigation from "react-navigation";
 const width = Dimensions.get("window").width;
@@ -18,6 +18,7 @@ export class DetailPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       title: "政策公告",
+      headerTitleStyle: { flex: 1, textAlign: "center" },
       headerRight: <View />,
       headerLeft: (
         <TouchableOpacity
@@ -34,7 +35,6 @@ export class DetailPage extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.dataSource = this.getDataSource();
     this.state = {
       page: 0,
       pageCount: 0,
@@ -48,14 +48,15 @@ export class DetailPage extends PureComponent {
       isRefreshing: false //下拉控制
     };
   }
-  getDataSource = () => {
-    let array = new Array();
-    for (let i = 0; i < 50; i++) {
-      array.push({ key: i, value: `FlatListItem:${i + 1}` });
-    }
-    return array;
-  };
+  componentDidMount() {
+    this.fetchData();
+  }
   render() {
+    console.log(
+      "lfj render data",
+      this.state.dataArray.length,
+      this.state.dataArray
+    );
     return (
       <PullFlatList
         ref={c => (this.pull = c)}
@@ -65,7 +66,7 @@ export class DetailPage extends PureComponent {
         topIndicatorHeight={topIndicatorHeight}
         style={{ flex: 1, width: width }}
         onPullRelease={this._onPullRelease}
-        data={this.dataSource}
+        data={this.state.dataArray}
         renderItem={this._renderItemView}
         ItemSeparatorComponent={() => (
           <View style={{ flex: 1, height: 0.5, backgroundColor: "#cbcbcb" }} />
@@ -81,13 +82,23 @@ export class DetailPage extends PureComponent {
   };
 
   //返回itemView
-  _renderItemView({ rowData }) {
+  _renderItemView({ item }) {
+    console.warn("lfj renderItemView:", item);
     //跳转并传值
     return (
       // <TouchableNativeFeedback onPress={() => {Actions.news({'url':item.url})}} >////切记不能带（）不能写成gotoDetails()
       <TouchableNativeFeedback onPress={this._onPress}>
         <View style={styles.flatListItemWithShadow}>
-          <Image style={{}} source={require("../../res/img/swiper_1.jpg")} />
+          <Image
+            style={{
+              width: 100,
+              height: 90,
+              marginLeft: 15,
+              marginTop: 16,
+              marginBottom: 15.6
+            }}
+            source={require("../../res/img/swiper_1.jpg")}
+          />
           <View
             style={{
               flex: 1,
@@ -137,7 +148,49 @@ export class DetailPage extends PureComponent {
         this.imgPullrelease.setNativeProps({ style: styles.show });
     }
   };
+  //获取数据
+  fetchData() {
+    url = "article/list/" + this.state.page + "/json";
 
+    fetchRequest(url, "GET")
+      .then(responseData => {
+        let data = responseData.data; //获取json 数据并存在data数组中
+        let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
+
+        data.datas.map(function(item) {
+          if (imageUrlIndex == 499) {
+            imageUrlIndex = 0;
+          }
+          item.key = imageUrls[imageUrlIndex];
+          imageUrlIndex++;
+          dataBlob.push(item);
+        });
+        let foot = 0;
+        // if (this.state.page >= 5) {
+        if (this.state.page >= data.pageCount) {
+          foot = 1; //listView底部显示没有更多数据了
+        }
+        this.setState({
+          //复制数据源
+          //  dataArray:this.state.dataArray.concat( responseData.results),
+          dataArray: this.state.dataArray.concat(dataBlob),
+          isLoading: false,
+          showFoot: foot,
+          showHeader: 0,
+          isRefreshing: false,
+          pageCount: data.pageCount
+        });
+        data = null; //重置为空
+        dataBlob = null;
+      })
+      .catch(error => {
+        this.setState({
+          error: true,
+          errorInfo: error
+        });
+      })
+      .done();
+  }
   //header view
   topIndicatorRender = () => {
     return (

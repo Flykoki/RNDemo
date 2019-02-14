@@ -4612,6 +4612,11 @@ react-native-gesture-handler@^1.0.12, react-native-gesture-handler@~1.0.14:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
+react-native-rk-pull-to-refresh@^1.1.9:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-rk-pull-to-refresh/-/react-native-rk-pull-to-refresh-1.2.1.tgz#8f88c98aca72dca1a58cbfe21b0cb6aceffe31de"
+  integrity sha1-j4jJispy3KGljL/iGwy2rO/+Md4=
+
 react-native-safe-area-view@^0.12.0:
   version "0.12.0"
   resolved "http://registry.npm.taobao.org/react-native-safe-area-view/download/react-native-safe-area-view-0.12.0.tgz#5c312f087300ecf82e8541c3eac25d560e147f22"
