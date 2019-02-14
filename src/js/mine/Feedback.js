@@ -5,15 +5,18 @@ import {
   Modal,
   CheckBox,
   Text,
+  Platform,
   TextInput,
   Dimensions,
   TouchableOpacity,
   TouchableHighlight,
+  TouchableNativeFeedback,
   Image,
   StatusBar
 } from "react-native";
 
 const width = Dimensions.get("window").width;
+const feedbackContentMaxLength = 500;
 
 export default class FeedbackScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -35,7 +38,19 @@ export default class FeedbackScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { feedbackContentText: "", feedbackPhoneNum: "" };
+    this.state = {
+      feedbackContentText: "",
+      feedbackPhoneNum: "",
+      checkBoxGroupStatus: [
+        { isChecked: true, label: "服务体验", uploadType: 0 },
+        { isChecked: false, label: "其他", uploadType: 0 },
+        { isChecked: false, label: "车源供应业务", uploadType: 0 },
+        { isChecked: false, label: "使用操作", uploadType: 0 },
+        { isChecked: false, label: "4S金融业务", uploadType: 0 },
+        { isChecked: false, label: "金融分销业务", uploadType: 0 }
+      ],
+      currentFeedbackContentLength: 0
+    };
   }
 
   render() {
@@ -49,45 +64,182 @@ export default class FeedbackScreen extends Component {
 
         <View style={styles.checkBoxGroup}>
           <View style={{ flex: 1, marginLeft: 15, marginTop: 15 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CheckBox style={{ borderWidth: 1 }} />
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => {
+                this.state.checkBoxGroupStatus[0].isChecked = !this.state
+                  .checkBoxGroupStatus[0].isChecked;
+                let enable =
+                  this.state.feedbackContentText.length > 0 &&
+                  (this.state.checkBoxGroupStatus[0].isChecked |
+                    this.state.checkBoxGroupStatus[1].isChecked |
+                    this.state.checkBoxGroupStatus[2].isChecked |
+                    this.state.checkBoxGroupStatus[3].isChecked |
+                    this.state.checkBoxGroupStatus[4].isChecked |
+                    this.state.checkBoxGroupStatus[5].isChecked)
+                this.setState({
+                  commitEnable: enable
+                });
+              }}
+            >
+              <CheckBox
+                style={{ borderWidth: 1 }}
+                value={this.state.checkBoxGroupStatus[0].isChecked}
+              />
               <Text>服务体验</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CheckBox style={{ borderWidth: 1 }} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => {
+                this.state.checkBoxGroupStatus[1].isChecked = !this.state
+                  .checkBoxGroupStatus[1].isChecked;
+                let enable =
+                  this.state.feedbackContentText.length > 0 &&
+                  (this.state.checkBoxGroupStatus[0].isChecked |
+                    this.state.checkBoxGroupStatus[1].isChecked |
+                    this.state.checkBoxGroupStatus[2].isChecked |
+                    this.state.checkBoxGroupStatus[3].isChecked |
+                    this.state.checkBoxGroupStatus[4].isChecked |
+                    this.state.checkBoxGroupStatus[5].isChecked)
+                this.setState({
+                  commitEnable: enable
+                });
+              }}
+            >
+              <CheckBox
+                style={{ borderWidth: 1 }}
+                value={this.state.checkBoxGroupStatus[1].isChecked}
+              />
               <Text>其他</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CheckBox style={{ borderWidth: 1 }} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => {
+                this.state.checkBoxGroupStatus[2].isChecked = !this.state
+                  .checkBoxGroupStatus[2].isChecked;
+                let enable =
+                  this.state.feedbackContentText.length > 0 &&
+                  (this.state.checkBoxGroupStatus[0].isChecked |
+                    this.state.checkBoxGroupStatus[1].isChecked |
+                    this.state.checkBoxGroupStatus[2].isChecked |
+                    this.state.checkBoxGroupStatus[3].isChecked |
+                    this.state.checkBoxGroupStatus[4].isChecked |
+                    this.state.checkBoxGroupStatus[5].isChecked)
+                this.setState({
+                  commitEnable: enable
+                });
+              }}
+            >
+              <CheckBox
+                style={{ borderWidth: 1 }}
+                value={this.state.checkBoxGroupStatus[2].isChecked}
+              />
               <Text>车源供应业务</Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={{ flex: 1, marginTop: 15 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CheckBox style={{ borderWidth: 1 }} />
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => {
+                this.state.checkBoxGroupStatus[3].isChecked = !this.state
+                  .checkBoxGroupStatus[3].isChecked;
+                let enable =
+                  this.state.feedbackContentText.length > 0 &&
+                  (this.state.checkBoxGroupStatus[0].isChecked |
+                    this.state.checkBoxGroupStatus[1].isChecked |
+                    this.state.checkBoxGroupStatus[2].isChecked |
+                    this.state.checkBoxGroupStatus[3].isChecked |
+                    this.state.checkBoxGroupStatus[4].isChecked |
+                    this.state.checkBoxGroupStatus[5].isChecked)
+                this.setState({
+                  commitEnable: enable
+                });
+              }}
+            >
+              <CheckBox
+                style={{ borderWidth: 1 }}
+                value={this.state.checkBoxGroupStatus[3].isChecked}
+              />
               <Text>使用操作</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CheckBox style={{ borderWidth: 1 }} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => {
+                this.state.checkBoxGroupStatus[4].isChecked = !this.state
+                  .checkBoxGroupStatus[4].isChecked;
+                let enable =
+                  this.state.feedbackContentText.length > 0 &&
+                  (this.state.checkBoxGroupStatus[0].isChecked |
+                    this.state.checkBoxGroupStatus[1].isChecked |
+                    this.state.checkBoxGroupStatus[2].isChecked |
+                    this.state.checkBoxGroupStatus[3].isChecked |
+                    this.state.checkBoxGroupStatus[4].isChecked |
+                    this.state.checkBoxGroupStatus[5].isChecked)
+                this.setState({
+                  commitEnable: enable
+                });
+              }}
+            >
+              <CheckBox
+                style={{ borderWidth: 1, color: "red" }}
+                value={this.state.checkBoxGroupStatus[4].isChecked}
+              />
               <Text>4S金融业务</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CheckBox style={{ borderWidth: 1 }} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() => {
+                this.state.checkBoxGroupStatus[5].isChecked = !this.state
+                  .checkBoxGroupStatus[5].isChecked;
+                let enable =
+                  this.state.feedbackContentText.length > 0 &&
+                  (this.state.checkBoxGroupStatus[0].isChecked |
+                    this.state.checkBoxGroupStatus[1].isChecked |
+                    this.state.checkBoxGroupStatus[2].isChecked |
+                    this.state.checkBoxGroupStatus[3].isChecked |
+                    this.state.checkBoxGroupStatus[4].isChecked |
+                    this.state.checkBoxGroupStatus[5].isChecked)
+                this.setState({
+                  commitEnable: enable
+                });
+              }}
+            >
+              <CheckBox
+                style={{ borderWidth: 1 }}
+                value={this.state.checkBoxGroupStatus[5].isChecked}
+              />
               <Text>金融分销业务</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
-        <TextInput
-          style={styles.feedbackTextInput}
-          placeholder={"请输入您的意见反馈内容"}
-          multiline={true}
-          blurOnSubmit={false}
-          maxLength={500}
-          selectionColor={"#CCCCCC "}
-          onChangeText={text => this.setState({ feedbackContentText: text })}
-          value={this.state.feedbackContentText}
-        />
+        <View style={styles.feedbackTextInputContainer}>
+          <TextInput
+            style={styles.feedbackTextInput}
+            placeholder={"请输入您的意见反馈内容"}
+            multiline={true}
+            blurOnSubmit={false}
+            maxLength={500}
+            selectionColor={"#CCCCCC"}
+            onChangeText={text => {
+              //判断commit button是否高亮
+              let enable =
+                text.length > 0 && this.state.checkBoxGroupStatus.length > 0
+                  ? true
+                  : false;
+
+              this.setState({
+                feedbackContentText: text,
+                currentFeedbackContentLength: text.length,
+                commitEnable: enable
+              });
+            }}
+            value={this.state.feedbackContentText}
+          />
+          <Text style={styles.feedbackTextInputTips}>
+            {this.state.currentFeedbackContentLength}/{feedbackContentMaxLength}
+          </Text>
+        </View>
 
         <View style={styles.feedbackPhoneContainer}>
           <Image
@@ -95,11 +247,11 @@ export default class FeedbackScreen extends Component {
             source={require("../../res/img/app_feedback_icon_phone.png")}
           />
           <TextInput
-            style={{ blurOnSubmit: false, color: "#666666" }}
+            style={{ color: "#666666" }}
             multiline={true}
             blurOnSubmit={false}
             keyboardType={"numeric"}
-            selectionColor={"#CCCCCC "}
+            selectionColor={"#CCCCCC"}
             maxLength={11}
             placeholder="非必填，请输入常用手机号"
             onChangeText={text => this.setState({ feedbackPhoneNum: text })}
@@ -112,21 +264,42 @@ export default class FeedbackScreen extends Component {
         <Text style={styles.feedbackPhoneTip}>
           留下手机号，便于我们及时与您取得联系
         </Text>
-
         <TouchableHighlight
-          style={styles.feedbackCommit}
-          underlayColor="#DDDDDD"
-          onPress={() =>
-            console.warn(
+          style={
+            this.state.commitEnable
+              ? styles.feedbackCommitEnable
+              : styles.feedbackCommitDisable
+          }
+          underlayColor="white"
+          onPress={() => {
+            console.log(
+              "lfj:",
               this.state.feedbackContentText,
               this.state.feedbackPhoneNum
-            )
-          }
+            );
+          }}
         >
-          <Text style={styles.feedbackCommitText}>提交</Text>
+          <Text
+            style={
+              this.state.commitEnable
+                ? styles.feedbackCommitTextEnable
+                : styles.feedbackCommitTextDisable
+            }
+          >
+            提交
+          </Text>
         </TouchableHighlight>
       </View>
     );
+  }
+
+  //========================= 自定义方法 =================================
+
+  //checkbox item点击事件
+  _checkBoxItemOnPress({ index }) {
+    this.state.checkBoxGroupStatus[index].isChecked = !this.state
+      .checkBoxGroupStatus[index].isChecked;
+    this.setState({ reRenderCheckBoxGroups: true });
   }
 }
 
@@ -150,20 +323,34 @@ const styles = StyleSheet.create({
     color: "#CCCCCC",
     fontSize: 12
   },
-  feedbackCommit: {
+  feedbackCommitDisable: {
     borderRadius: 6,
     height: 42,
     position: "absolute",
     bottom: 20,
     left: 30,
     right: 30,
-    // backgroundColor: "#DDDDDD",
+    backgroundColor: "#DDDDDD",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  feedbackCommitEnable: {
+    borderRadius: 6,
+    height: 42,
+    position: "absolute",
+    bottom: 20,
+    left: 30,
+    right: 30,
     backgroundColor: "#F12E49",
     justifyContent: "center",
     alignItems: "center"
   },
-  feedbackCommitText: {
+  feedbackCommitTextDisable: {
     color: "#BBBBBB",
+    fontSize: 16
+  },
+  feedbackCommitTextEnable: {
+    color: "white",
     fontSize: 16
   },
   loginOutStyle: {
@@ -202,13 +389,27 @@ const styles = StyleSheet.create({
     alignItems: "flex-start"
   },
   checkBox: {},
+  feedbackTextInputTips: { position: "absolute", bottom: 5, right: 5 },
+  feedbackTextInputContainer: {
+    borderRadius: 5,
+    borderColor: "#E7E7E7",
+    borderWidth: 1,
+    margin: 15
+  },
   feedbackTextInput: {
     height: 90,
     textAlignVertical: "top",
-    borderColor: "#E7E7E7",
     color: "#666666",
-    borderRadius: 5,
-    borderWidth: 1,
-    margin: 15
+    marginBottom: 10
+  },
+  button: {
+    marginBottom: 30,
+    width: 260,
+    alignItems: "center",
+    backgroundColor: "#2196F3"
+  },
+  buttonText: {
+    padding: 20,
+    color: "white"
   }
 });
