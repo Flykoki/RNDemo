@@ -47,7 +47,13 @@ export class MineScreen extends Component {
       <View style={styles.container}>
         <View style={styles.panelContainer}>
           <Text style={styles.title}>我的</Text>
-          <PersonalPanel name="懒懒岚" phoneNumber="18888888888" />
+          <PersonalPanel
+            onPress={() => {
+              this.props.navigation.navigate("PersonalInfo");
+            }}
+            name="懒懒岚"
+            phoneNumber="18888888888"
+          />
         </View>
 
         <SettingsList data={this.state.listData} />

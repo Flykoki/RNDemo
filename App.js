@@ -17,7 +17,7 @@ import HomeStack from "./src/js/home/HomeStack";
 import { MineScreen } from "./src/js/mine/MineScreen";
 import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
 import FeedbackScreen from "./src/js/mine/Feedback";
-
+import PersonalInfoScreen from "./src/js/mine/personal/PersonalInfo";
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomeStack,
@@ -35,6 +35,7 @@ const StackContainer = createStackNavigator(
   {
     Feedback: FeedbackScreen,
     Settings: SettingsScreen,
+    PersonalInfo: PersonalInfoScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: {
