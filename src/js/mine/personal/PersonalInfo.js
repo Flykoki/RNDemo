@@ -34,83 +34,83 @@ export default class PersonalInfoScreen extends Component {
   _initEmployeeData() {
     return [
       {
-        key: 0,
+        key: "0",
         type: "margin",
         margin: 10
       },
       {
-        key: 1,
+        key: "1",
         name: "姓名",
         type: "item",
         value: "懒懒岚"
       },
       {
-        key: 10,
+        key: "10",
         type: "divider"
       },
       {
-        key: 2,
+        key: "2",
         name: "二维码",
         value: "立即设置",
         type: "item"
       },
       {
-        key: 11,
+        key: "11",
         type: "divider"
       },
       {
-        key: 3,
+        key: "3",
         name: "邀请码",
         value: "22233232",
         type: "item"
       },
       {
-        key: 0,
+        key: "0",
         type: "margin",
         margin: 9.7
       },
       {
-        key: 4,
+        key: "4",
         name: "登录账号",
         value: "18888888888",
         type: "item"
       },
       {
-        key: 12,
+        key: "12",
         type: "divider"
       },
       {
-        key: 5,
+        key: "5",
         name: "员工编号",
         value: "aaaaa",
         type: "item"
       },
       {
-        key: 13,
+        key: "13",
         type: "divider"
       },
       {
-        key: 6,
+        key: "6",
         name: "手机",
         value: "1888888888",
         type: "item"
       },
       {
-        key: 14,
+        key: "14",
         type: "divider"
       },
       {
-        key: 7,
+        key: "7",
         name: "所在部门",
         value: "运营管理部",
         type: "item"
       },
       {
-        key: 15,
+        key: "15",
         type: "divider"
       },
       {
-        key: 8,
+        key: "8",
         name: "账号角色",
         value: "普通管理员",
         type: "item"

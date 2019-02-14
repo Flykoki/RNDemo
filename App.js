@@ -8,6 +8,7 @@
  */
 
 import React from "react";
+import { Image } from "react-native";
 import {
   createBottomTabNavigator,
   createAppContainer,
@@ -24,6 +25,23 @@ const TabNavigator = createBottomTabNavigator(
     我的: MineScreen
   },
   {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let iconName;
+        if (routeName === "首页") {
+          iconName = focused
+            ? require("./src/res/img/app_info_tab_pre.png")
+            : require("./src/res/img/app_info_tab_nor.png");
+        } else if (routeName === "我的") {
+          iconName = focused
+            ? require("./src/res/img/app_mine_tab_pre.png")
+            : require("./src/res/img/app_mine_tab_nor.png");
+        }
+
+        return <Image style={{ width: 20, height: 18 }} source={iconName} />;
+      }
+    }),
     tabBarOptions: {
       activeTintColor: "tomato",
       inactiveTintColor: "gray"

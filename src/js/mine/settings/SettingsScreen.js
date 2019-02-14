@@ -32,7 +32,7 @@ export default class SettingsScreen extends Component {
     this.state = {
       data: [
         {
-          key: 1,
+          key: "1",
           name: "修改密码",
           showArrow: "1",
           type: "item",
@@ -41,54 +41,54 @@ export default class SettingsScreen extends Component {
           }
         },
         {
-          key: 10,
+          key: "10",
           type: "divider"
         },
         {
-          key: 2,
+          key: "2",
           name: "密保手机号",
           value: "立即设置",
           showArrow: "1",
           type: "item"
         },
         {
-          key: 0,
+          key: "0",
           type: "margin",
           margin: 9.7
         },
         {
-          key: 3,
+          key: "3",
           name: "消息通知",
           showArrow: "1",
           type: "item"
         },
         {
-          key: 0,
+          key: "0",
           type: "margin",
           margin: 9.7
         },
         {
-          key: 4,
+          key: "4",
           name: "清空缓存",
           showArrow: "1",
           type: "item"
         },
         {
-          key: 12,
+          key: "12",
           type: "divider"
         },
         {
-          key: 5,
+          key: "5",
           name: "检测新版本",
           showArrow: "1",
           type: "item"
         },
         {
-          key: 13,
+          key: "13",
           type: "divider"
         },
         {
-          key: 6,
+          key: "6",
           name: "版本说明",
           showArrow: "1",
           type: "item"
