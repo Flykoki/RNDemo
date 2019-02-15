@@ -92,6 +92,10 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[0].isChecked = !this.state
                   .checkBoxGroupStatus[0].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
+=======
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let checkBoxEnable =
                   this.state.checkBoxGroupStatus[0].isChecked |
                   this.state.checkBoxGroupStatus[1].isChecked |
@@ -99,8 +103,15 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
+=======
+
+                let enable =
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 this.setState({
                   commitEnable: enable
                 });
@@ -110,8 +121,16 @@ export default class FeedbackScreen extends Component {
                 style={{ borderWidth: 1 }}
                 value={this.state.checkBoxGroupStatus[0].isChecked}
                 onValueChange={value => {
+<<<<<<< HEAD:src/js/mine/Feedback.js
                   console.warn("lfj onValueChange ",value)
                   this.state.checkBoxGroupStatus[0].isChecked = value;
+=======
+                  let arr = this.state.checkBoxGroupStatus;
+                  arr[0].isChecked = value;
+                  this.setState({
+                    checkBoxGroupStatus: arr
+                  });
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 }}
               />
               <Text>服务体验</Text>
@@ -128,6 +147,10 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
+=======
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -138,6 +161,13 @@ export default class FeedbackScreen extends Component {
               <CheckBox
                 style={{ borderWidth: 1 }}
                 value={this.state.checkBoxGroupStatus[1].isChecked}
+                onValueChange={value => {
+                  let arr = this.state.checkBoxGroupStatus;
+                  arr[1].isChecked = value;
+                  this.setState({
+                    checkBoxGroupStatus: arr
+                  });
+                }}
               />
               <Text>其他</Text>
             </TouchableOpacity>
@@ -153,6 +183,10 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
+=======
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -163,6 +197,13 @@ export default class FeedbackScreen extends Component {
               <CheckBox
                 style={{ borderWidth: 1 }}
                 value={this.state.checkBoxGroupStatus[2].isChecked}
+                onValueChange={value => {
+                  let arr = this.state.checkBoxGroupStatus;
+                  arr[2].isChecked = value;
+                  this.setState({
+                    checkBoxGroupStatus: arr
+                  });
+                }}
               />
               <Text>车源供应业务</Text>
             </TouchableOpacity>
@@ -180,6 +221,10 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
+=======
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -190,6 +235,13 @@ export default class FeedbackScreen extends Component {
               <CheckBox
                 style={{ borderWidth: 1 }}
                 value={this.state.checkBoxGroupStatus[3].isChecked}
+                onValueChange={value => {
+                  let arr = this.state.checkBoxGroupStatus;
+                  arr[3].isChecked = value;
+                  this.setState({
+                    checkBoxGroupStatus: arr
+                  });
+                }}
               />
               <Text>使用操作</Text>
             </TouchableOpacity>
@@ -205,6 +257,10 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
+=======
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -215,6 +271,13 @@ export default class FeedbackScreen extends Component {
               <CheckBox
                 style={{ borderWidth: 1, color: "red" }}
                 value={this.state.checkBoxGroupStatus[4].isChecked}
+                onValueChange={value => {
+                  let arr = this.state.checkBoxGroupStatus;
+                  arr[4].isChecked = value;
+                  this.setState({
+                    checkBoxGroupStatus: arr
+                  });
+                }}
               />
               <Text>4S金融业务</Text>
             </TouchableOpacity>
@@ -230,6 +293,10 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
+<<<<<<< HEAD:src/js/mine/Feedback.js
+=======
+
+>>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -240,6 +307,13 @@ export default class FeedbackScreen extends Component {
               <CheckBox
                 style={{ borderWidth: 1 }}
                 value={this.state.checkBoxGroupStatus[5].isChecked}
+                onValueChange={value => {
+                  let arr = this.state.checkBoxGroupStatus;
+                  arr[5].isChecked = value;
+                  this.setState({
+                    checkBoxGroupStatus: arr
+                  });
+                }}
               />
               <Text>金融分销业务</Text>
             </TouchableOpacity>
@@ -303,6 +377,7 @@ export default class FeedbackScreen extends Component {
               ? styles.feedbackCommitEnable
               : styles.feedbackCommitDisable
           }
+          disabled={this.state.commitEnable ? false : true}
           underlayColor="white"
           onPress={() => {
             console.log(

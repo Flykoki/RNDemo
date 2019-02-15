@@ -17,8 +17,12 @@ import {
 import HomeStack from "./src/js/home/HomeStack";
 import { MineScreen } from "./src/js/mine/MineScreen";
 import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
-import FeedbackScreen from "./src/js/mine/Feedback";
+import FeedbackScreen from "./src/js/mine/FeedbackScreen";
+import InitSecurityPhoneStep1 from "./src/js/mine/settings/initsecurityphone/InitSecurityPhoneStep1";
+import InitSecurityPhoneStep2 from "./src/js/mine/settings/initsecurityphone/InitSecurityPhoneStep2";
 import PersonalInfoScreen from "./src/js/mine/personal/PersonalInfo";
+import ModifyPwdScreen from "./src/js/mine/settings/ModifyPwdScreen";
+import QrCodeScreen from "./src/js/mine/personal/QrCodeScreen";
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomeStack,
@@ -53,8 +57,12 @@ const TabNavigator = createBottomTabNavigator(
 const StackContainer = createStackNavigator(
   {
     Feedback: FeedbackScreen,
+    InitSecurityPhoneStep1: InitSecurityPhoneStep1,
+    InitSecurityPhoneStep2: InitSecurityPhoneStep2,
+    ModifyPwd: ModifyPwdScreen,
     Settings: SettingsScreen,
     PersonalInfo: PersonalInfoScreen,
+    QrCode: QrCodeScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: {
