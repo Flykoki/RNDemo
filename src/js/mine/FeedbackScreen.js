@@ -15,11 +15,9 @@ import {
   StatusBar
 } from "react-native";
 
-/**
- *  切勿格式化!!!
- *  切勿格式化!!!
- *  切勿格式化!!!
- */
+const width = Dimensions.get("window").width;
+const feedbackContentMaxLength = 500;
+
 export default class FeedbackScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -53,7 +51,31 @@ export default class FeedbackScreen extends Component {
       ],
       currentFeedbackContentLength: 0
     };
+
+    this._checkBoxContainerOnPress.bind(this);
+    this._checkBoxOnPress.bind(this);
   }
+
+  _checkBoxContainerOnPress = index => {
+    console.warn(index, this.state);
+    this.state.checkBoxGroupStatus[index].isChecked = !this.state
+      .checkBoxGroupStatus[index].isChecked;
+
+    let checkBoxEnable =
+      this.state.checkBoxGroupStatus[0].isChecked |
+      this.state.checkBoxGroupStatus[1].isChecked |
+      this.state.checkBoxGroupStatus[2].isChecked |
+      this.state.checkBoxGroupStatus[3].isChecked |
+      this.state.checkBoxGroupStatus[4].isChecked |
+      this.state.checkBoxGroupStatus[5].isChecked;
+
+    let enable = this.state.feedbackContentText.length > 0 && checkBoxEnable;
+
+    this.setState({
+      commitEnable: enable
+    });
+  };
+  _checkBoxOnPress = () => {};
 
   render() {
     return (
@@ -68,34 +90,10 @@ export default class FeedbackScreen extends Component {
           <View style={{ flex: 1, marginLeft: 15, marginTop: 15 }}>
             <TouchableOpacity
               style={{ flexDirection: "row", alignItems: "center" }}
-              // onStartShouldSetResponderCapture={() => {
-              //   console.warn(onStartShouldSetResponderCapture);
-              //   return true;
-              // }}
-              // onResponderStart={() => {
-              //   console.warn(onResponderStart);
-              //   this.state.checkBoxGroupStatus[0].isChecked = !this.state
-              //     .checkBoxGroupStatus[0].isChecked;
-              //   let checkBoxEnable =
-              //     this.state.checkBoxGroupStatus[0].isChecked |
-              //     this.state.checkBoxGroupStatus[1].isChecked |
-              //     this.state.checkBoxGroupStatus[2].isChecked |
-              //     this.state.checkBoxGroupStatus[3].isChecked |
-              //     this.state.checkBoxGroupStatus[4].isChecked |
-              //     this.state.checkBoxGroupStatus[5].isChecked;
-              //   let enable =
-              //     this.state.feedbackContentText.length > 0 && checkBoxEnable;
-              //   this.setState({
-              //     commitEnable: enable
-              //   });
-              // }}
               onPress={() => {
                 this.state.checkBoxGroupStatus[0].isChecked = !this.state
                   .checkBoxGroupStatus[0].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-=======
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let checkBoxEnable =
                   this.state.checkBoxGroupStatus[0].isChecked |
                   this.state.checkBoxGroupStatus[1].isChecked |
@@ -103,15 +101,10 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-=======
 
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 this.setState({
                   commitEnable: enable
                 });
@@ -121,16 +114,22 @@ export default class FeedbackScreen extends Component {
                 style={{ borderWidth: 1 }}
                 value={this.state.checkBoxGroupStatus[0].isChecked}
                 onValueChange={value => {
-<<<<<<< HEAD:src/js/mine/Feedback.js
-                  console.warn("lfj onValueChange ",value)
-                  this.state.checkBoxGroupStatus[0].isChecked = value;
-=======
                   let arr = this.state.checkBoxGroupStatus;
                   arr[0].isChecked = value;
+
+                  let checkBoxEnable =
+                    arr[0].isChecked |
+                    arr[1].isChecked |
+                    arr[2].isChecked |
+                    arr[3].isChecked |
+                    arr[4].isChecked |
+                    arr[5].isChecked;
+                  let enable =
+                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
                   this.setState({
-                    checkBoxGroupStatus: arr
+                    checkBoxGroupStatus: arr,
+                    commitEnable: enable
                   });
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 }}
               />
               <Text>服务体验</Text>
@@ -147,10 +146,7 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-=======
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -164,8 +160,18 @@ export default class FeedbackScreen extends Component {
                 onValueChange={value => {
                   let arr = this.state.checkBoxGroupStatus;
                   arr[1].isChecked = value;
+                  let checkBoxEnable =
+                    arr[0].isChecked |
+                    arr[1].isChecked |
+                    arr[2].isChecked |
+                    arr[3].isChecked |
+                    arr[4].isChecked |
+                    arr[5].isChecked;
+                  let enable =
+                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
                   this.setState({
-                    checkBoxGroupStatus: arr
+                    checkBoxGroupStatus: arr,
+                    commitEnable: enable
                   });
                 }}
               />
@@ -183,10 +189,7 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-=======
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -200,8 +203,18 @@ export default class FeedbackScreen extends Component {
                 onValueChange={value => {
                   let arr = this.state.checkBoxGroupStatus;
                   arr[2].isChecked = value;
+                  let checkBoxEnable =
+                    arr[0].isChecked |
+                    arr[1].isChecked |
+                    arr[2].isChecked |
+                    arr[3].isChecked |
+                    arr[4].isChecked |
+                    arr[5].isChecked;
+                  let enable =
+                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
                   this.setState({
-                    checkBoxGroupStatus: arr
+                    checkBoxGroupStatus: arr,
+                    commitEnable: enable
                   });
                 }}
               />
@@ -221,10 +234,7 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-=======
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -238,8 +248,18 @@ export default class FeedbackScreen extends Component {
                 onValueChange={value => {
                   let arr = this.state.checkBoxGroupStatus;
                   arr[3].isChecked = value;
+                  let checkBoxEnable =
+                    arr[0].isChecked |
+                    arr[1].isChecked |
+                    arr[2].isChecked |
+                    arr[3].isChecked |
+                    arr[4].isChecked |
+                    arr[5].isChecked;
+                  let enable =
+                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
                   this.setState({
-                    checkBoxGroupStatus: arr
+                    checkBoxGroupStatus: arr,
+                    commitEnable: enable
                   });
                 }}
               />
@@ -257,10 +277,7 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-=======
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -274,8 +291,18 @@ export default class FeedbackScreen extends Component {
                 onValueChange={value => {
                   let arr = this.state.checkBoxGroupStatus;
                   arr[4].isChecked = value;
+                  let checkBoxEnable =
+                    arr[0].isChecked |
+                    arr[1].isChecked |
+                    arr[2].isChecked |
+                    arr[3].isChecked |
+                    arr[4].isChecked |
+                    arr[5].isChecked;
+                  let enable =
+                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
                   this.setState({
-                    checkBoxGroupStatus: arr
+                    checkBoxGroupStatus: arr,
+                    commitEnable: enable
                   });
                 }}
               />
@@ -293,10 +320,7 @@ export default class FeedbackScreen extends Component {
                   this.state.checkBoxGroupStatus[3].isChecked |
                   this.state.checkBoxGroupStatus[4].isChecked |
                   this.state.checkBoxGroupStatus[5].isChecked;
-<<<<<<< HEAD:src/js/mine/Feedback.js
-=======
 
->>>>>>> dd7ae2446f7ff8172ebbdcea13049c7084260c03:src/js/mine/FeedbackScreen.js
                 let enable =
                   this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
@@ -310,8 +334,18 @@ export default class FeedbackScreen extends Component {
                 onValueChange={value => {
                   let arr = this.state.checkBoxGroupStatus;
                   arr[5].isChecked = value;
+                  let checkBoxEnable =
+                    arr[0].isChecked |
+                    arr[1].isChecked |
+                    arr[2].isChecked |
+                    arr[3].isChecked |
+                    arr[4].isChecked |
+                    arr[5].isChecked;
+                  let enable =
+                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
                   this.setState({
-                    checkBoxGroupStatus: arr
+                    checkBoxGroupStatus: arr,
+                    commitEnable: enable
                   });
                 }}
               />
@@ -410,8 +444,7 @@ export default class FeedbackScreen extends Component {
     this.setState({ reRenderCheckBoxGroups: true });
   }
 }
-const width = Dimensions.get("window").width;
-const feedbackContentMaxLength = 500;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

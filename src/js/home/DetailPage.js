@@ -12,7 +12,6 @@ import {
 import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "react-native-rk-pull-to-refresh";
 import reactNavigation from "react-navigation";
-import { url } from "inspector";
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
 let _navigation;
