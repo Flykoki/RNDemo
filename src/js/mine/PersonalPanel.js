@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   avaterStyle: { height: 57, width: 57, marginRight: 21, marginLeft: 24 },
   messagePanelStyle: {
-    width: "70%",
+    width: "60%",
     flexDirection: "column",
     justifyContent: "space-between"
   },

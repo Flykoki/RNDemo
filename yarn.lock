@@ -1221,6 +1221,13 @@ camelcase@^5.0.0:
   resolved "http://registry.npm.taobao.org/camelcase/download/camelcase-5.0.0.tgz#03295527d58bd3cd4aa75363f35b2e8d97be2f42"
   integrity sha1-AylVJ9WL081Kp1Nj81sujZe+L0I=
 
+can-promise@0.0.1:
+  version "0.0.1"
+  resolved "http://registry.npm.taobao.org/can-promise/download/can-promise-0.0.1.tgz#7a7597ad801fb14c8b22341dfec314b6bd6ad8d3"
+  integrity sha1-enWXrYAfsUyLIjQd/sMUtr1q2NM=
+  dependencies:
+    window-or-global "^1.0.1"
+
 capture-exit@^1.2.0:
   version "1.2.0"
   resolved "http://registry.npm.taobao.org/capture-exit/download/capture-exit-1.2.0.tgz#1c5fcc489fd0ab00d4f1ac7ae1072e3173fbab6f"
@@ -1641,6 +1648,11 @@ diff-sequences@^24.0.0:
   version "24.0.0"
   resolved "http://registry.npm.taobao.org/diff-sequences/download/diff-sequences-24.0.0.tgz#cdf8e27ed20d8b8d3caccb4e0c0d8fe31a173013"
   integrity sha1-zfjiftINi408rMtODA2P4xoXMBM=
+
+dijkstrajs@^1.0.1:
+  version "1.0.1"
+  resolved "http://registry.npm.taobao.org/dijkstrajs/download/dijkstrajs-1.0.1.tgz#d3cd81221e3ea40742cfcde556d4e99e98ddc71b"
+  integrity sha1-082BIh4+pAdCz83lVtTpnpjdxxs=
 
 dom-walk@^0.1.0:
   version "0.1.1"
@@ -2712,6 +2724,11 @@ isarray@1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
+
+isarray@^2.0.1:
+  version "2.0.4"
+  resolved "http://registry.npm.taobao.org/isarray/download/isarray-2.0.4.tgz#38e7bcbb0f3ba1b7933c86ba1894ddfc3781bbb7"
+  integrity sha1-OOe8uw87obeTPIa6GJTd/DeBu7c=
 
 isexe@^2.0.0:
   version "2.0.0"
@@ -4441,6 +4458,11 @@ pn@^1.1.0:
   resolved "http://registry.npm.taobao.org/pn/download/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha1-4vTO8OIZ9GPBeas3Rj5OHs3Muvs=
 
+pngjs@^3.3.0:
+  version "3.3.3"
+  resolved "http://registry.npm.taobao.org/pngjs/download/pngjs-3.3.3.tgz#85173703bde3edac8998757b96e5821d0966a21b"
+  integrity sha1-hRc3A73j7ayJmHV7luWCHQlmohs=
+
 posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "http://registry.npm.taobao.org/posix-character-classes/download/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
@@ -4543,6 +4565,17 @@ qr.js@0.0.0:
   resolved "http://registry.npm.taobao.org/qr.js/download/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
   integrity sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=
 
+qrcode@^1.2.0:
+  version "1.3.3"
+  resolved "http://registry.npm.taobao.org/qrcode/download/qrcode-1.3.3.tgz#5ef50c0c890cffa1897f452070f0f094936993de"
+  integrity sha1-XvUMDIkM/6GJf0UgcPDwlJNpk94=
+  dependencies:
+    can-promise "0.0.1"
+    dijkstrajs "^1.0.1"
+    isarray "^2.0.1"
+    pngjs "^3.3.0"
+    yargs "^12.0.5"
+
 qs@~6.5.2:
   version "6.5.2"
   resolved "http://registry.npm.taobao.org/qs/download/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
@@ -4617,6 +4650,14 @@ react-native-gesture-handler@^1.0.12, react-native-gesture-handler@~1.0.14:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
+react-native-qrcode-svg@^5.1.2:
+  version "5.1.2"
+  resolved "http://registry.npm.taobao.org/react-native-qrcode-svg/download/react-native-qrcode-svg-5.1.2.tgz#1368a1142b7d4916c3d8b1903fd2046185340fd0"
+  integrity sha1-E2ihFCt9SRbD2LGQP9IEYYU0D9A=
+  dependencies:
+    prop-types "^15.5.10"
+    qrcode "^1.2.0"
+
 react-native-qrcode@^0.2.7:
   version "0.2.7"
   resolved "http://registry.npm.taobao.org/react-native-qrcode/download/react-native-qrcode-0.2.7.tgz#d103166fb1a5b53643e8bf7b88c0672e689ac4f8"
@@ -4642,6 +4683,11 @@ react-native-safe-area-view@^0.12.0:
   version "1.0.0-alpha.22"
   resolved "http://registry.npm.taobao.org/react-native-screens/download/react-native-screens-1.0.0-alpha.22.tgz#7a120377b52aa9bbb94d0b8541a014026be9289b"
   integrity sha1-ehIDd7Uqqbu5TQuFQaAUAmvpKJs=
+
+react-native-svg@^9.2.4:
+  version "9.2.4"
+  resolved "http://registry.npm.taobao.org/react-native-svg/download/react-native-svg-9.2.4.tgz#a30ee42535b39097e7b68dfa6dcf5c1c8cce97f1"
+  integrity sha1-ow7kJTWzkJfnto36bc9cHIzOl/E=
 
 react-native-tab-view@^1.0.0, react-native-tab-view@^1.2.0:
   version "1.3.2"
@@ -5870,6 +5916,11 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2 || 2"
 
+window-or-global@^1.0.1:
+  version "1.0.1"
+  resolved "http://registry.npm.taobao.org/window-or-global/download/window-or-global-1.0.1.tgz#dbe45ba2a291aabc56d62cf66c45b7fa322946de"
+  integrity sha1-2+RboqKRqrxW1iz2bEW3+jIpRt4=
+
 wordwrap@^1.0.0, wordwrap@~1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/wordwrap/download/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
@@ -6015,7 +6066,7 @@ yargs-parser@^7.0.0:
   dependencies:
     camelcase "^4.1.0"
 
-yargs@^12.0.2:
+yargs@^12.0.2, yargs@^12.0.5:
   version "12.0.5"
   resolved "http://registry.npm.taobao.org/yargs/download/yargs-12.0.5.tgz#05f5997b609647b64f66b81e3b4b10a368e7ad13"
   integrity sha1-BfWZe2CWR7ZPZrgeO0sQo2jnrRM=
