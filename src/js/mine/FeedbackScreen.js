@@ -69,14 +69,18 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[0].isChecked = !this.state
                   .checkBoxGroupStatus[0].isChecked;
+
+                let checkBoxEnable =
+                  this.state.checkBoxGroupStatus[0].isChecked |
+                  this.state.checkBoxGroupStatus[1].isChecked |
+                  this.state.checkBoxGroupStatus[2].isChecked |
+                  this.state.checkBoxGroupStatus[3].isChecked |
+                  this.state.checkBoxGroupStatus[4].isChecked |
+                  this.state.checkBoxGroupStatus[5].isChecked;
+
                 let enable =
-                  this.state.feedbackContentText.length > 0 &&
-                  (this.state.checkBoxGroupStatus[0].isChecked |
-                    this.state.checkBoxGroupStatus[1].isChecked |
-                    this.state.checkBoxGroupStatus[2].isChecked |
-                    this.state.checkBoxGroupStatus[3].isChecked |
-                    this.state.checkBoxGroupStatus[4].isChecked |
-                    this.state.checkBoxGroupStatus[5].isChecked)
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
+
                 this.setState({
                   commitEnable: enable
                 });
@@ -93,14 +97,16 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[1].isChecked = !this.state
                   .checkBoxGroupStatus[1].isChecked;
+                let checkBoxEnable =
+                  this.state.checkBoxGroupStatus[0].isChecked |
+                  this.state.checkBoxGroupStatus[1].isChecked |
+                  this.state.checkBoxGroupStatus[2].isChecked |
+                  this.state.checkBoxGroupStatus[3].isChecked |
+                  this.state.checkBoxGroupStatus[4].isChecked |
+                  this.state.checkBoxGroupStatus[5].isChecked;
+
                 let enable =
-                  this.state.feedbackContentText.length > 0 &&
-                  (this.state.checkBoxGroupStatus[0].isChecked |
-                    this.state.checkBoxGroupStatus[1].isChecked |
-                    this.state.checkBoxGroupStatus[2].isChecked |
-                    this.state.checkBoxGroupStatus[3].isChecked |
-                    this.state.checkBoxGroupStatus[4].isChecked |
-                    this.state.checkBoxGroupStatus[5].isChecked)
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
                   commitEnable: enable
                 });
@@ -117,14 +123,16 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[2].isChecked = !this.state
                   .checkBoxGroupStatus[2].isChecked;
+                let checkBoxEnable =
+                  this.state.checkBoxGroupStatus[0].isChecked |
+                  this.state.checkBoxGroupStatus[1].isChecked |
+                  this.state.checkBoxGroupStatus[2].isChecked |
+                  this.state.checkBoxGroupStatus[3].isChecked |
+                  this.state.checkBoxGroupStatus[4].isChecked |
+                  this.state.checkBoxGroupStatus[5].isChecked;
+
                 let enable =
-                  this.state.feedbackContentText.length > 0 &&
-                  (this.state.checkBoxGroupStatus[0].isChecked |
-                    this.state.checkBoxGroupStatus[1].isChecked |
-                    this.state.checkBoxGroupStatus[2].isChecked |
-                    this.state.checkBoxGroupStatus[3].isChecked |
-                    this.state.checkBoxGroupStatus[4].isChecked |
-                    this.state.checkBoxGroupStatus[5].isChecked)
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
                   commitEnable: enable
                 });
@@ -143,14 +151,16 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[3].isChecked = !this.state
                   .checkBoxGroupStatus[3].isChecked;
+                let checkBoxEnable =
+                  this.state.checkBoxGroupStatus[0].isChecked |
+                  this.state.checkBoxGroupStatus[1].isChecked |
+                  this.state.checkBoxGroupStatus[2].isChecked |
+                  this.state.checkBoxGroupStatus[3].isChecked |
+                  this.state.checkBoxGroupStatus[4].isChecked |
+                  this.state.checkBoxGroupStatus[5].isChecked;
+
                 let enable =
-                  this.state.feedbackContentText.length > 0 &&
-                  (this.state.checkBoxGroupStatus[0].isChecked |
-                    this.state.checkBoxGroupStatus[1].isChecked |
-                    this.state.checkBoxGroupStatus[2].isChecked |
-                    this.state.checkBoxGroupStatus[3].isChecked |
-                    this.state.checkBoxGroupStatus[4].isChecked |
-                    this.state.checkBoxGroupStatus[5].isChecked)
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
                   commitEnable: enable
                 });
@@ -167,14 +177,16 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[4].isChecked = !this.state
                   .checkBoxGroupStatus[4].isChecked;
+                let checkBoxEnable =
+                  this.state.checkBoxGroupStatus[0].isChecked |
+                  this.state.checkBoxGroupStatus[1].isChecked |
+                  this.state.checkBoxGroupStatus[2].isChecked |
+                  this.state.checkBoxGroupStatus[3].isChecked |
+                  this.state.checkBoxGroupStatus[4].isChecked |
+                  this.state.checkBoxGroupStatus[5].isChecked;
+
                 let enable =
-                  this.state.feedbackContentText.length > 0 &&
-                  (this.state.checkBoxGroupStatus[0].isChecked |
-                    this.state.checkBoxGroupStatus[1].isChecked |
-                    this.state.checkBoxGroupStatus[2].isChecked |
-                    this.state.checkBoxGroupStatus[3].isChecked |
-                    this.state.checkBoxGroupStatus[4].isChecked |
-                    this.state.checkBoxGroupStatus[5].isChecked)
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
                   commitEnable: enable
                 });
@@ -191,14 +203,16 @@ export default class FeedbackScreen extends Component {
               onPress={() => {
                 this.state.checkBoxGroupStatus[5].isChecked = !this.state
                   .checkBoxGroupStatus[5].isChecked;
+                let checkBoxEnable =
+                  this.state.checkBoxGroupStatus[0].isChecked |
+                  this.state.checkBoxGroupStatus[1].isChecked |
+                  this.state.checkBoxGroupStatus[2].isChecked |
+                  this.state.checkBoxGroupStatus[3].isChecked |
+                  this.state.checkBoxGroupStatus[4].isChecked |
+                  this.state.checkBoxGroupStatus[5].isChecked;
+
                 let enable =
-                  this.state.feedbackContentText.length > 0 &&
-                  (this.state.checkBoxGroupStatus[0].isChecked |
-                    this.state.checkBoxGroupStatus[1].isChecked |
-                    this.state.checkBoxGroupStatus[2].isChecked |
-                    this.state.checkBoxGroupStatus[3].isChecked |
-                    this.state.checkBoxGroupStatus[4].isChecked |
-                    this.state.checkBoxGroupStatus[5].isChecked)
+                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
                 this.setState({
                   commitEnable: enable
                 });
@@ -270,6 +284,7 @@ export default class FeedbackScreen extends Component {
               ? styles.feedbackCommitEnable
               : styles.feedbackCommitDisable
           }
+          disabled={this.state.commitEnable ? false : true}
           underlayColor="white"
           onPress={() => {
             console.log(

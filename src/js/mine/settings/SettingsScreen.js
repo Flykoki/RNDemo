@@ -37,7 +37,7 @@ export default class SettingsScreen extends Component {
           showArrow: "1",
           type: "item",
           onPress: () => {
-            this.props.navigation.goBack();
+            this.props.navigation.navigate("ModifyPwd");
           }
         },
         {
@@ -49,7 +49,11 @@ export default class SettingsScreen extends Component {
           name: "密保手机号",
           value: "立即设置",
           showArrow: "1",
-          type: "item"
+          type: "item",
+          onPress: () => {
+            //Todo 根据当前是否设置密保手机号码来进行页面跳转
+            this.props.navigation.navigate("InitSecurityPhoneStep1");
+          }
         },
         {
           key: "0",
