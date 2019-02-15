@@ -143,7 +143,7 @@ export default class InitSecurityPhoneStep2 extends Component {
             underlayColor={"transparent"}
             onPress={() => {
               if (this.state.sendVerificationCodeEnable) {
-                //onPress前为ture,开始倒计时
+                //onPress前为ture,开始倒计时 todo lfj
                 if (this.state.timeLeft > 0) {
                   let that = this;
                   let interval = setInterval(function() {
@@ -156,6 +156,7 @@ export default class InitSecurityPhoneStep2 extends Component {
                     } else {
                       let totalTime = that.state.timeLeft;
                       that.setState({
+
                         countDownTextContent: totalTime + "S",
                         timeLeft: totalTime - 1
                       });
@@ -291,7 +292,8 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center"
+    paddingRight: 8,
+    alignItems: 'flex-end'
   },
   verificationCodeContainer: {
     width: 80,
