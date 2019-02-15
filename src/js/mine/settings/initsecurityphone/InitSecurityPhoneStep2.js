@@ -39,6 +39,7 @@ export default class InitSecurityPhoneStep2 extends Component {
       commitEnable: false,
       sendVerificationCodeEnable: true,
       securityPhone: "",
+      timeLeft: 60,
       countDownTextContent: "发送验证码",
       verificationCode: ""
     };
@@ -49,6 +50,8 @@ export default class InitSecurityPhoneStep2 extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.tip}>请设置密保手机号</Text>
+        {/* =================== 密保手机 ===================== */}
+
         <View style={styles.textInputContainer}>
           <Image
             style={styles.textInputLeftImg}
@@ -106,7 +109,9 @@ export default class InitSecurityPhoneStep2 extends Component {
           </TouchableHighlight>
         </View>
         <View style={styles.divider} />
-        //验证码container
+        {/* =================== 密保手机 ===================== */}
+
+        {/* =================== 验证码 ===================== */}
         <View style={styles.textInputContainer}>
           <Image
             style={styles.textInputLeftImg}
@@ -131,23 +136,57 @@ export default class InitSecurityPhoneStep2 extends Component {
               });
             }}
           />
-          //验证码发送按钮
+          {/* =================== 验证码发送view ===================== */}
           <TouchableHighlight
             style={styles.verificationCodeContainer}
             disabled={this.state.sendVerificationCodeEnable ? false : true}
             underlayColor={"transparent"}
-            onPress={() =>
-              this.setState({
-                sendVerificationCodeEnable: false
-              })
-            }
+            onPress={() => {
+              if (this.state.sendVerificationCodeEnable) {
+                //onPress前为ture,开始倒计时
+                if (this.state.timeLeft > 0) {
+                  let that = this;
+                  let interval = setInterval(function() {
+                    if (that.state.timeLeft < 1) {
+                      clearInterval(interval);
+                      that.setState({
+                        sendVerificationCodeEnable: !that.state
+                          .sendVerificationCodeEnable
+                      });
+                    } else {
+                      let totalTime = that.state.timeLeft;
+                      that.setState({
+                        countDownTextContent: totalTime + "S",
+                        timeLeft: totalTime - 1
+                      });
+                    }
+                  }, 1000);
+                }
+              } else {
+                //显示重新发送
+                this.setState({
+                  sendVerificationCodeEnable: !this.state
+                    .sendVerificationCodeEnable,
+                  countDownTextContent: "重新发送"
+                });
+              }
+            }}
           >
-            //验证码text
-            <Text>{this.state.countDownTextContent}</Text>
+            <Text
+              style={
+                this.state.sendVerificationCodeEnable
+                  ? styles.sendVerificationCodeEnable
+                  : styles.sendVerificationCodeDisable
+              }
+            >
+              {this.state.countDownTextContent}
+            </Text>
           </TouchableHighlight>
         </View>
         <View style={styles.divider} />
-        //立即设置按钮
+        {/* =================== 验证码 ===================== */}
+        {/* =================== 设置按钮 ===================== */}
+
         <TouchableHighlight
           style={
             this.state.commitEnable
@@ -167,6 +206,7 @@ export default class InitSecurityPhoneStep2 extends Component {
             立即设置
           </Text>
         </TouchableHighlight>
+        {/* =================== 设置按钮 ===================== */}
       </View>
     );
   }
@@ -187,6 +227,14 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginRight: 30,
     height: 1
+  },
+  sendVerificationCodeEnable: {
+    color: "#F12E49",
+    fontSize: 16
+  },
+  sendVerificationCodeDisable: {
+    color: "#999999",
+    fontSize: 16
   },
   modifyCommitTextEnable: {
     color: "white",
