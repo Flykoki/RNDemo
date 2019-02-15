@@ -12,8 +12,11 @@ import {
 import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "react-native-rk-pull-to-refresh";
 import reactNavigation from "react-navigation";
+import { url } from "inspector";
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
+let _navigation;
+let imageUrlIndex = 0;
 export class DetailPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -52,7 +55,7 @@ export class DetailPage extends PureComponent {
     this.fetchData();
   }
   render() {
-    console.log(
+    console.warn(
       "lfj render data",
       this.state.dataArray.length,
       this.state.dataArray
@@ -98,6 +101,7 @@ export class DetailPage extends PureComponent {
               marginBottom: 15.6
             }}
             source={require("../../res/img/swiper_1.jpg")}
+            source={{uri:item.origin}}
           />
           <View
             style={{
@@ -156,12 +160,12 @@ export class DetailPage extends PureComponent {
       .then(responseData => {
         let data = responseData.data; //获取json 数据并存在data数组中
         let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
-
+        console.warn('lfj response data:',data.datas.length,data.datas)
         data.datas.map(function(item) {
           if (imageUrlIndex == 499) {
             imageUrlIndex = 0;
           }
-          item.key = imageUrls[imageUrlIndex];
+          item.origin = imageUrls[imageUrlIndex];
           imageUrlIndex++;
           dataBlob.push(item);
         });
@@ -170,6 +174,7 @@ export class DetailPage extends PureComponent {
         if (this.state.page >= data.pageCount) {
           foot = 1; //listView底部显示没有更多数据了
         }
+        
         this.setState({
           //复制数据源
           //  dataArray:this.state.dataArray.concat( responseData.results),
@@ -180,6 +185,9 @@ export class DetailPage extends PureComponent {
           isRefreshing: false,
           pageCount: data.pageCount
         });
+
+
+
         data = null; //重置为空
         dataBlob = null;
       })

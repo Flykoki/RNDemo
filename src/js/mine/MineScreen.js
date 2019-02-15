@@ -8,9 +8,9 @@ export class MineScreen extends Component {
     super(props);
     this.state = {
       listData: [
-        { key: 1, type: "margin", margin: 10 },
+        { key: "1", type: "margin", margin: 10 },
         {
-          key: 2,
+          key: "2",
           type: "item",
           name: "意见反馈",
           showArrow: "1",
@@ -18,9 +18,9 @@ export class MineScreen extends Component {
             this.props.navigation.navigate("Feedback");
           }
         },
-        { key: 3, type: "divider" },
+        { key: "3", type: "divider" },
         {
-          key: 4,
+          key: "4",
           type: "item",
           name: "设置",
           showArrow: "1",
@@ -47,7 +47,13 @@ export class MineScreen extends Component {
       <View style={styles.container}>
         <View style={styles.panelContainer}>
           <Text style={styles.title}>我的</Text>
-          <PersonalPanel name="懒懒岚" phoneNumber="18888888888" />
+          <PersonalPanel
+            onPress={() => {
+              this.props.navigation.navigate("PersonalInfo");
+            }}
+            name="懒懒岚"
+            phoneNumber="18888888888"
+          />
         </View>
 
         <SettingsList data={this.state.listData} />

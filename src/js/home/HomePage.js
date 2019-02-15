@@ -1,4 +1,4 @@
-import React, { Component,PureComponent } from "react";
+import React, { Component, PureComponent } from "react";
 import {
   View,
   Text,
@@ -18,7 +18,7 @@ const width = Dimensions.get("window").width;
 const topIndicatorHeight = 25;
 export class HomePage extends PureComponent {
   static navigationOptions = {
-    title: "政策公告",
+    title: "首页",
     headerTitleStyle: { flex: 1, textAlign: "center" }
   };
 
