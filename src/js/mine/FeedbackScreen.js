@@ -450,7 +450,7 @@ export default class FeedbackScreen extends Component {
     // };
     var options = {
       thide: true /*不显示头部标题*/,
-      // innersHeight: 160,
+      innersHeight: 163,
       messText: "感谢您的宝贵建议，我们将继续努力，为您提供更好服务！",
       messTextStyle: styles.commonDialogContentText,
       buttons: [
@@ -495,6 +495,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingLeft: 20,
     paddingRight: 12,
+    textAlignVertical: "center",
     color: "#666666"
   },
   commonDialogButton: {

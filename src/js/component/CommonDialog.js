@@ -91,11 +91,17 @@ export default class CommonDialog extends Component {
                 </Text>
               </View>
             )}
-            <View
-              style={{ flexDirection: "row", flex: 1, width: this.innersWidth }}
-            >
-              {this.props.components}
-            </View>
+            {this.props.components && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  flex: 1,
+                  width: this.innersWidth
+                }}
+              >
+                {this.props.components}
+              </View>
+            )}
             {this.state.messText !== "" && (
               <View style={[styles.flexRow, styles.flex1]}>
                 <Text style={[this.state.messTextStyle]}>
@@ -104,11 +110,7 @@ export default class CommonDialog extends Component {
               </View>
             )}
             {this.state.buttons && (
-              <View
-                style={
-                  (styles.btnView, { flexDirection: "row" })
-                }
-              >
+              <View style={(styles.btnView, { flexDirection: "row" })}>
                 {this.state.buttons.map((item, i) => this.CreateBtns(item, i))}
               </View>
             )}
