@@ -36,6 +36,7 @@ export default class SettingsScreen extends Component {
           name: "修改密码",
           showArrow: "1",
           type: "item",
+          leftIcon: require("../../../res/img/icon_setting_password.png"),
           onPress: () => {
             this.props.navigation.navigate("ModifyPwd");
           }
@@ -49,6 +50,7 @@ export default class SettingsScreen extends Component {
           name: "密保手机号",
           value: "立即设置",
           showArrow: "1",
+          leftIcon: require("../../../res/img/icon_setting_phone.png"),
           type: "item",
           onPress: () => {
             //Todo 根据当前是否设置密保手机号码来进行页面跳转
@@ -64,6 +66,7 @@ export default class SettingsScreen extends Component {
           key: "3",
           name: "消息通知",
           showArrow: "1",
+          leftIcon: require("../../../res/img/icon_setting_notification.png"),
           type: "item"
         },
         {
@@ -75,6 +78,7 @@ export default class SettingsScreen extends Component {
           key: "4",
           name: "清空缓存",
           showArrow: "1",
+          leftIcon: require("../../../res/img/icon_setting_clear_cache.png"),
           type: "item"
         },
         {
@@ -85,6 +89,7 @@ export default class SettingsScreen extends Component {
           key: "5",
           name: "检测新版本",
           showArrow: "1",
+          leftIcon: require("../../../res/img/icon_setting_update.png"),
           type: "item"
         },
         {
@@ -95,6 +100,7 @@ export default class SettingsScreen extends Component {
           key: "6",
           name: "版本说明",
           showArrow: "1",
+          leftIcon: require("../../../res/img/icon_setting_version_info.png"),
           type: "item"
         }
       ]
