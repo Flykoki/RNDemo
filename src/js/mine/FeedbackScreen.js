@@ -14,6 +14,7 @@ import {
   Image,
   StatusBar
 } from "react-native";
+import CommonDialog from "../component/CommonDialog";
 
 const width = Dimensions.get("window").width;
 const feedbackContentMaxLength = 500;
@@ -54,6 +55,8 @@ export default class FeedbackScreen extends Component {
 
     this._checkBoxContainerOnPress.bind(this);
     this._checkBoxOnPress.bind(this);
+    this._onCommonDialogConfirm.bind(this);
+    this._funcustomConfirm.bind(this);
   }
 
   _checkBoxContainerOnPress = index => {
@@ -414,11 +417,7 @@ export default class FeedbackScreen extends Component {
           disabled={this.state.commitEnable ? false : true}
           underlayColor="white"
           onPress={() => {
-            console.log(
-              "lfj:",
-              this.state.feedbackContentText,
-              this.state.feedbackPhoneNum
-            );
+            this._funcustomConfirm();
           }}
         >
           <Text
@@ -431,11 +430,45 @@ export default class FeedbackScreen extends Component {
             提交
           </Text>
         </TouchableHighlight>
+
+        {/* 提交提示框 */}
+        <CommonDialog ref="dcustomConfirm" />
       </View>
     );
   }
 
   //========================= 自定义方法 =================================
+
+  //弹窗提示
+  _funcustomConfirm() {
+    // var options = {
+    //   animationType: "none",
+    //   thide: true,
+    //   messText: "感谢您的宝贵建议，我们将继续努力，为您提供更好服务！",
+    //   clickScreen: true,
+    //   button: [this._onCommonDialogConfirm]
+    // };
+    var options = {
+      thide: true /*不显示头部标题*/,
+      // innersHeight: 160,
+      messText: "感谢您的宝贵建议，我们将继续努力，为您提供更好服务！",
+      messTextStyle: styles.commonDialogContentText,
+      buttons: [
+        {
+          txt: "确定",
+          txtStyle: styles.commonDialogBtnContentText,
+          btnStyle: styles.commonDialogButton,
+          onClick: this._onCommonDialogConfirm()
+        }
+      ]
+    };
+    this.refs.dcustomConfirm.show(options);
+  }
+
+  _onCommonDialogConfirm() {
+    //TODO 调用后台接口
+    this.refs.dcustomConfirm.hide();
+  }
 
   //checkbox item点击事件
   _checkBoxItemOnPress({ index }) {
@@ -451,6 +484,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8F8",
     justifyContent: "flex-start",
     flexDirection: "column"
+  },
+  commonDialogBtnContentText: {
+    color: "#F12E49",
+    fontSize: 16,
+    textAlign: "center",
+    textAlignVertical: "center"
+  },
+  commonDialogContentText: {
+    fontSize: 14,
+    paddingLeft: 20,
+    paddingRight: 12,
+    color: "#666666"
+  },
+  commonDialogButton: {
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    height: 46,
+    flex: 1,
+    paddingLeft: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    paddingRight: 0,
+    borderTopColor: "#F0F0F0"
   },
   feedbackPhoneContainer: {
     flexDirection: "row",

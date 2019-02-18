@@ -24,8 +24,9 @@ export default class CommonDialog extends Component {
       transparent: true,
       title: "提示",
       chide: false,
-      headStyle: "",
       messText: "",
+      headStyle: "",
+      messTextStyle: "",
       innersWidth: null,
       innersHeight: null,
       buttons: []
@@ -97,13 +98,15 @@ export default class CommonDialog extends Component {
             </View>
             {this.state.messText !== "" && (
               <View style={[styles.flexRow, styles.flex1]}>
-                <Text>{this.state.messText}</Text>
+                <Text style={[this.state.messTextStyle]}>
+                  {this.state.messText}
+                </Text>
               </View>
             )}
             {this.state.buttons && (
               <View
                 style={
-                  (styles.btnView, { flexDirection: "row", marginBottom: 15 })
+                  (styles.btnView, { flexDirection: "row" })
                 }
               >
                 {this.state.buttons.map((item, i) => this.CreateBtns(item, i))}
@@ -161,6 +164,8 @@ export default class CommonDialog extends Component {
       let title = options.title == undefined ? "提示" : options.title;
       let thide = options.thide == undefined ? false : options.thide;
       let headStyle = options.headStyle == undefined ? "" : options.headStyle;
+      let messTextStyle =
+        options.messTextStyle == undefined ? "" : options.messTextStyle;
       let messText = options.messText == undefined ? "" : options.messText;
       let innersWidth =
         options.innersWidth == undefined ? null : options.innersWidth;
@@ -173,6 +178,7 @@ export default class CommonDialog extends Component {
           messText: messText,
           thide: thide,
           headStyle: headStyle,
+          messTextStyle: messTextStyle,
           modalVisible: true,
           innersHeight: innersHeight,
           innersWidth: innersWidth,
@@ -219,6 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
+  messTextStyle: {},
   container: {
     width: width,
     height: height,

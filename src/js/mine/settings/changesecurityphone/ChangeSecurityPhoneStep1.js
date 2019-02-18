@@ -15,10 +15,10 @@ import {
   StatusBar
 } from "react-native";
 
-export default class InitSecurityPhoneStep2 extends Component {
+export default class ChangeSecurityPhoneStep1 extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "设置密保手机号2/2",
+      title: "修改密保手机号1/2",
       headerRight: <View />,
       headerLeft: (
         <TouchableOpacity
@@ -35,10 +35,9 @@ export default class InitSecurityPhoneStep2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showClearButton: false,
+      securityPhoneTip: "请先验证当前密保手机 186****6789",
       commitEnable: false,
       sendVerificationCodeEnable: true,
-      securityPhone: "",
       timeLeft: countDownTotalTime,
       countDownTextContent: "发送验证码",
       verificationCode: ""
@@ -49,68 +48,7 @@ export default class InitSecurityPhoneStep2 extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.tip}>请设置密保手机号</Text>
-        {/* =================== 密保手机 ===================== */}
-
-        <View style={styles.textInputContainer}>
-          <Image
-            style={styles.textInputLeftImg}
-            source={require("../../../../res/img/app_phoneno_icon.png")}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder={"密保手机号"}
-            onFocus={() => {
-              this.state.clearButtonFocus = true;
-            }}
-            onBlur={() => {
-              this.setState({ showClearButton: false });
-            }}
-            maxLength={20}
-            placeholderTextColor={"#999999"}
-            selectionColor={"#CCCCCC"}
-            secureTextEntry={true}
-            value={this.state.securityPhone}
-            onChangeText={text => {
-              let enableCommit =
-                text.length > 0 && this.state.verificationCode.length > 0;
-              let enableClearButton =
-                text.length > 0 && this.state.clearButtonFocus;
-              this.setState({
-                commitEnable: enableCommit,
-                securityPhone: text,
-                showClearButton: enableClearButton
-              });
-            }}
-          />
-          <TouchableHighlight
-            style={
-              this.state.showClearButton
-                ? styles.clearButtonShow
-                : styles.clearButtonHide
-            }
-            disabled={this.state.showClearButton ? false : true}
-            underlayColor={"black"}
-            onPress={() =>
-              this.setState({
-                securityPhone: "",
-                commitEnable: false,
-                showClearButton: false
-              })
-            }
-          >
-            <Image
-              source={
-                this.state.showClearButton
-                  ? require("../../../../res/img/icon_app_clear_button.png")
-                  : {}
-              }
-            />
-          </TouchableHighlight>
-        </View>
-        <View style={styles.divider} />
-        {/* =================== 密保手机 ===================== */}
-
+        <Text style={styles.tip}>{this.state.securityPhoneTip}</Text>
         {/* =================== 验证码 ===================== */}
         <View style={styles.textInputContainer}>
           <Image
@@ -128,10 +66,8 @@ export default class InitSecurityPhoneStep2 extends Component {
             keyboardType={"number-pad"}
             value={this.state.verificationCode}
             onChangeText={text => {
-              let enableCommit =
-                text.length > 0 && this.state.securityPhone.length > 0;
               this.setState({
-                commitEnable: enableCommit,
+                commitEnable: text.length > 0,
                 verificationCode: text
               });
             }}
@@ -195,7 +131,14 @@ export default class InitSecurityPhoneStep2 extends Component {
               : styles.modifyCommitDisable
           }
           disabled={this.state.commitEnable ? false : true}
-          onPress={this._validFormData}
+          onPress={
+          //   () => {
+          //   if ((this.state.verificationCode.length === 6)) {
+          //     this.props.navigation.navigate("ChangeSecurityPhoneStep2");
+          //   }
+          // }
+          this._validFormData
+          }
         >
           <Text
             style={
@@ -204,7 +147,7 @@ export default class InitSecurityPhoneStep2 extends Component {
                 : styles.modifyCommitTextDisable
             }
           >
-            立即设置
+            去设置新手机号
           </Text>
         </TouchableHighlight>
         {/* =================== 设置按钮 ===================== */}
@@ -216,8 +159,10 @@ export default class InitSecurityPhoneStep2 extends Component {
    * 检验textinput 内容的合法性
    */
   _validFormData = () => {
-    let securityPhone = this.state.securityPhone;
-    console.warn(securityPhone);
+    let code = this.state.verificationCode;
+    if ((code.length === 6)) {
+      this.props.navigation.navigate("ChangeSecurityPhoneStep2");
+    }
   };
 }
 const countDownTotalTime = 9;

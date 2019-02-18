@@ -15,10 +15,10 @@ import {
   StatusBar
 } from "react-native";
 
-export default class InitSecurityPhoneStep2 extends Component {
+export default class ChangeSecurityPhoneStep2 extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "设置密保手机号2/2",
+      title: "修改密保手机号2/2",
       headerRight: <View />,
       headerLeft: (
         <TouchableOpacity
@@ -37,7 +37,7 @@ export default class InitSecurityPhoneStep2 extends Component {
     this.state = {
       showClearButton: false,
       commitEnable: false,
-      sendVerificationCodeEnable: true,
+      sendVerificationCodeEnable: false,
       securityPhone: "",
       timeLeft: countDownTotalTime,
       countDownTextContent: "发送验证码",
@@ -49,7 +49,7 @@ export default class InitSecurityPhoneStep2 extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.tip}>请设置密保手机号</Text>
+        <Text style={styles.tip}>请设置新的密保手机号</Text>
         {/* =================== 密保手机 ===================== */}
 
         <View style={styles.textInputContainer}>
@@ -66,20 +66,22 @@ export default class InitSecurityPhoneStep2 extends Component {
             onBlur={() => {
               this.setState({ showClearButton: false });
             }}
-            maxLength={20}
+            maxLength={11}
             placeholderTextColor={"#999999"}
             selectionColor={"#CCCCCC"}
-            secureTextEntry={true}
+            keyboardType={"number-pad"}
             value={this.state.securityPhone}
             onChangeText={text => {
               let enableCommit =
                 text.length > 0 && this.state.verificationCode.length > 0;
               let enableClearButton =
                 text.length > 0 && this.state.clearButtonFocus;
+              let verifyCodeEnable = text.length === 11; //手机号码长度===11时候才可以发送验证码
               this.setState({
                 commitEnable: enableCommit,
                 securityPhone: text,
-                showClearButton: enableClearButton
+                showClearButton: enableClearButton,
+                sendVerificationCodeEnable: verifyCodeEnable
               });
             }}
           />
@@ -95,6 +97,7 @@ export default class InitSecurityPhoneStep2 extends Component {
               this.setState({
                 securityPhone: "",
                 commitEnable: false,
+                sendVerificationCodeEnable: false,
                 showClearButton: false
               })
             }
@@ -223,6 +226,7 @@ export default class InitSecurityPhoneStep2 extends Component {
 const countDownTotalTime = 9;
 
 const styles = StyleSheet.create({
+  header: { fontSize: 15, fontFamily: "PingFangSC-Regular", color: "#000000" },
   backButtonStyle: { marginLeft: 20, width: 50 },
   divider: {
     backgroundColor: "#F0F0F0",

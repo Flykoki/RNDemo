@@ -52,7 +52,7 @@ export default class SettingsScreen extends Component {
           type: "item",
           onPress: () => {
             //Todo 根据当前是否设置密保手机号码来进行页面跳转
-            this.props.navigation.navigate("InitSecurityPhoneStep1");
+            this.props.navigation.navigate("ChangeSecurityPhoneStep1");
           }
         },
         {
