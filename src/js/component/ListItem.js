@@ -6,35 +6,54 @@ export default class ListItem extends Component {
     super(props);
   }
   render() {
-    const { name, value, showArrow, onPress, style, rightIcon } = this.props;
+    const {
+      name,
+      value,
+      showArrow,
+      onPress,
+      style,
+      rightIcon,
+      leftIcon
+    } = this.props;
     return (
       <TouchableOpacity
         style={[style, styles.containerStyle]}
         onPress={onPress}
         activeOpacity={1}
       >
-        <Text style={styles.textStyle}>{name}</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={styles.leftContaierStyle}>
+          {leftIcon && (
+            <Image
+              style={styles.leftIconStyle}
+              source={leftIcon}
+              resizeMode="contain"
+            />
+          )}
+          <Text style={styles.textStyle}>{name}</Text>
+        </View>
+
+        <View style={styles.leftContaierStyle}>
           <Text style={styles.textStyle}>{value}</Text>
 
           {rightIcon && (
             <Image
-              style={{
-                height: 20,
-                width: 20,
-                marginLeft: 7,
-                display: rightIcon ? "flex" : "none"
-              }}
+              style={[
+                styles.rightIconStyle,
+                {
+                  display: rightIcon ? "flex" : "none"
+                }
+              ]}
               source={rightIcon}
+              resizeMode="contain"
             />
           )}
           <Image
-            style={{
-              width: 6,
-              height: 10,
-              marginLeft: 10,
-              display: showArrow ? "flex" : "none"
-            }}
+            style={[
+              styles.rightArrowStyle,
+              {
+                display: showArrow ? "flex" : "none"
+              }
+            ]}
             source={require("../../res/img/icon_left_arrow_black.png")}
           />
         </View>
@@ -56,5 +75,17 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     paddingLeft: 16,
     backgroundColor: "white"
+  },
+  leftContaierStyle: { flexDirection: "row", alignItems: "center" },
+  leftIconStyle: { width: 23, height: 23, marginLeft: 9, marginRight: 12 },
+  rightIconStyle: {
+    height: 20,
+    width: 20,
+    marginLeft: 7
+  },
+  rightArrowStyle: {
+    width: 6,
+    height: 10,
+    marginLeft: 10
   }
 });
