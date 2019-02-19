@@ -54,7 +54,7 @@ const TabNavigator = createBottomTabNavigator(
     tabBarOptions: {
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
-    },
+    }
   }
 );
 
@@ -73,8 +73,14 @@ const StackContainer = createStackNavigator(
     QrCode: QrCodeScreen,
     HomeTab: {
       screen: TabNavigator,
-      navigationOptions: {
-        header: null
+      navigationOptions: ({ navigation }) => {
+        const { index } = navigation.state;
+        if (index === 1) {
+          return { header: null };
+        }
+        if (index === 0) {
+          return HomePage.navigationOptions(navigation);
+        }
       }
     }
   },
