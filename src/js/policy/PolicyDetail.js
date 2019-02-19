@@ -53,3 +53,61 @@ export class PolicyDetail extends PureComponent {
     );
   }
 }
+const styles = StyleSheet.create({
+  backButtonStyle: { marginLeft: 20, width: 50 },
+  hide: {
+    position: "absolute",
+    left: 10000
+  },
+  show: {
+    position: "relative",
+    left: 0,
+    backgroundColor: "transparent"
+  },
+  container: {
+    padding: 10,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF"
+  },
+  title: {
+    fontSize: 16,
+    marginTop: 16,
+    marginRight: 19,
+    marginLeft: 15,
+    color: "#333333"
+  },
+  footer: {
+    flexDirection: "row",
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10
+  },
+  content: {
+    marginBottom: 8,
+    marginLeft: 8,
+    marginRight: 8,
+    fontSize: 12,
+    color: "black"
+  },
+  flatListItemWithShadow: {
+    // margin: 5,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    backgroundColor: "white"
+    // shadowColor: "#000",
+    // shadowOpacity: 0.8,
+    // shadowRadius: 6,
+    // elevation: 9,
+    // borderRadius: 8
+  },
+  flatListContain: {
+    backgroundColor: "#F8F8F8"
+  }
+});

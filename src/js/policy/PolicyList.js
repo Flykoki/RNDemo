@@ -269,6 +269,7 @@ export class PolicyList extends PureComponent {
 
   //header 在不同的状态下的样式
   _onPullStateChangeHeight = (pullState, moveHeight) => {
+    console.log("lfj pull state:", pullState, moveHeight);
     if (pullState == "pulling") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
@@ -359,6 +360,9 @@ export class PolicyList extends PureComponent {
           height: topIndicatorHeight
         }}
       >
+        <Text ref={c => (this.txtPullDone = c)} style={styles.hide}>
+          刷新完成
+        </Text>
         <Image
           style={styles.hide}
           ref={c => (this.imgPulling = c)}
