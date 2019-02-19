@@ -42,7 +42,7 @@ export class HomePage extends PureComponent {
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setBarStyle("light-content");
+      StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
     this.fetchData();

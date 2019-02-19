@@ -34,7 +34,17 @@ export class PolicyDetail extends PureComponent {
       )
     };
   };
+  componentDidMount() {
+    //设置statusbar样式
+    this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("#FFFFFF");
+    });
+  }
 
+  componentWillUnmount = () => {
+    this._navListener.remove();
+  };
   render() {
     return (
       <Text style={{ justifyContent: "center", textAlign: "center" }}>

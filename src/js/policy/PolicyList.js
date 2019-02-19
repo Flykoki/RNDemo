@@ -49,13 +49,13 @@ export class PolicyList extends PureComponent {
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
       isRefreshing: false //下拉控制
     };
-
+    _navigation = this.props.navigation;
     // this._onPress.bind(this);
   }
   componentDidMount() {
     //设置statusbar样式
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setBarStyle("light-content");
+      StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
     this.fetchData();
@@ -219,7 +219,7 @@ export class PolicyList extends PureComponent {
 
   //item 点击事件
   _onPress = item => {
-    console.log("policylist item onpress",item);
+    console.log("policylist item onpress", item);
     const ret = _navigation.navigate("PolicyDetail");
     console.log("policylist item onpress result:", ret);
   };
@@ -228,7 +228,11 @@ export class PolicyList extends PureComponent {
   _renderItemView({ item }) {
     //跳转并传值
     return (
-      <TouchableNativeFeedback onPress={item => this._onPress(item)}>
+      <TouchableNativeFeedback
+        onPress={() => {
+          _navigation.navigate("PolicyDetail");
+        }}
+      >
         <View style={styles.flatListItemWithShadow}>
           <Image
             style={{
