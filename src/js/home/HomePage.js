@@ -20,7 +20,7 @@ export class HomePage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       title: "首页",
-      headerTitleStyle: { flex: 1, textAlign: "center" },
+      headerTitleStyle: { flex: 1, textAlign: "center" }
     };
   };
 
@@ -83,7 +83,7 @@ export class HomePage extends PureComponent {
         });
         let foot = 0;
         if (this.state.page >= 5) {
-        // if (this.state.page >= data.pageCount) {
+          // if (this.state.page >= data.pageCount) {
           foot = 1; //listView底部显示没有更多数据了
         }
         this.setState({
@@ -147,7 +147,7 @@ export class HomePage extends PureComponent {
   _keyExtractor = (item, index) => item.key;
   //item点击事件
   _onPress = ({ item }) => {
-    console.log("home item onpress,",item);
+    console.log("home item onpress,", item);
     const ret = _navigation.navigate("PolicyList");
   };
 
