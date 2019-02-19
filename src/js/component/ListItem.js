@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import Switch from "./Switch";
 
 export default class ListItem extends Component {
   constructor(props) {
@@ -13,7 +14,8 @@ export default class ListItem extends Component {
       onPress,
       style,
       rightIcon,
-      leftIcon
+      leftIcon,
+      switchStatus
     } = this.props;
     return (
       <TouchableOpacity
@@ -35,6 +37,7 @@ export default class ListItem extends Component {
         <View style={styles.leftContaierStyle}>
           <Text style={styles.textStyle}>{value}</Text>
 
+          {switchStatus && <Switch value={switchStatus.status} />}
           {rightIcon && (
             <Image
               style={[

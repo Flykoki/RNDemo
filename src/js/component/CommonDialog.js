@@ -44,7 +44,6 @@ export default class CommonDialog extends Component {
         transparent={this.state.transparent}
         visible={this.state.modalVisible}
         onRequestClose={this.hide.bind(this)}
-        presentationStyle="overFullScreen"
       >
         <View style={[styles.container, styles.flexVer, styles.flex1]}>
           {this.state.clickScreen && (
@@ -104,11 +103,7 @@ export default class CommonDialog extends Component {
               </View>
             )}
             {this.state.buttons && (
-              <View
-                style={
-                  (styles.btnView, { flexDirection: "row" })
-                }
-              >
+              <View style={(styles.btnView, { flexDirection: "row" })}>
                 {this.state.buttons.map((item, i) => this.CreateBtns(item, i))}
               </View>
             )}
@@ -129,7 +124,7 @@ export default class CommonDialog extends Component {
     );
   }
   hide() {
-    StatusBar.setHidden(false);
+    // StatusBar.setHidden(false);
     this.setState({ modalVisible: false });
   }
 
@@ -155,7 +150,7 @@ export default class CommonDialog extends Component {
    */
 
   show(options) {
-    StatusBar.setHidden(true);
+    // StatusBar.setHidden(true);
     if (options) {
       let clickScreen =
         options.clickScreen == undefined ? true : options.clickScreen;

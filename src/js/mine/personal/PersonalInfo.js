@@ -190,7 +190,8 @@ export default class PersonalInfoScreen extends Component {
         key: 6,
         name: "版本说明",
         showArrow: "1",
-        type: "item"
+        type: "item",
+        switchStatus: { status: true }
       }
     ];
   }

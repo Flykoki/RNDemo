@@ -51,6 +51,10 @@ export class HomePage extends PureComponent {
   }
 
   componentDidMount() {
+    this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("white");
+    });
     this.fetchData();
   }
   //=========================== 自定义方法 =========================

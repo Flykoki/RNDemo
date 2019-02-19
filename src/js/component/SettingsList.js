@@ -13,6 +13,7 @@ export default class SettingsList extends Component {
           onPress={item.onPress}
           rightIcon={item.rightIcon}
           leftIcon={item.leftIcon}
+          switchStatus={item.switchStatus}
         />
       );
     }
