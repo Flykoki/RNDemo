@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { StatusBar } from "react-native";
 import { HomePage } from "./HomePage";
-import { DetailPage } from "./DetailPage";
+import { PolicyList } from "../policy/PolicyList";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
 const HomeNavigator = createStackNavigator(
   {
     Home: HomePage,
-    Detail: DetailPage
   },
   { initialRouteName: "Home" }
 );

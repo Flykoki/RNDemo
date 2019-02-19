@@ -1,26 +1,37 @@
-import React, { Component, PureComponent } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
   Text,
   Image,
-  FlatList,
-  StatusBar,
-  Dimensions,
+  StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
   TouchableNativeFeedback,
-  StyleSheet
+  Dimensions
 } from "react-native";
 import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "react-native-rk-pull-to-refresh";
+import reactNavigation from "react-navigation";
+const width = Dimensions.get("window").width;
+const topIndicatorHeight = 50;
 let _navigation;
 let imageUrlIndex = 0;
-const width = Dimensions.get("window").width;
-const topIndicatorHeight = 25;
-export class HomePage extends PureComponent {
+export class PolicyList extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "首页",
+      title: "政策公告",
       headerTitleStyle: { flex: 1, textAlign: "center" },
+      headerRight: <View />,
+      headerLeft: (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+          style={styles.backButtonStyle}
+        >
+          <Image source={require("../../res/img/icon_back.png")} />
+        </TouchableOpacity>
+      )
     };
   };
 
@@ -38,9 +49,11 @@ export class HomePage extends PureComponent {
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
       isRefreshing: false //下拉控制
     };
-    _navigation = this.props.navigation;
+
+    // this._onPress.bind(this);
   }
   componentDidMount() {
+    //设置statusbar样式
     this._navListener = this.props.navigation.addListener("didFocus", () => {
       StatusBar.setBarStyle("light-content");
       StatusBar.setBackgroundColor("#FFFFFF");
@@ -51,146 +64,71 @@ export class HomePage extends PureComponent {
   componentWillUnmount = () => {
     this._navListener.remove();
   };
+
   render() {
     //第一次加载等待的view
     if (this.state.isLoading && !this.state.error) {
-      return this.renderLoadingView();
+      return this._renderLoadingView();
     } else if (this.state.error) {
       //请求失败view
-      return this.renderErrorView();
+      return this._renderErrorView();
     }
     //加载数据
-    return this.renderData();
-  }
-  //=========================== 自定义方法 =========================
-
-  //获取数据
-  fetchData() {
-    url = "article/list/" + this.state.page + "/json";
-
-    fetchRequest(url, "GET")
-      .then(responseData => {
-        let data = responseData.data; //获取json 数据并存在data数组中
-        let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
-
-        data.datas.map(function(item) {
-          if (imageUrlIndex == 499) {
-            imageUrlIndex = 0;
-          }
-          item.key = imageUrls[imageUrlIndex];
-          imageUrlIndex++;
-          dataBlob.push(item);
-        });
-        let foot = 0;
-        if (this.state.page >= 5) {
-        // if (this.state.page >= data.pageCount) {
-          foot = 1; //listView底部显示没有更多数据了
-        }
-        this.setState({
-          //复制数据源
-          //  dataArray:this.state.dataArray.concat( responseData.results),
-          dataArray: this.state.dataArray.concat(dataBlob),
-          isLoading: false,
-          showFoot: foot,
-          showHeader: 0,
-          isRefreshing: false,
-          pageCount: data.pageCount
-        });
-        data = null; //重置为空
-        dataBlob = null;
-      })
-      .catch(error => {
-        this.setState({
-          error: true,
-          errorInfo: error
-        });
-      })
-      .done();
+    return this._renderData();
   }
 
-  //显示FlatList
-  renderData() {
+  // ======================================= 自定义方法 =======================================
+  //加载数据显示FlatList
+  _renderData() {
     return (
-      <View style={styles.flatListContain}>
-        {/* <PullFlatList
-          ref={c => (this.pull = c)}
-          data={this.state.dataArray}
-          renderItem={this._renderItemView.bind(this)}
-          ListFooterComponent={this._renderFooter}
-          onEndReached={this._onEndReached}
-          onEndReachedThreshold={0.1}
-          refreshing={this.state.isRefreshing}
-          onRefresh={this.handleRefresh} //因为涉及到this.state
-          keyExtractor={this._keyExtractor}
-          ItemSeparatorComponent={this._separator}
-          style={{ flex: 1, width: width }}
-          isContentScroll={true}
-          topIndicatorRender={this.topIndicatorRender}
-          topIndicatorHeight={topIndicatorHeight}
-          onPullStateChangeHeight={this.onPullStateChangeHeight}
-        /> */}
-        <FlatList
-          data={this.state.dataArray}
-          renderItem={this._renderItemView.bind(this)}
-          ListFooterComponent={this._renderFooter}
-          onEndReached={this._onEndReached}
-          onEndReachedThreshold={1}
-          refreshing={this.state.isRefreshing}
-          onRefresh={this.handleRefresh} //因为涉及到this.state
-          ItemSeparatorComponent={this._separator}
-          keyExtractor={this._keyExtractor}
-        />
+      <PullFlatList
+        ref={c => (this.pull = c)}
+        isContentScroll={true}
+        onPullStateChangeHeight={this._onPullStateChangeHeight}
+        topIndicatorRender={this._topIndicatorRender}
+        topIndicatorHeight={topIndicatorHeight}
+        style={{ flex: 1, width: width }}
+        onPullRelease={this._onPullRelease}
+        data={this.state.dataArray}
+        onEndReached={this._onEndReached}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={this._renderFooter}
+        refreshing={this.state.isRefreshing}
+        renderItem={this._renderItemView}
+        ItemSeparatorComponent={() => (
+          <View style={{ flex: 1, height: 0.5, backgroundColor: "#cbcbcb" }} />
+        )}
+      />
+    );
+  }
+  //加载等待页
+  _renderLoadingView() {
+    return (
+      <View style={styles.container}>
+        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
+        <ActivityIndicator animating={true} color="blue" size="large" />
       </View>
     );
   }
-  //key
-  _keyExtractor = (item, index) => item.key;
-  //item点击事件
-  _onPress = ({ item }) => {
-    console.log("home item onpress,",item);
-    const ret = _navigation.navigate("PolicyList");
-  };
-
-  //返回itemView
-  _renderItemView({ item }) {
-    let imageKey = item.key;
-    //跳转并传值
+  //加载失败view
+  _renderErrorView() {
     return (
-      // <TouchableNativeFeedback onPress={() => {Actions.news({'url':item.url})}} >////切记不能带（）不能写成gotoDetails()
-      <TouchableNativeFeedback onPress={this._onPress}>
-        <View style={styles.flatListItemWithShadow}>
-          <Image
-            style={{
-              width: 100,
-              height: 90,
-              marginLeft: 15,
-              marginTop: 16,
-              marginBottom: 15.6
-            }}
-            source={{ uri: imageKey }}
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "space-between"
-            }}
-          >
-            <Text style={styles.title}>{item.title}</Text>
-            <Text
-              style={{
-                marginLeft: 15,
-                marginBottom: 15.6
-              }}
-            >
-              {item.niceDate}
-            </Text>
-          </View>
-        </View>
-      </TouchableNativeFeedback>
+      <View style={styles.container}>
+        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
+        <Text>{this.state.errorInfo}</Text>
+      </View>
     );
   }
-
+  //刷新时
+  _handleRefresh = () => {
+    this.setState({
+      page: 1,
+      showHeader: 1,
+      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
+      dataArray: []
+    });
+    this.fetchData();
+  };
   //滑动到底部
   _onEndReached = () => {
     //如果是正在加载中或没有更多数据了，则返回
@@ -211,44 +149,18 @@ export class HomePage extends PureComponent {
     }
   };
 
-  //头部控件
-  _renderHeader = () => {
-    console.log("lfj showhearder:", this.state.showHeader);
-    if (this.state.showHeader === 0) {
-      return (
-        <View style={{ height: 0, width: 0 }}>
-          <Text />
-        </View>
-      );
-    } else if (this.state.showHeader === 1) {
-      return (
-        <View
-          style={{
-            height: 50,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <ActivityIndicator />
-          <Text>加载中...</Text>
-        </View>
-      );
-    }
-  };
-
   //返回footer
   _renderFooter = () => {
     if (this.state.showFoot === 1) {
       return (
         <View
           style={{
-            flex: 1,
-            alignItems: "center",
+            height: 267,
+            backgroundColor: "#F8F8F8",
+            flexDirection: "row",
             marginTop: 20,
-            marginBottom: 20,
-            justifyContent: "center",
-            flexDirection: "row"
+            justifyContent: "flex-start",
+            alignItems: "center"
           }}
         >
           <View
@@ -262,8 +174,8 @@ export class HomePage extends PureComponent {
           />
           <Text
             style={{
-              flex: 1,
               color: "#999999",
+              width: 50,
               fontSize: 14,
               textAlign: "center"
             }}
@@ -299,50 +211,60 @@ export class HomePage extends PureComponent {
       );
     }
   };
-  //分割线
-  _separator() {
-    return (
-      <View
-        style={{
-          height: 1,
-          backgroundColor: "#E3E3E3",
-          marginLeft: 17,
-          marginRight: 13
-        }}
-      />
-    );
-  }
-  //刷新时
-  handleRefresh = () => {
-    console.log("lfj handleRefresh");
-    this.setState({
-      page: 1,
-      showHeader: 1,
-      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
-      dataArray: []
-    });
-    this.fetchData();
+
+  //下拉释放回调
+  _onPullRelease = () => {
+    this._handleRefresh();
   };
-  //加载等待页
-  renderLoadingView() {
+
+  //item 点击事件
+  _onPress = item => {
+    console.log("policylist item onpress",item);
+    const ret = _navigation.navigate("PolicyDetail");
+    console.log("policylist item onpress result:", ret);
+  };
+
+  //init itemView
+  _renderItemView({ item }) {
+    //跳转并传值
     return (
-      <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
-        <ActivityIndicator animating={true} color="blue" size="large" />
-      </View>
+      <TouchableNativeFeedback onPress={item => this._onPress(item)}>
+        <View style={styles.flatListItemWithShadow}>
+          <Image
+            style={{
+              width: 100,
+              height: 90,
+              marginLeft: 15,
+              marginTop: 16,
+              marginBottom: 15.6
+            }}
+            source={require("../../res/img/swiper_1.jpg")}
+            source={{ uri: item.key }}
+          />
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "space-between"
+            }}
+          >
+            <Text style={styles.title}>{item.title}</Text>
+            <Text
+              style={{
+                marginLeft: 15,
+                marginBottom: 15.6
+              }}
+            >
+              {item.niceDate}
+            </Text>
+          </View>
+        </View>
+      </TouchableNativeFeedback>
     );
   }
-  //加载失败view
-  renderErrorView() {
-    return (
-      <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
-        <Text>{this.state.errorInfo}</Text>
-      </View>
-    );
-  }
-  //header在不同的pullstate下的展示
-  onPullStateChangeHeight = (pullState, moveHeight) => {
+
+  //header 在不同的状态下的样式
+  _onPullStateChangeHeight = (pullState, moveHeight) => {
     if (pullState == "pulling") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
@@ -377,8 +299,53 @@ export class HomePage extends PureComponent {
     }
   };
 
+  //获取数据
+  fetchData() {
+    url = "article/list/" + this.state.page + "/json";
+    fetchRequest(url, "GET")
+      .then(responseData => {
+        let data = responseData.data; //获取json 数据并存在data数组中
+        let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
+        data.datas.map(function(item) {
+          if (imageUrlIndex === 499) {
+            imageUrlIndex = 0;
+          }
+          item.key = imageUrls[imageUrlIndex];
+          imageUrlIndex++;
+          dataBlob.push(item);
+        });
+        let foot = 0;
+        if (this.state.page >= 5) {
+          // if (this.state.page >= data.pageCount) {
+          foot = 1; //listView底部显示没有更多数据了
+        }
+
+        this.setState({
+          //复制数据源
+          //  dataArray:this.state.dataArray.concat( responseData.results),
+          dataArray: this.state.dataArray.concat(dataBlob),
+          isLoading: false,
+          showFoot: foot,
+          showHeader: 0,
+          isRefreshing: false,
+          pageCount: data.pageCount
+        });
+
+        data = null; //重置为空
+        dataBlob = null;
+      })
+      .catch(error => {
+        this.setState({
+          error: true,
+          errorInfo: error
+        });
+      })
+      .finally(this.pull && this.pull.finishRefresh())
+      .done();
+  }
+
   //header view
-  topIndicatorRender = () => {
+  _topIndicatorRender = () => {
     return (
       <View
         style={{
@@ -417,10 +384,12 @@ export class HomePage extends PureComponent {
       </View>
     );
   };
-  //=========================== 自定义方法 =========================
+
+  // ======================================= 自定义方法 =======================================
 }
 
 const styles = StyleSheet.create({
+  backButtonStyle: { marginLeft: 20, width: 50 },
   hide: {
     position: "absolute",
     left: 10000
