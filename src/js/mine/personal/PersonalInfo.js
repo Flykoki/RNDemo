@@ -1,32 +1,17 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Image,
-  StatusBar,
-  Clipboard
-} from "react-native";
+import { StyleSheet, View, StatusBar, Clipboard } from "react-native";
 import SettingsList from "../../component/SettingsList";
 import CommonDialog from "../../component/CommonDialog";
 import QrCodeScreen from "./QrCodeScreen";
+import { titleOptions } from "../../component/Titie";
+import { RootView } from "../../component/CommonView";
 
 export default class PersonalInfoScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    return {
-      title: "个人信息",
-      headerRight: <View />,
-      headerLeft: (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}
-          style={styles.backButtonStyle}
-        >
-          <Image source={require("../../../res/img/icon_back.png")} />
-        </TouchableOpacity>
-      )
-    };
+    return titleOptions({
+      navigation,
+      title: "个人信息"
+    });
   };
 
   constructor(props) {
@@ -233,7 +218,10 @@ export default class PersonalInfoScreen extends Component {
   }
 
   _initData() {
-    this.state = { data: this._initDealerData() };
+    this.state = { data: this._initDealerData(), status: "loading" };
+    setTimeout(() => {
+      this.setState({ status: "loadingFailed" });
+    }, 5000);
   }
 
   _funcustomConfirm() {
@@ -247,11 +235,27 @@ export default class PersonalInfoScreen extends Component {
     this.refs.dcustomConfirm.show(options);
   }
 
+  _customView() {
+    return <SettingsList data={this.state.data} />;
+  }
+
   render() {
+    const { status } = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="white" />
-        <SettingsList data={this.state.data} />
+        <RootView
+          status={status}
+          failed={{
+            tips: "加载失败",
+            onPress: () => {
+              this.setState({ status: "custom" });
+            },
+            btnText: "重新加载"
+          }}
+          custom={this._customView()}
+        />
+
         <CommonDialog
           ref="dcustomConfirm"
           backgroundColor="transparent"
