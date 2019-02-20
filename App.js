@@ -28,6 +28,8 @@ import ChangeSecurityPhoneStep2 from "./src/js/mine/settings/changesecurityphone
 import PersonalInfoScreen from "./src/js/mine/personal/PersonalInfo";
 import ModifyPwdScreen from "./src/js/mine/settings/ModifyPwdScreen";
 import QrCodeScreen from "./src/js/mine/personal/QrCodeScreen";
+import NotificationManager from "./src/js/mine/settings/notification/NotificationManager";
+
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomePage,
@@ -71,6 +73,7 @@ const StackContainer = createStackNavigator(
     Settings: SettingsScreen,
     PersonalInfo: PersonalInfoScreen,
     QrCode: QrCodeScreen,
+    NotificationManager: NotificationManager,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {

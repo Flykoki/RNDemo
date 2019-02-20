@@ -32,6 +32,10 @@ export default class SettingsList extends Component {
         </View>
       );
     }
+
+    if (item.type === "custom") {
+      return item.customView;
+    }
   }
   render() {
     const { data } = this.props;

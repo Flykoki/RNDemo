@@ -8,23 +8,11 @@ import {
   StyleSheet
 } from "react-native";
 import SettingsList from "../../component/SettingsList";
+import { titleOptions } from "../../component/Titie";
 
 export default class SettingsScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    return {
-      title: "设置",
-      headerRight: <View />,
-      headerLeft: (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}
-          style={styles.backButtonStyle}
-        >
-          <Image source={require("../../../res/img/icon_back.png")} />
-        </TouchableOpacity>
-      )
-    };
+    return titleOptions({ navigation, title: "设置" });
   };
 
   constructor(props) {
@@ -67,7 +55,10 @@ export default class SettingsScreen extends Component {
           name: "消息通知",
           showArrow: "1",
           leftIcon: require("../../../res/img/icon_setting_notification.png"),
-          type: "item"
+          type: "item",
+          onPress: () => {
+            this.props.navigation.navigate("NotificationManager");
+          }
         },
         {
           key: "0",
@@ -143,5 +134,11 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center"
   },
-  backButtonStyle: { marginLeft: 20, width: 50 }
+  backButtonStyle: {
+    marginLeft: 20,
+    width: 50,
+    height: 50,
+    flex: 1,
+    justifyContent: "center"
+  }
 });
