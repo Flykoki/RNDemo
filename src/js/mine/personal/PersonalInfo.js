@@ -131,73 +131,109 @@ export default class PersonalInfoScreen extends Component {
   _initDealerData() {
     return [
       {
-        key: 1,
-        name: "修改密码",
-        showArrow: "1",
+        key: "0",
+        type: "margin",
+        margin: 10
+      },
+      {
+        key: "1",
+        name: "姓名",
+        type: "item",
+        value: "懒懒岚"
+      },
+      {
+        key: "10",
+        type: "divider"
+      },
+      {
+        key: "2",
+        name: "二维码",
+        rightIcon: require("../../../res/img/qr_code.png"),
         type: "item",
         onPress: () => {
-          this.props.navigation.goBack();
+          this._funcustomConfirm();
         }
       },
       {
-        key: 10,
+        key: "11",
         type: "divider"
       },
       {
-        key: 2,
-        name: "密保手机号",
-        value: "立即设置",
-        showArrow: "1",
-        type: "item"
-      },
-      {
-        key: 0,
-        type: "margin",
-        margin: 9.7
-      },
-      {
-        key: 3,
-        name: "消息通知",
-        showArrow: "1",
-        type: "item"
-      },
-      {
-        key: 0,
-        type: "margin",
-        margin: 9.7
-      },
-      {
-        key: 4,
-        name: "清空缓存",
-        showArrow: "1",
-        type: "item"
-      },
-      {
-        key: 12,
-        type: "divider"
-      },
-      {
-        key: 5,
-        name: "检测新版本",
-        showArrow: "1",
-        type: "item"
-      },
-      {
-        key: 13,
-        type: "divider"
-      },
-      {
-        key: 6,
-        name: "版本说明",
-        showArrow: "1",
+        key: "3",
+        name: "邀请码",
+        value: "22233232",
+        rightIcon: require("../../../res/img/copy.png"),
         type: "item",
-        switchStatus: { status: true }
+        onPress: () => {
+          Clipboard.setString("22233232");
+        }
+      },
+      {
+        key: "0",
+        type: "margin",
+        margin: 9.7
+      },
+      {
+        key: "4",
+        name: "登录账号",
+        value: "18888888888",
+        type: "item"
+      },
+      {
+        key: "12",
+        type: "divider"
+      },
+      {
+        key: "5",
+        name: "联系电话",
+        value: "18999012123",
+        type: "item"
+      },
+      {
+        key: "12",
+        type: "divider"
+      },
+      {
+        key: "6",
+        name: "渠道商",
+        value: "才华有限公司",
+        type: "item"
+      },
+      {
+        key: "12",
+        type: "divider"
+      },
+      {
+        key: "7",
+        name: "账号权限",
+        value: "客户经理",
+        type: "item"
+      },
+      {
+        key: "12",
+        type: "divider"
+      },
+      {
+        key: "8",
+        name: "支持操作业务",
+        value: "4s金融",
+        type: "item"
+      },
+      {
+        key: "12",
+        type: "divider"
+      },
+      {
+        key: "9",
+        name: "支持门店",
+        value: "望京店、直营门店",
+        type: "item"
       }
     ];
   }
 
   _initData() {
-    this.state = { data: this._initEmployeeData() };
+    this.state = { data: this._initDealerData() };
   }
 
   _funcustomConfirm() {
@@ -213,7 +249,7 @@ export default class PersonalInfoScreen extends Component {
 
   render() {
     return (
-      <View style={{ backgroundColor: "#F8F8F8", flex: 1 }}>
+      <View style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="white" />
         <SettingsList data={this.state.data} />
         <CommonDialog
@@ -233,11 +269,6 @@ export default class PersonalInfoScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8F8F8",
-    justifyContent: "space-between",
-    flexDirection: "column"
-  },
+  container: { backgroundColor: "#F8F8F8", flex: 1 },
   backButtonStyle: { marginLeft: 20, width: 50 }
 });
