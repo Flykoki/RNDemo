@@ -16,16 +16,19 @@ export default class PersonalPanel extends Component {
         onPress={onPress}
         activeOpacity={1}
       >
-        <Image style={styles.avaterStyle} source={avater} />
+        <View style={styles.leftContainer}>
+          <Image style={styles.avaterStyle} source={avater} />
 
-        <View style={styles.messagePanelStyle}>
-          <Text style={[styles.messageTextStyle, { marginTop: 5 }]}>
-            {name ? name : "请登录"}
-          </Text>
-          <Text style={[styles.messageTextStyle, { marginBottom: 5 }]}>
-            {phoneNumber}
-          </Text>
+          <View style={styles.messagePanelStyle}>
+            <Text style={[styles.messageTextStyle, { marginTop: 5 }]}>
+              {name ? name : "请登录"}
+            </Text>
+            <Text style={[styles.messageTextStyle, { marginBottom: 5 }]}>
+              {phoneNumber}
+            </Text>
+          </View>
         </View>
+
         <Image
           style={styles.rightArrowStyle}
           source={require("../../res/img/icon_left_arrow.png")}
@@ -42,7 +45,11 @@ const styles = StyleSheet.create({
     alignContent: "flex-start",
     justifyContent: "space-between"
   },
-  avaterStyle: { height: 57, width: 57, marginRight: 21, marginLeft: 24 },
+  leftContainer: {
+    marginLeft: 24,
+    flexDirection: "row"
+  },
+  avaterStyle: { height: 57, width: 57, marginRight: 21 },
   messagePanelStyle: {
     width: "60%",
     flexDirection: "column",
