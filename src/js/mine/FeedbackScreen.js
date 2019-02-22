@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TextInput,
-  Dimensions,
   TouchableOpacity,
   TouchableHighlight,
   Image,
@@ -53,7 +52,16 @@ export default class FeedbackScreen extends Component {
     this._onCommonDialogConfirm.bind(this);
     this._funcustomConfirm.bind(this);
   }
+  componentDidMount() {
+    this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("#FFFFFF");
+    });
+  }
 
+  componentWillUnmount = () => {
+    this._navListener.remove();
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -121,17 +129,7 @@ export default class FeedbackScreen extends Component {
             maxLength={500}
             selectionColor={"#CCCCCC"}
             onChangeText={text => {
-              //判断commit button是否高亮
-              let enable =
-                text.length > 0 && this.state.checkBoxGroupStatus.length > 0
-                  ? true
-                  : false;
-
-              this.setState({
-                feedbackContentText: text,
-                currentFeedbackContentLength: text.length,
-                commitEnable: enable
-              });
+              this._onFeedbackTextContentChange(text);
             }}
             value={this.state.feedbackContentText}
           />
@@ -194,6 +192,21 @@ export default class FeedbackScreen extends Component {
   }
 
   //========================= 自定义方法 =================================
+
+  //反馈内容文本框回调
+  _onFeedbackTextContentChange = text => {
+    //判断commit button是否高亮
+    let enable =
+      text.length > 0 && this.state.checkBoxGroupStatus.length > 0
+        ? true
+        : false;
+
+    this.setState({
+      feedbackContentText: text,
+      currentFeedbackContentLength: text.length,
+      commitEnable: enable
+    });
+  };
 
   //弹窗提示
   _funcustomConfirm() {

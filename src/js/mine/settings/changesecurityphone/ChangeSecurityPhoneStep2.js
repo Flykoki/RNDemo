@@ -2,15 +2,10 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   View,
-  Modal,
-  CheckBox,
   Text,
-  Platform,
   TextInput,
-  Dimensions,
   TouchableOpacity,
   TouchableHighlight,
-  TouchableWithoutFeedback,
   Image,
   StatusBar
 } from "react-native";
@@ -46,6 +41,16 @@ export default class ChangeSecurityPhoneStep2 extends Component {
 
     this._validFormData.bind(this);
   }
+  componentDidMount() {
+    this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("#FFFFFF");
+    });
+  }
+
+  componentWillUnmount = () => {
+    this._navListener.remove();
+  };
   render() {
     return (
       <View style={styles.container}>
