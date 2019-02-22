@@ -1,0 +1,48 @@
+{
+  "_args": [
+    [
+      "urn-pull-to-refresh@1.0.0",
+      "E:\\Project\\Private\\ReactNative\\RNDemo"
+    ]
+  ],
+  "_from": "urn-pull-to-refresh@1.0.0",
+  "_id": "urn-pull-to-refresh@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-j4jJispy3KGljL/iGwy2rO/+Md4=",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "urn-pull-to-refresh@1.0.0",
+    "name": "urn-pull-to-refresh",
+    "escapedName": "urn-pull-to-refresh",
+    "rawSpec": "1.0.0",
+    "saveSpec": null,
+    "fetchSpec": "1.0.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_spec": "1.0.0",
+  "_where": "E:\\Project\\Private\\ReactNative\\RNDemo",
+  "author": {
+    "name": "ZhilinHe"
+  },
+  "description": "a pull to refresh component for react-native, same api on both android and ios.",
+  "keywords": [
+    "react-native-pull-to-refresh",
+    "react-native",
+    "ios",
+    "android",
+    "pull-to-refresh",
+    "pull",
+    "refresh"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "urn-pull-to-refresh",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1;"
+  },
+  "version": "1.0.0"
+}

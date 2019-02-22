@@ -10,7 +10,7 @@ import {
   Dimensions
 } from "react-native";
 import { fetchRequest } from "../utils/FetchUtil";
-import { PullFlatList } from "react-native-rk-pull-to-refresh";
+import { PullFlatList } from "urn-pull-to-refresh";
 import reactNavigation from "react-navigation";
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
