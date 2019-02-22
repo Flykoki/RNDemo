@@ -11,7 +11,7 @@ import {
   StyleSheet
 } from "react-native";
 import { fetchRequest } from "../utils/FetchUtil";
-import { PullFlatList } from "react-native-rk-pull-to-refresh";
+import { PullFlatList } from "urn-pull-to-refresh";
 let _navigation;
 let imageUrlIndex = 0;
 const width = Dimensions.get("window").width;

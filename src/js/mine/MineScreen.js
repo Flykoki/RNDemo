@@ -27,6 +27,16 @@ export class MineScreen extends Component {
           onPress: () => {
             this.props.navigation.navigate("Settings");
           }
+        },
+        { key: "5", type: "divider" },
+        {
+          key: "6",
+          type: "item",
+          name: "城市列表",
+          showArrow: "1",
+          onPress: () => {
+            this.props.navigation.navigate("CityList");
+          }
         }
       ]
     };
