@@ -33,7 +33,7 @@ export default class AndroidRefreshLayout extends Component {
     finishRefresh = () => {
         UIManager.dispatchViewManagerCommand(
             this.getRefreshLayoutHandle(),
-            UIManager.RCTRefreshView.Commands.finishRefresh,
+            UIManager.getViewManagerConfig('RCTRefreshView').Commands.finishRefresh,
             null
         );
     }
@@ -41,7 +41,7 @@ export default class AndroidRefreshLayout extends Component {
     startRefresh = () => {
         UIManager.dispatchViewManagerCommand(
             this.getRefreshLayoutHandle(),
-            UIManager.RCTRefreshView.Commands.startRefresh,
+            UIManager.getViewManagerConfig('RCTRefreshView').Commands.startRefresh,
             null
         );
     }

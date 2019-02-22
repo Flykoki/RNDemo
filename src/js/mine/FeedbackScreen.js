@@ -2,21 +2,17 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   View,
-  Modal,
-  CheckBox,
   Text,
-  Platform,
   TextInput,
   Dimensions,
   TouchableOpacity,
   TouchableHighlight,
-  TouchableNativeFeedback,
   Image,
   StatusBar
 } from "react-native";
 import CommonDialog from "../component/CommonDialog";
+import CheckViewWithText from "../component/CheckViewWithText";
 
-const width = Dimensions.get("window").width;
 const feedbackContentMaxLength = 500;
 
 export default class FeedbackScreen extends Component {
@@ -53,32 +49,10 @@ export default class FeedbackScreen extends Component {
       currentFeedbackContentLength: 0
     };
 
-    this._checkBoxContainerOnPress.bind(this);
     this._checkBoxOnPress.bind(this);
     this._onCommonDialogConfirm.bind(this);
     this._funcustomConfirm.bind(this);
   }
-
-  _checkBoxContainerOnPress = index => {
-    console.warn(index, this.state);
-    this.state.checkBoxGroupStatus[index].isChecked = !this.state
-      .checkBoxGroupStatus[index].isChecked;
-
-    let checkBoxEnable =
-      this.state.checkBoxGroupStatus[0].isChecked |
-      this.state.checkBoxGroupStatus[1].isChecked |
-      this.state.checkBoxGroupStatus[2].isChecked |
-      this.state.checkBoxGroupStatus[3].isChecked |
-      this.state.checkBoxGroupStatus[4].isChecked |
-      this.state.checkBoxGroupStatus[5].isChecked;
-
-    let enable = this.state.feedbackContentText.length > 0 && checkBoxEnable;
-
-    this.setState({
-      commitEnable: enable
-    });
-  };
-  _checkBoxOnPress = () => {};
 
   render() {
     return (
@@ -91,269 +65,50 @@ export default class FeedbackScreen extends Component {
 
         <View style={styles.checkBoxGroup}>
           <View style={{ flex: 1, marginLeft: 15, marginTop: 15 }}>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center" }}
-              onPress={() => {
-                this.state.checkBoxGroupStatus[0].isChecked = !this.state
-                  .checkBoxGroupStatus[0].isChecked;
-
-                let checkBoxEnable =
-                  this.state.checkBoxGroupStatus[0].isChecked |
-                  this.state.checkBoxGroupStatus[1].isChecked |
-                  this.state.checkBoxGroupStatus[2].isChecked |
-                  this.state.checkBoxGroupStatus[3].isChecked |
-                  this.state.checkBoxGroupStatus[4].isChecked |
-                  this.state.checkBoxGroupStatus[5].isChecked;
-
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-
-                this.setState({
-                  commitEnable: enable
-                });
+            <CheckViewWithText
+              text={"服务体验"}
+              defaultState={this.state.checkBoxGroupStatus[0].isChecked}
+              onValueChangeCallback={value => {
+                this._checkBoxOnPress(0, value);
               }}
-            >
-              <CheckBox
-                style={{ borderWidth: 1 }}
-                value={this.state.checkBoxGroupStatus[0].isChecked}
-                onValueChange={value => {
-                  let arr = this.state.checkBoxGroupStatus;
-                  arr[0].isChecked = value;
-
-                  let checkBoxEnable =
-                    arr[0].isChecked |
-                    arr[1].isChecked |
-                    arr[2].isChecked |
-                    arr[3].isChecked |
-                    arr[4].isChecked |
-                    arr[5].isChecked;
-                  let enable =
-                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                  this.setState({
-                    checkBoxGroupStatus: arr,
-                    commitEnable: enable
-                  });
-                }}
-              />
-              <Text>服务体验</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center" }}
-              onPress={() => {
-                this.state.checkBoxGroupStatus[1].isChecked = !this.state
-                  .checkBoxGroupStatus[1].isChecked;
-                let checkBoxEnable =
-                  this.state.checkBoxGroupStatus[0].isChecked |
-                  this.state.checkBoxGroupStatus[1].isChecked |
-                  this.state.checkBoxGroupStatus[2].isChecked |
-                  this.state.checkBoxGroupStatus[3].isChecked |
-                  this.state.checkBoxGroupStatus[4].isChecked |
-                  this.state.checkBoxGroupStatus[5].isChecked;
-
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                this.setState({
-                  commitEnable: enable
-                });
+            />
+            <CheckViewWithText
+              text={"其他"}
+              defaultState={this.state.checkBoxGroupStatus[1].isChecked}
+              onValueChangeCallback={value => {
+                this._checkBoxOnPress(1, value);
               }}
-            >
-              <CheckBox
-                style={{ borderWidth: 1 }}
-                value={this.state.checkBoxGroupStatus[1].isChecked}
-                onValueChange={value => {
-                  let arr = this.state.checkBoxGroupStatus;
-                  arr[1].isChecked = value;
-                  let checkBoxEnable =
-                    arr[0].isChecked |
-                    arr[1].isChecked |
-                    arr[2].isChecked |
-                    arr[3].isChecked |
-                    arr[4].isChecked |
-                    arr[5].isChecked;
-                  let enable =
-                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                  this.setState({
-                    checkBoxGroupStatus: arr,
-                    commitEnable: enable
-                  });
-                }}
-              />
-              <Text>其他</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center" }}
-              onPress={() => {
-                this.state.checkBoxGroupStatus[2].isChecked = !this.state
-                  .checkBoxGroupStatus[2].isChecked;
-                let checkBoxEnable =
-                  this.state.checkBoxGroupStatus[0].isChecked |
-                  this.state.checkBoxGroupStatus[1].isChecked |
-                  this.state.checkBoxGroupStatus[2].isChecked |
-                  this.state.checkBoxGroupStatus[3].isChecked |
-                  this.state.checkBoxGroupStatus[4].isChecked |
-                  this.state.checkBoxGroupStatus[5].isChecked;
-
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                this.setState({
-                  commitEnable: enable
-                });
+            />
+            <CheckViewWithText
+              text={"车源供应业务"}
+              defaultState={this.state.checkBoxGroupStatus[2].isChecked}
+              onValueChangeCallback={value => {
+                this._checkBoxOnPress(2, value);
               }}
-            >
-              <CheckBox
-                style={{ borderWidth: 1 }}
-                value={this.state.checkBoxGroupStatus[2].isChecked}
-                onValueChange={value => {
-                  let arr = this.state.checkBoxGroupStatus;
-                  arr[2].isChecked = value;
-                  let checkBoxEnable =
-                    arr[0].isChecked |
-                    arr[1].isChecked |
-                    arr[2].isChecked |
-                    arr[3].isChecked |
-                    arr[4].isChecked |
-                    arr[5].isChecked;
-                  let enable =
-                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                  this.setState({
-                    checkBoxGroupStatus: arr,
-                    commitEnable: enable
-                  });
-                }}
-              />
-              <Text>车源供应业务</Text>
-            </TouchableOpacity>
+            />
           </View>
           <View style={{ flex: 1, marginTop: 15 }}>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center" }}
-              onPress={() => {
-                this.state.checkBoxGroupStatus[3].isChecked = !this.state
-                  .checkBoxGroupStatus[3].isChecked;
-                let checkBoxEnable =
-                  this.state.checkBoxGroupStatus[0].isChecked |
-                  this.state.checkBoxGroupStatus[1].isChecked |
-                  this.state.checkBoxGroupStatus[2].isChecked |
-                  this.state.checkBoxGroupStatus[3].isChecked |
-                  this.state.checkBoxGroupStatus[4].isChecked |
-                  this.state.checkBoxGroupStatus[5].isChecked;
-
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                this.setState({
-                  commitEnable: enable
-                });
+            <CheckViewWithText
+              text={"使用操作"}
+              defaultState={this.state.checkBoxGroupStatus[3].isChecked}
+              onValueChangeCallback={value => {
+                this._checkBoxOnPress(3, value);
               }}
-            >
-              <CheckBox
-                style={{ borderWidth: 1 }}
-                value={this.state.checkBoxGroupStatus[3].isChecked}
-                onValueChange={value => {
-                  let arr = this.state.checkBoxGroupStatus;
-                  arr[3].isChecked = value;
-                  let checkBoxEnable =
-                    arr[0].isChecked |
-                    arr[1].isChecked |
-                    arr[2].isChecked |
-                    arr[3].isChecked |
-                    arr[4].isChecked |
-                    arr[5].isChecked;
-                  let enable =
-                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                  this.setState({
-                    checkBoxGroupStatus: arr,
-                    commitEnable: enable
-                  });
-                }}
-              />
-              <Text>使用操作</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center" }}
-              onPress={() => {
-                this.state.checkBoxGroupStatus[4].isChecked = !this.state
-                  .checkBoxGroupStatus[4].isChecked;
-                let checkBoxEnable =
-                  this.state.checkBoxGroupStatus[0].isChecked |
-                  this.state.checkBoxGroupStatus[1].isChecked |
-                  this.state.checkBoxGroupStatus[2].isChecked |
-                  this.state.checkBoxGroupStatus[3].isChecked |
-                  this.state.checkBoxGroupStatus[4].isChecked |
-                  this.state.checkBoxGroupStatus[5].isChecked;
-
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                this.setState({
-                  commitEnable: enable
-                });
+            />
+            <CheckViewWithText
+              text={"4S金融业务"}
+              defaultState={this.state.checkBoxGroupStatus[4].isChecked}
+              onValueChangeCallback={value => {
+                this._checkBoxOnPress(4, value);
               }}
-            >
-              <CheckBox
-                style={{ borderWidth: 1, color: "red" }}
-                value={this.state.checkBoxGroupStatus[4].isChecked}
-                onValueChange={value => {
-                  let arr = this.state.checkBoxGroupStatus;
-                  arr[4].isChecked = value;
-                  let checkBoxEnable =
-                    arr[0].isChecked |
-                    arr[1].isChecked |
-                    arr[2].isChecked |
-                    arr[3].isChecked |
-                    arr[4].isChecked |
-                    arr[5].isChecked;
-                  let enable =
-                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                  this.setState({
-                    checkBoxGroupStatus: arr,
-                    commitEnable: enable
-                  });
-                }}
-              />
-              <Text>4S金融业务</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center" }}
-              onPress={() => {
-                this.state.checkBoxGroupStatus[5].isChecked = !this.state
-                  .checkBoxGroupStatus[5].isChecked;
-                let checkBoxEnable =
-                  this.state.checkBoxGroupStatus[0].isChecked |
-                  this.state.checkBoxGroupStatus[1].isChecked |
-                  this.state.checkBoxGroupStatus[2].isChecked |
-                  this.state.checkBoxGroupStatus[3].isChecked |
-                  this.state.checkBoxGroupStatus[4].isChecked |
-                  this.state.checkBoxGroupStatus[5].isChecked;
-
-                let enable =
-                  this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                this.setState({
-                  commitEnable: enable
-                });
+            />
+            <CheckViewWithText
+              text={"金融分销业务"}
+              defaultState={this.state.checkBoxGroupStatus[5].isChecked}
+              onValueChangeCallback={value => {
+                this._checkBoxOnPress(5, value);
               }}
-            >
-              <CheckBox
-                style={{ borderWidth: 1 }}
-                value={this.state.checkBoxGroupStatus[5].isChecked}
-                onValueChange={value => {
-                  let arr = this.state.checkBoxGroupStatus;
-                  arr[5].isChecked = value;
-                  let checkBoxEnable =
-                    arr[0].isChecked |
-                    arr[1].isChecked |
-                    arr[2].isChecked |
-                    arr[3].isChecked |
-                    arr[4].isChecked |
-                    arr[5].isChecked;
-                  let enable =
-                    this.state.feedbackContentText.length > 0 && checkBoxEnable;
-                  this.setState({
-                    checkBoxGroupStatus: arr,
-                    commitEnable: enable
-                  });
-                }}
-              />
-              <Text>金融分销业务</Text>
-            </TouchableOpacity>
+            />
           </View>
         </View>
 
@@ -408,6 +163,7 @@ export default class FeedbackScreen extends Component {
         <Text style={styles.feedbackPhoneTip}>
           留下手机号，便于我们及时与您取得联系
         </Text>
+
         <TouchableHighlight
           style={
             this.state.commitEnable
@@ -441,13 +197,6 @@ export default class FeedbackScreen extends Component {
 
   //弹窗提示
   _funcustomConfirm() {
-    // var options = {
-    //   animationType: "none",
-    //   thide: true,
-    //   messText: "感谢您的宝贵建议，我们将继续努力，为您提供更好服务！",
-    //   clickScreen: true,
-    //   button: [this._onCommonDialogConfirm]
-    // };
     var options = {
       thide: true /*不显示头部标题*/,
       innersHeight: 163,
@@ -463,18 +212,30 @@ export default class FeedbackScreen extends Component {
       ]
     };
     this.refs.dcustomConfirm.show(options);
-  }
 
+    console.warn(this.state.checkBoxGroupStatus);
+  }
+  // 反馈类型item点击事件
+  _checkBoxOnPress = (index, value) => {
+    let arr = this.state.checkBoxGroupStatus;
+    arr[index].isChecked = value;
+
+    let checkBoxEnable =
+      arr[0].isChecked |
+      arr[1].isChecked |
+      arr[2].isChecked |
+      arr[3].isChecked |
+      arr[4].isChecked |
+      arr[5].isChecked;
+    let enable = this.state.feedbackContentText.length > 0 && checkBoxEnable;
+    this.setState({
+      checkBoxGroupStatus: arr,
+      commitEnable: enable
+    });
+  };
   _onCommonDialogConfirm() {
     //TODO 调用后台接口
     this.refs.dcustomConfirm.hide();
-  }
-
-  //checkbox item点击事件
-  _checkBoxItemOnPress({ index }) {
-    this.state.checkBoxGroupStatus[index].isChecked = !this.state
-      .checkBoxGroupStatus[index].isChecked;
-    this.setState({ reRenderCheckBoxGroups: true });
   }
 }
 

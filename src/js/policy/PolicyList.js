@@ -270,13 +270,13 @@ export class PolicyList extends PureComponent {
 
   //header 在不同的状态下的样式
   _onPullStateChangeHeight = (pullState, moveHeight) => {
-    console.log("lfj pull state:", pullState, moveHeight);
     if (pullState == "pulling") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
       this.txtPullrelease &&
         this.txtPullrelease.setNativeProps({ style: styles.hide });
-
+        this.txtPullDone &&
+        this.txtPullDone.setNativeProps({ style: styles.hide });
       //设置img
       this.imgPulling && this.imgPulling.setNativeProps({ style: styles.show });
       this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
@@ -287,6 +287,8 @@ export class PolicyList extends PureComponent {
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.show });
       this.txtPullrelease &&
         this.txtPullrelease.setNativeProps({ style: styles.hide });
+        this.txtPullDone &&
+        this.txtPullDone.setNativeProps({ style: styles.hide });
       //设置img
       this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
       this.imgPullok && this.imgPullok.setNativeProps({ style: styles.show });
@@ -297,11 +299,27 @@ export class PolicyList extends PureComponent {
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
       this.txtPullrelease &&
         this.txtPullrelease.setNativeProps({ style: styles.show });
+        this.txtPullDone &&
+        this.txtPullDone.setNativeProps({ style: styles.hide });
       //设置img
       this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
       this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
       this.imgPullrelease &&
         this.imgPullrelease.setNativeProps({ style: styles.show });
+
+    } else if (pullState == "pullDone") {
+      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
+      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
+      this.txtPullrelease &&
+        this.txtPullrelease.setNativeProps({ style: styles.hide });
+      //设置img
+      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
+      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
+      this.imgPullrelease &&
+        this.imgPullrelease.setNativeProps({ style: styles.hide });
+
+      this.txtPullDone &&
+        this.txtPullDone.setNativeProps({ style: styles.show });
     }
   };
 
@@ -389,6 +407,9 @@ export class PolicyList extends PureComponent {
         />
         <Text ref={c => (this.txtPullrelease = c)} style={styles.hide}>
           正在刷新...
+        </Text>
+        <Text ref={c => (this.txtPullDone = c)} style={styles.hide}>
+          刷新完成
         </Text>
       </View>
     );

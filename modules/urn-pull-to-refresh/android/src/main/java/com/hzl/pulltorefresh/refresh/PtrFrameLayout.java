@@ -9,17 +9,19 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.react.uimanager.events.NativeGestureUtil;
 import com.facebook.react.views.view.ReactViewGroup;
 import com.hzl.pulltorefresh.refresh.indicator.PtrIndicator;
 import com.hzl.pulltorefresh.refresh.util.PtrCLog;
 
+import java.util.logging.Logger;
 
 /**
- * This layout view for "Pull to Refresh(Ptr)" support all of the view, you can contain everything you want.
- * support: pull to refresh / release to refresh / auto refresh / keep header view while refreshing / hide header view while refreshing
- * It defines {@link PtrUIHandler}, which allows you customize the UI easily.
+ * This layout view for "Pull to Refresh(Ptr)" support all of the view, you can contain everything you want. support:
+ * pull to refresh / release to refresh / auto refresh / keep header view while refreshing / hide header view while
+ * refreshing It defines {@link PtrUIHandler}, which allows you customize the UI easily.
  */
 public class PtrFrameLayout extends ReactViewGroup {
 
@@ -55,6 +57,7 @@ public class PtrFrameLayout extends ReactViewGroup {
     private ScrollChecker mScrollChecker;
     private int mPagingTouchSlop;
     private int mHeaderHeight;
+    private int mOnPressY;
     private boolean mDisableWhenHorizontalMove = false;
     private int mFlag = 0x00;
 
@@ -144,7 +147,8 @@ public class PtrFrameLayout extends ReactViewGroup {
             errorView.setTextColor(0xffff6600);
             errorView.setGravity(Gravity.CENTER);
             errorView.setTextSize(20);
-            errorView.setText("The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?");
+            errorView.setText(
+                    "The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?");
             mContent = errorView;
             addView(mContent);
         }
@@ -171,10 +175,8 @@ public class PtrFrameLayout extends ReactViewGroup {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         if (isDebug()) {
-            PtrCLog.d(LOG_TAG, "onMeasure frame: width: %s, height: %s, padding: %s %s %s %s",
-                    getMeasuredHeight(), getMeasuredWidth(),
-                    getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom());
-
+            PtrCLog.d(LOG_TAG, "onMeasure frame: width: %s, height: %s, padding: %s %s %s %s", getMeasuredHeight(),
+                      getMeasuredWidth(), getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom());
         }
 
         if (mHeaderView != null) {
@@ -188,24 +190,23 @@ public class PtrFrameLayout extends ReactViewGroup {
             measureContentView(mContent, widthMeasureSpec, heightMeasureSpec);
             if (isDebug()) {
                 MarginLayoutParams lp = (MarginLayoutParams) mContent.getLayoutParams();
-                PtrCLog.d(LOG_TAG, "onMeasure content, width: %s, height: %s, margin: %s %s %s %s",
-                        getMeasuredWidth(), getMeasuredHeight(),
-                        lp.leftMargin, lp.topMargin, lp.rightMargin, lp.bottomMargin);
-                PtrCLog.d(LOG_TAG, "onMeasure, currentPos: %s, lastPos: %s, top: %s",
-                        mPtrIndicator.getCurrentPosY(), mPtrIndicator.getLastPosY(), mContent.getTop());
+                PtrCLog.d(LOG_TAG, "onMeasure content, width: %s, height: %s, margin: %s %s %s %s", getMeasuredWidth(),
+                          getMeasuredHeight(), lp.leftMargin, lp.topMargin, lp.rightMargin, lp.bottomMargin);
+                PtrCLog.d(LOG_TAG, "onMeasure, currentPos: %s, lastPos: %s, top: %s", mPtrIndicator.getCurrentPosY(),
+                          mPtrIndicator.getLastPosY(), mContent.getTop());
             }
         }
     }
 
-    private void measureContentView(View child,
-                                    int parentWidthMeasureSpec,
-                                    int parentHeightMeasureSpec) {
+    private void measureContentView(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
         final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
 
         final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
-                getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
-        final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
-                getPaddingTop() + getPaddingBottom() + lp.topMargin, lp.height);
+                                                              getPaddingLeft() + getPaddingRight() + lp.leftMargin +
+                                                              lp.rightMargin, lp.width);
+        final int childHeightMeasureSpec =
+                getChildMeasureSpec(parentHeightMeasureSpec, getPaddingTop() + getPaddingBottom() + lp.topMargin,
+                                    lp.height);
 
         child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
     }
@@ -268,6 +269,7 @@ public class PtrFrameLayout extends ReactViewGroup {
 
             case MotionEvent.ACTION_CANCEL:
                 mPtrIndicator.onRelease();
+                mOnPressY = 0;
                 if (mPtrIndicator.hasLeftStartPosition()) {
                     if (DEBUG) {
                         PtrCLog.d(LOG_TAG, "call onRelease when user release");
@@ -285,7 +287,8 @@ public class PtrFrameLayout extends ReactViewGroup {
             case MotionEvent.ACTION_DOWN:
                 mHasSendCancelEvent = false;
                 mPtrIndicator.onPressDown(e.getX(), e.getY());
-
+                mOnPressY = (int) e.getY();
+                System.out.println("lfj ACTION_DOWN : getY:" + mOnPressY);
                 mScrollChecker.abortIfWorking();
 
                 mPreventForHorizontal = false;
@@ -293,6 +296,7 @@ public class PtrFrameLayout extends ReactViewGroup {
                 // So let the event pass to children.
                 // fix #93, #102
                 dispatchTouchEventSupper(e);
+                //TODO 避免刷新reset时候继续下拉
                 return true;
 
             case MotionEvent.ACTION_MOVE:
@@ -300,13 +304,17 @@ public class PtrFrameLayout extends ReactViewGroup {
                 mPtrIndicator.onMove(e.getX(), e.getY());
                 float offsetX = mPtrIndicator.getOffsetX();
                 float offsetY = mPtrIndicator.getOffsetY();
+                int currentY = (int) e.getY();
+
+                // System.out.println("lfj HeaderHeight:"+mHeaderHeight+" event.getY:"+e.getY()+" ;rawY:"+e.getRawY());
 
                 //此时表示的是竖直下拉的的操作
                 if (Math.abs(offsetX) < Math.abs(offsetY)) {
                     NativeGestureUtil.notifyNativeGestureStarted(this, e);
                 }
 
-                if (mDisableWhenHorizontalMove && !mPreventForHorizontal && (Math.abs(offsetX) > mPagingTouchSlop && Math.abs(offsetX) > Math.abs(offsetY))) {
+                if (mDisableWhenHorizontalMove && !mPreventForHorizontal &&
+                    (Math.abs(offsetX) > mPagingTouchSlop && Math.abs(offsetX) > Math.abs(offsetY))) {
                     if (mPtrIndicator.isInStartPosition()) {
                         mPreventForHorizontal = true;
                     }
@@ -319,9 +327,17 @@ public class PtrFrameLayout extends ReactViewGroup {
                 boolean moveUp = !moveDown;
                 boolean canMoveUp = mPtrIndicator.hasLeftStartPosition();
 
+
+//                if ((Math.abs((currentY - mOnPressY)) > mHeaderHeight * 3) ) {
+//                    return true;
+//                }
+
                 if (DEBUG) {
-                    boolean canMoveDown = mPtrHandler != null && mPtrHandler.checkCanDoRefresh(this, mContent, mHeaderView);
-                    PtrCLog.v(LOG_TAG, "ACTION_MOVE: offsetY:%s, currentPos: %s, moveUp: %s, canMoveUp: %s, moveDown: %s: canMoveDown: %s", offsetY, mPtrIndicator.getCurrentPosY(), moveUp, canMoveUp, moveDown, canMoveDown);
+                    boolean canMoveDown =
+                            mPtrHandler != null && mPtrHandler.checkCanDoRefresh(this, mContent, mHeaderView);
+                    PtrCLog.v(LOG_TAG,
+                              "ACTION_MOVE: offsetY:%s, currentPos: %s, moveUp: %s, canMoveUp: %s, moveDown: %s: canMoveDown: %s",
+                              offsetY, mPtrIndicator.getCurrentPosY(), moveUp, canMoveUp, moveDown, canMoveDown);
                 }
 
                 // disable move when header not reach top
@@ -363,6 +379,7 @@ public class PtrFrameLayout extends ReactViewGroup {
 
         mPtrIndicator.setCurrentPos(to);
         int change = to - mPtrIndicator.getLastPosY();
+
         updatePos(change);
     }
 
@@ -381,7 +398,7 @@ public class PtrFrameLayout extends ReactViewGroup {
 
         // leave initiated position or just refresh complete
         if ((mPtrIndicator.hasJustLeftStartPosition() && mStatus == PTR_STATUS_INIT) ||
-                (mPtrIndicator.goDownCrossFinishPosition() && mStatus == PTR_STATUS_COMPLETE && isEnabledNextPtrAtOnce())) {
+            (mPtrIndicator.goDownCrossFinishPosition() && mStatus == PTR_STATUS_COMPLETE && isEnabledNextPtrAtOnce())) {
 
             mStatus = PTR_STATUS_PREPARE;
             mPtrUIHandlerHolder.onUIRefreshPrepare(this);
@@ -403,19 +420,25 @@ public class PtrFrameLayout extends ReactViewGroup {
         // Pull to Refresh
         if (mStatus == PTR_STATUS_PREPARE) {
             // reach fresh height while moving from top to bottom
-            if (isUnderTouch && !isAutoRefresh() && mPullToRefresh
-                    && mPtrIndicator.crossRefreshLineFromTopToBottom()) {
+            if (isUnderTouch && !isAutoRefresh() && mPullToRefresh && mPtrIndicator.crossRefreshLineFromTopToBottom()) {
                 tryToPerformRefresh();
             }
             // reach header height while auto refresh
             if (performAutoRefreshButLater() && mPtrIndicator.hasJustReachedHeaderHeightFromTopToBottom()) {
                 tryToPerformRefresh();
             }
+
+            //reach max pull height
+            // if(mPtrIndicator.isPull2MaxHeight(mHeaderHeight/2)){
+            //     System.out.println("================== lfj isPull2MaxHeight");
+            //     return;
+            // }
+
         }
 
         if (DEBUG) {
-            PtrCLog.v(LOG_TAG, "updatePos: change: %s, current: %s last: %s, top: %s, headerHeight: %s",
-                    change, mPtrIndicator.getCurrentPosY(), mPtrIndicator.getLastPosY(), mContent.getTop(), mHeaderHeight);
+            PtrCLog.v(LOG_TAG, "updatePos: change: %s, current: %s last: %s, top: %s, headerHeight: %s", change,
+                      mPtrIndicator.getCurrentPosY(), mPtrIndicator.getLastPosY(), mContent.getTop(), mHeaderHeight);
         }
 
         mHeaderView.offsetTopAndBottom(change);
@@ -517,7 +540,8 @@ public class PtrFrameLayout extends ReactViewGroup {
             return false;
         }
 
-        if ((mPtrIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh()) || mPtrIndicator.isOverOffsetToRefresh()) {
+        if ((mPtrIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh()) ||
+            mPtrIndicator.isOverOffsetToRefresh()) {
             mStatus = PTR_STATUS_LOADING;
             performRefresh();
         }
@@ -583,8 +607,8 @@ public class PtrFrameLayout extends ReactViewGroup {
     }
 
     /**
-     * Call this when data is loaded.
-     * The UI will perform complete at once or after a delay, depends on the time elapsed is greater then {@link #mLoadingMinTime} or not.
+     * Call this when data is loaded. The UI will perform complete at once or after a delay, depends on the time elapsed
+     * is greater then {@link #mLoadingMinTime} or not.
      */
     final public void refreshComplete() {
         if (DEBUG) {
@@ -620,7 +644,7 @@ public class PtrFrameLayout extends ReactViewGroup {
             // do nothing
             if (DEBUG) {
                 PtrCLog.d(LOG_TAG, "performRefreshComplete do nothing, scrolling: %s, auto refresh: %s",
-                        mScrollChecker.mIsRunning, mFlag);
+                          mScrollChecker.mIsRunning, mFlag);
             }
             return;
         }
@@ -915,7 +939,9 @@ public class PtrFrameLayout extends ReactViewGroup {
             return;
         }
         MotionEvent last = mLastMoveEvent;
-        MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime() + ViewConfiguration.getLongPressTimeout(), MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
+        MotionEvent e =
+                MotionEvent.obtain(last.getDownTime(), last.getEventTime() + ViewConfiguration.getLongPressTimeout(),
+                                   MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
         dispatchTouchEventSupper(e);
     }
 
@@ -924,7 +950,9 @@ public class PtrFrameLayout extends ReactViewGroup {
             PtrCLog.d(LOG_TAG, "send down event");
         }
         final MotionEvent last = mLastMoveEvent;
-        MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime(), MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
+        MotionEvent e =
+                MotionEvent.obtain(last.getDownTime(), last.getEventTime(), MotionEvent.ACTION_DOWN, last.getX(),
+                                   last.getY(), last.getMetaState());
         dispatchTouchEventSupper(e);
     }
 
@@ -967,8 +995,8 @@ public class PtrFrameLayout extends ReactViewGroup {
             if (DEBUG) {
                 if (deltaY != 0) {
                     PtrCLog.v(LOG_TAG,
-                            "scroll: %s, start: %s, to: %s, currentPos: %s, current :%s, last: %s, delta: %s",
-                            finish, mStart, mTo, mPtrIndicator.getCurrentPosY(), curY, mLastFlingY, deltaY);
+                              "scroll: %s, start: %s, to: %s, currentPos: %s, current :%s, last: %s, delta: %s", finish,
+                              mStart, mTo, mPtrIndicator.getCurrentPosY(), curY, mLastFlingY, deltaY);
                 }
             }
             if (!finish) {
