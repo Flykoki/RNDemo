@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import CommonDialog from "../component/CommonDialog";
 import CheckViewWithText from "../component/CheckViewWithText";
+import TextInputWithClearButton from "../component/TextInputWithClearButton";
 
 const feedbackContentMaxLength = 500;
 
@@ -50,7 +51,7 @@ export default class FeedbackScreen extends Component {
 
     this._checkBoxOnPress.bind(this);
     this._onCommonDialogConfirm.bind(this);
-    this._funcustomConfirm.bind(this);
+    this._showConfirm.bind(this);
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
@@ -70,7 +71,7 @@ export default class FeedbackScreen extends Component {
         <Text style={styles.feedbackTypeStyle}>请选择意见反馈类型</Text>
 
         <View style={styles.divider} />
-
+        {/* ============================= CheckBox Groups start ================================== */}
         <View style={styles.checkBoxGroup}>
           <View style={{ flex: 1, marginLeft: 15, marginTop: 15 }}>
             <CheckViewWithText
@@ -119,7 +120,9 @@ export default class FeedbackScreen extends Component {
             />
           </View>
         </View>
+        {/* ============================= CheckBox Groups end ================================== */}
 
+        {/* ============================= feedback content start ================================== */}
         <View style={styles.feedbackTextInputContainer}>
           <TextInput
             style={styles.feedbackTextInput}
@@ -137,31 +140,24 @@ export default class FeedbackScreen extends Component {
             {this.state.currentFeedbackContentLength}/{feedbackContentMaxLength}
           </Text>
         </View>
-
-        <View style={styles.feedbackPhoneContainer}>
-          <Image
-            style={styles.feedbackPhoneImg}
-            source={require("../../res/img/app_feedback_icon_phone.png")}
-          />
-          <TextInput
-            style={{ color: "#666666" }}
-            multiline={true}
-            blurOnSubmit={false}
-            keyboardType={"numeric"}
-            selectionColor={"#CCCCCC"}
-            maxLength={11}
-            placeholder="非必填，请输入常用手机号"
-            onChangeText={text => this.setState({ feedbackPhoneNum: text })}
-            value={this.state.feedbackPhoneNum}
-          />
-        </View>
-
-        <View style={styles.feedbackPhoneDiver} />
-
+        {/* ============================= feedback content end ================================== */}
+        {/* ============================= phone start ================================== */}
+        <TextInputWithClearButton
+          bodyStyle={{ marginLeft: 18, marginRight: 18 }}
+          leftImg={require("../../res/img/app_feedback_icon_phone.png")}
+          multiline={true}
+          blurOnSubmit={false}
+          keyboardType={"numeric"}
+          selectionColor={"#CCCCCC"}
+          maxLength={11}
+          placeholder="非必填，请输入常用手机号"
+          onChangeText={text => this.setState({ feedbackPhoneNum: text })}
+        />
         <Text style={styles.feedbackPhoneTip}>
           留下手机号，便于我们及时与您取得联系
         </Text>
-
+        {/* ============================= phone end ================================== */}
+        {/* ============================= commit button start ================================== */}
         <TouchableHighlight
           style={
             this.state.commitEnable
@@ -171,7 +167,7 @@ export default class FeedbackScreen extends Component {
           disabled={this.state.commitEnable ? false : true}
           underlayColor="white"
           onPress={() => {
-            this._funcustomConfirm();
+            this._showConfirm();
           }}
         >
           <Text
@@ -184,9 +180,9 @@ export default class FeedbackScreen extends Component {
             提交
           </Text>
         </TouchableHighlight>
-
+        {/* ============================= commit button end ================================== */}
         {/* 提交提示框 */}
-        <CommonDialog ref="dcustomConfirm" />
+        <CommonDialog ref="commonDialog" />
       </View>
     );
   }
@@ -209,7 +205,7 @@ export default class FeedbackScreen extends Component {
   };
 
   //弹窗提示
-  _funcustomConfirm() {
+  _showConfirm() {
     var options = {
       thide: true /*不显示头部标题*/,
       innersHeight: 163,
@@ -224,7 +220,7 @@ export default class FeedbackScreen extends Component {
         }
       ]
     };
-    this.refs.dcustomConfirm.show(options);
+    this.refs.commonDialog.show(options);
 
     console.warn(this.state.checkBoxGroupStatus);
   }
@@ -248,7 +244,7 @@ export default class FeedbackScreen extends Component {
   };
   _onCommonDialogConfirm() {
     //TODO 调用后台接口
-    this.refs.dcustomConfirm.hide();
+    this.refs.commonDialog.hide();
   }
 }
 
@@ -290,7 +286,6 @@ const styles = StyleSheet.create({
   },
   feedbackPhoneImg: { marginLeft: 15, height: 15, width: 15, marginRight: 11 },
   feedbackPhoneTip: {
-    // flex: 1,
     marginLeft: 15,
     marginTop: 7.5,
     color: "#CCCCCC",

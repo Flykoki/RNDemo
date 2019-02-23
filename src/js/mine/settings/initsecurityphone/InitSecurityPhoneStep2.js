@@ -9,6 +9,7 @@ import {
   Image,
   StatusBar
 } from "react-native";
+import TextInputWithClearButton from "../../../component/TextInputWithClearButton";
 
 export default class InitSecurityPhoneStep2 extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -32,7 +33,7 @@ export default class InitSecurityPhoneStep2 extends Component {
     this.state = {
       showClearButton: false,
       commitEnable: false,
-      sendVerificationCodeEnable: true,
+      sendVerificationCodeEnable: false,
       securityPhone: "",
       timeLeft: countDownTotalTime,
       countDownTextContent: "发送验证码",
@@ -56,64 +57,31 @@ export default class InitSecurityPhoneStep2 extends Component {
       <View style={styles.container}>
         <Text style={styles.tip}>请设置密保手机号</Text>
         {/* =================== 密保手机 ===================== */}
-
-        <View style={styles.textInputContainer}>
-          <Image
-            style={styles.textInputLeftImg}
-            source={require("../../../../res/img/app_phoneno_icon.png")}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder={"密保手机号"}
-            onFocus={() => {
-              this.state.clearButtonFocus = true;
-            }}
-            onBlur={() => {
-              this.setState({ showClearButton: false });
-            }}
-            maxLength={20}
-            placeholderTextColor={"#999999"}
-            selectionColor={"#CCCCCC"}
-            secureTextEntry={true}
-            value={this.state.securityPhone}
-            onChangeText={text => {
-              let enableCommit =
-                text.length > 0 && this.state.verificationCode.length > 0;
-              let enableClearButton =
-                text.length > 0 && this.state.clearButtonFocus;
-              this.setState({
-                commitEnable: enableCommit,
-                securityPhone: text,
-                showClearButton: enableClearButton
-              });
-            }}
-          />
-          <TouchableHighlight
-            style={
-              this.state.showClearButton
-                ? styles.clearButtonShow
-                : styles.clearButtonHide
-            }
-            disabled={this.state.showClearButton ? false : true}
-            underlayColor={"black"}
-            onPress={() =>
-              this.setState({
-                securityPhone: "",
-                commitEnable: false,
-                showClearButton: false
-              })
-            }
-          >
-            <Image
-              source={
-                this.state.showClearButton
-                  ? require("../../../../res/img/icon_app_clear_button.png")
-                  : {}
-              }
-            />
-          </TouchableHighlight>
-        </View>
-        <View style={styles.divider} />
+        <TextInputWithClearButton
+          bodyStyle={{ marginLeft: 30, marginRight: 30 }}
+          textInputStyle={{ color: "black", fontSize: 16 }}
+          maxLength={11}
+          selectionColor={"#CCCCCC"}
+          keyboardType={"numeric"}
+          placeholder={"密保手机号"}
+          leftImg={require("../../../../res/img/app_phoneno_icon.png")}
+          onChangeText={text => {
+            let enableCommit =
+              text.length > 0 && this.state.verificationCode.length > 0;
+            let enableSendCode = text.length === 11;
+            this.setState({
+              commitEnable: enableCommit,
+              sendVerificationCodeEnable: enableSendCode,
+              securityPhone: text
+            });
+          }}
+          onClearButtonPress={() =>
+            this.setState({
+              securityPhone: "",
+              commitEnable: false
+            })
+          }
+        />
         {/* =================== 密保手机 ===================== */}
 
         {/* =================== 验证码 ===================== */}

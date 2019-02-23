@@ -9,6 +9,7 @@ import {
   Image,
   StatusBar
 } from "react-native";
+import TextInputWithClearButton from "../../../component/TextInputWithClearButton";
 
 export default class InitSecurityPhoneStep1 extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -52,63 +53,29 @@ export default class InitSecurityPhoneStep1 extends Component {
       <View style={styles.container}>
         <Text style={styles.tip}>请先输入密码</Text>
 
-        <View style={styles.textInputContainer}>
-          <Image
-            style={styles.textInputLeftImg}
-            source={require("../../../../res/img/app_login_account_number_password.png")}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder={"请输入账号密码"}
-            onFocus={() => {
-              this.state.clearButtonFocus = true;
-            }}
-            onBlur={() => {
-              this.setState({ showClearButton: false });
-            }}
-            maxLength={20}
-            placeholderTextColor={"#999999"}
-            selectionColor={"#CCCCCC"}
-            secureTextEntry={true}
-            value={this.state.oriPassword}
-            onChangeText={text => {
-              let enableCommit = text.length > 0;
-              let enableClearButton =
-                text.length > 0 && this.state.clearButtonFocus;
-              this.setState({
-                commitEnable: enableCommit,
-                oriPassword: text,
-                showClearButton: enableClearButton
-              });
-            }}
-          />
-          <TouchableHighlight
-            style={
-              this.state.showClearButton
-                ? styles.clearButtonShow
-                : styles.clearButtonHide
-            }
-            disabled={this.state.showClearButton ? false : true}
-            underlayColor={"transparent"}
-            onPress={() =>
-              this.setState({
-                oriPassword: "",
-                commitEnable: false,
-                showClearButton: false
-              })
-            }
-          >
-            <Image
-              source={
-                this.state.showClearButton
-                  ? require("../../../../res/img/icon_app_clear_button.png")
-                  : {}
-              }
-            />
-          </TouchableHighlight>
-        </View>
+        <TextInputWithClearButton
+          bodyStyle={{ marginLeft: 30, marginRight: 30 }}
+          textInputStyle={{ color: "#999999", fontSize: 16 }}
+          leftImg={require("../../../../res/img/app_login_account_number_password.png")}
+          placeholder={"请输入账号密码"}
+          maxLength={20}
+          selectionColor={"#CCCCCC"}
+          secureTextEntry={true}
+          onChangeText={text => {
+            let enableCommit = text.length > 0;
+            this.setState({
+              commitEnable: enableCommit,
+              oriPassword: text
+            });
+          }}
+          onClearButtonPress={() => {
+            this.setState({
+              oriPassword: "",
+              commitEnable: false
+            });
+          }}
+        />
 
-        <View style={styles.divider} />
 
         <TouchableHighlight
           style={
@@ -218,6 +185,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 30,
     marginTop: 15,
-    marginBottom: 15
+    marginBottom: 5
   }
 });
