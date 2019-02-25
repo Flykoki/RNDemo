@@ -147,7 +147,7 @@ export default class FeedbackScreen extends Component {
           leftImg={require("../../res/img/app_feedback_icon_phone.png")}
           multiline={true}
           blurOnSubmit={false}
-          keyboardType={"numeric"}
+          keyboardType={"number-pad"}
           selectionColor={"#CCCCCC"}
           maxLength={11}
           placeholder="非必填，请输入常用手机号"

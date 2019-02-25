@@ -62,7 +62,7 @@ export default class InitSecurityPhoneStep2 extends Component {
           textInputStyle={{ color: "black", fontSize: 16 }}
           maxLength={11}
           selectionColor={"#CCCCCC"}
-          keyboardType={"numeric"}
+          keyboardType={"number-pad"}
           placeholder={"密保手机号"}
           leftImg={require("../../../../res/img/app_phoneno_icon.png")}
           onChangeText={text => {
