@@ -29,7 +29,7 @@ import PersonalInfoScreen from "./src/js/mine/personal/PersonalInfo";
 import ModifyPwdScreen from "./src/js/mine/settings/ModifyPwdScreen";
 import QrCodeScreen from "./src/js/mine/personal/QrCodeScreen";
 import NotificationManager from "./src/js/mine/settings/notification/NotificationManager";
-import CityList from "./src/js/component/CityList";
+import CityList from "./src/js/component/city/CityList";
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -75,7 +75,7 @@ const StackContainer = createStackNavigator(
     PersonalInfo: PersonalInfoScreen,
     QrCode: QrCodeScreen,
     NotificationManager: NotificationManager,
-    CityList:CityList,
+    CityList: CityList,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {

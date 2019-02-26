@@ -4658,6 +4658,13 @@ react-lifecycles-compat@^3.0.4:
   resolved "http://registry.npm.taobao.org/react-lifecycles-compat/download/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha1-TxonOv38jzSIqMUWv9p4+HI1I2I=
 
+react-native-easy-toast@^1.2.0:
+  version "1.2.0"
+  resolved "http://registry.npm.taobao.org/react-native-easy-toast/download/react-native-easy-toast-1.2.0.tgz#0f70bcb99e3306cda4800c244bfb4a67d42276ed"
+  integrity sha1-D3C8uZ4zBs2kgAwkS/tKZ9Qidu0=
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-fs@^2.13.3:
   version "2.13.3"
   resolved "http://registry.npm.taobao.org/react-native-fs/download/react-native-fs-2.13.3.tgz#a422f0ecd8a093a7e99d8d51ff51440e090a18a8"
@@ -4691,11 +4698,6 @@ react-native-qrcode@^0.2.7:
     create-react-class "^15.6.0"
     prop-types "^15.5.10"
     qr.js "0.0.0"
-
-react-native-rk-pull-to-refresh@^1.1.9:
-  version "1.2.1"
-  resolved "http://registry.npm.taobao.org/react-native-rk-pull-to-refresh/download/react-native-rk-pull-to-refresh-1.2.1.tgz#8f88c98aca72dca1a58cbfe21b0cb6aceffe31de"
-  integrity sha1-j4jJispy3KGljL/iGwy2rO/+Md4=
 
 react-native-safe-area-view@^0.12.0:
   version "0.12.0"
@@ -5822,6 +5824,9 @@ urix@^0.1.0:
   version "0.1.0"
   resolved "http://registry.npm.taobao.org/urix/download/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
+
+"urn-pull-to-refresh@file:modules/urn-pull-to-refresh":
+  version "1.0.0"
 
 use@^3.1.0:
   version "3.1.1"
