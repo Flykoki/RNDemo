@@ -328,9 +328,6 @@ public class PtrFrameLayout extends ReactViewGroup {
                 boolean canMoveUp = mPtrIndicator.hasLeftStartPosition();
 
 
-//                if ((Math.abs((currentY - mOnPressY)) > mHeaderHeight * 3) ) {
-//                    return true;
-//                }
 
                 if (DEBUG) {
                     boolean canMoveDown =
@@ -344,7 +341,10 @@ public class PtrFrameLayout extends ReactViewGroup {
                 if (moveDown && mPtrHandler != null && !mPtrHandler.checkCanDoRefresh(this, mContent, mHeaderView)) {
                     return dispatchTouchEventSupper(e);
                 }
-
+            //     //设置下拉最大距离
+            //    if (((currentY - mOnPressY)> mHeaderHeight * 3) || (moveUp && (currentY>mOnPressY))) {
+            //        return true;
+            //    }
                 if ((moveUp && canMoveUp) || moveDown) {
                     movePos(offsetY);
                     return true;
