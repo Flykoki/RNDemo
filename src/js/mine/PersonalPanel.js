@@ -12,7 +12,7 @@ export default class PersonalPanel extends Component {
       : require("../../res/img/icon_default_avater.png");
     return (
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, this.props.style]}
         onPress={onPress}
         activeOpacity={1}
       >
@@ -40,7 +40,6 @@ export default class PersonalPanel extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 21,
     flexDirection: "row",
     alignContent: "flex-start",
     justifyContent: "space-between"

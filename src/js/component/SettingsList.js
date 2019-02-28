@@ -39,6 +39,12 @@ export default class SettingsList extends Component {
   }
   render() {
     const { data } = this.props;
-    return <FlatList data={data} renderItem={this._renderItem} />;
+    return (
+      <FlatList
+        data={data}
+        renderItem={this._renderItem}
+        style={this.props.styles}
+      />
+    );
   }
 }
