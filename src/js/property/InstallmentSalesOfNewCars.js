@@ -91,7 +91,11 @@ export default class InstallmentSalesOfNewCars extends Component {
         <View style={styles.dividerBg}>
           <View style={styles.divider} />
         </View>
-        <CarInfoPanel />
+        <CarInfoPanel
+          onPress={() => {
+            this.props.navigation.navigate("CarInfoScreen");
+          }}
+        />
         <FlatList data={this.state.data} renderItem={this._renderTaskItem} />
       </View>
     );
@@ -142,7 +146,10 @@ class TaskInfoPanel extends Component {
 class CarInfoPanel extends Component {
   render() {
     return (
-      <TouchableOpacity style={styles.carInfoContainer}>
+      <TouchableOpacity
+        style={styles.carInfoContainer}
+        onPress={this.props.onPress}
+      >
         <Text style={styles.firstLineName}>{"车牌号"}</Text>
         <Text style={styles.firstLineValue}>{"京P E2342"}</Text>
         <Text style={styles.secondLineName}>{"车架号"}</Text>

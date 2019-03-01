@@ -29,7 +29,7 @@ export class MineScreen extends Component {
           onPress: () => {
             this.props.navigation.navigate("Settings");
           }
-        }
+        },
         // { key: "5", type: "divider" },
         // {
         //   key: "6",
@@ -40,16 +40,16 @@ export class MineScreen extends Component {
         //     this.props.navigation.navigate("CityList");
         //   }
         // },
-        // { key: "7", type: "divider" },
-        // {
-        //   key: "8",
-        //   type: "item",
-        //   name: "新车分期销售",
-        //   showArrow: "1",
-        //   onPress: () => {
-        //     this.props.navigation.navigate("InstallmentSalesOfNewCars");
-        //   }
-        // }
+        { key: "7", type: "divider" },
+        {
+          key: "8",
+          type: "item",
+          name: "新车分期销售",
+          showArrow: "1",
+          onPress: () => {
+            this.props.navigation.navigate("InstallmentSalesOfNewCars");
+          }
+        }
       ]
     };
   }
