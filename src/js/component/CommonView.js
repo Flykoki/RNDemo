@@ -9,7 +9,8 @@ import {
   Text,
   Easing,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBar
 } from "react-native";
 
 export class LoadingView extends Component {
@@ -89,7 +90,8 @@ export class RootView extends Component {
   render() {
     const { status, failed, custom } = this.props;
     return (
-      <View>
+      <View style={this.props.style}>
+        <StatusBar barStyle="dark-content" backgroundColor="white" />
         {status === "loading" && <LoadingView />}
 
         {status === "loadingFailed" && (

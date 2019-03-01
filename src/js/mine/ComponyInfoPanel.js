@@ -2,26 +2,38 @@ import React, { Component } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
 export default class ComponyInfoPanel extends Component {
-  _renderIconList() {
+  _renderIconList(business) {
     let icons = [];
-    icons.push(
-      <Image
-        style={styles.icon}
-        source={require("../../res/img/app_mine_label_4s_finance.png")}
-      />
-    );
-    icons.push(
-      <Image
-        style={styles.icon}
-        source={require("../../res/img/app_mine_label_car_supply.png")}
-      />
-    );
-    icons.push(
-      <Image
-        style={styles.icon}
-        source={require("../../res/img/app_mine_label_finance_distribution.png")}
-      />
-    );
+    if (business.indexOf("4s") > -1) {
+      icons.push(
+        <Image
+          key="1"
+          style={styles.icon}
+          source={require("../../res/img/app_mine_label_4s_finance.png")}
+        />
+      );
+    }
+
+    if (business.indexOf("car") > -1) {
+      icons.push(
+        <Image
+          key="2"
+          style={styles.icon}
+          source={require("../../res/img/app_mine_label_car_supply.png")}
+        />
+      );
+    }
+
+    if (business.indexOf("finance") > -1) {
+      icons.push(
+        <Image
+          key="3"
+          style={styles.icon}
+          source={require("../../res/img/app_mine_label_finance_distribution.png")}
+        />
+      );
+    }
+
     return icons;
   }
   render() {
@@ -31,9 +43,11 @@ export default class ComponyInfoPanel extends Component {
         onPress={this.props.onPress}
         activeOpacity={1}
       >
-        <Text style={styles.name}>{"神州买买车分销商有限公司"}</Text>
+        <Text style={styles.name}>{this.props.info.company}</Text>
 
-        <View style={styles.iconsList}>{this._renderIconList()}</View>
+        <View style={styles.iconsList}>
+          {this._renderIconList(this.props.info.business)}
+        </View>
         <Image
           style={styles.rightArrow}
           source={require("../../res/img/icon_left_arrow_black.png")}

@@ -31,6 +31,8 @@ import QrCodeScreen from "./src/js/mine/personal/QrCodeScreen";
 import NotificationManager from "./src/js/mine/settings/notification/NotificationManager";
 import CityList from "./src/js/component/city/CityList";
 import BasicInfo from "./src/js/property/BasicInfo";
+import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCars";
+import IntegratedTaskInfo from "./src/js/property/IntegratedTaskInfo";
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -78,6 +80,8 @@ const StackContainer = createStackNavigator(
     NotificationManager: NotificationManager,
     CityList: CityList,
     BasicInfo: BasicInfo,
+    InstallmentSalesOfNewCars: InstallmentSalesOfNewCars,
+    IntegratedTaskInfo: IntegratedTaskInfo,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {

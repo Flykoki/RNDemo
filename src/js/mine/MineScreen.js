@@ -44,10 +44,10 @@ export class MineScreen extends Component {
         // {
         //   key: "8",
         //   type: "item",
-        //   name: "基础信息",
+        //   name: "新车分期销售",
         //   showArrow: "1",
         //   onPress: () => {
-        //     this.props.navigation.navigate("BasicInfo");
+        //     this.props.navigation.navigate("InstallmentSalesOfNewCars");
         //   }
         // }
       ]
@@ -80,7 +80,10 @@ export class MineScreen extends Component {
         </View>
 
         {this.state.isCompany && (
-          <ComponyInfoPanel style={styles.companyPanelStyle} />
+          <ComponyInfoPanel
+            style={styles.companyPanelStyle}
+            info={{ company: "神州买买车分销商有限公司", business: ["4s"] }}
+          />
         )}
 
         <SettingsList
