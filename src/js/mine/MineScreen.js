@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import { View, Text, StatusBar, StyleSheet } from "react-native";
 import SettingsList from "../component/SettingsList";
 import PersonalPanel from "./PersonalPanel";
+import ComponyInfoPanel from "./ComponyInfoPanel";
 
 export class MineScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isCompany: true,
       listData: [
         { key: "1", type: "margin", margin: 10 },
         {
@@ -28,14 +30,24 @@ export class MineScreen extends Component {
             this.props.navigation.navigate("Settings");
           }
         },
-        { key: "5", type: "divider" },
+        // { key: "5", type: "divider" },
+        // {
+        //   key: "6",
+        //   type: "item",
+        //   name: "城市列表",
+        //   showArrow: "1",
+        //   onPress: () => {
+        //     this.props.navigation.navigate("CityList");
+        //   }
+        // },
+        { key: "7", type: "divider" },
         {
-          key: "6",
+          key: "8",
           type: "item",
-          name: "城市列表",
+          name: "新车分期销售",
           showArrow: "1",
           onPress: () => {
-            this.props.navigation.navigate("CityList");
+            this.props.navigation.navigate("InstallmentSalesOfNewCars");
           }
         },
         { key: "7", type: "divider" },
@@ -68,6 +80,7 @@ export class MineScreen extends Component {
         <View style={styles.panelContainer}>
           <Text style={styles.title}>我的</Text>
           <PersonalPanel
+            style={{ marginBottom: this.state.isCompany ? 46 : 21 }}
             onPress={() => {
               this.props.navigation.navigate("PersonalInfo");
             }}
@@ -76,7 +89,17 @@ export class MineScreen extends Component {
           />
         </View>
 
-        <SettingsList data={this.state.listData} />
+        {this.state.isCompany && (
+          <ComponyInfoPanel
+            style={styles.companyPanelStyle}
+            info={{ company: "神州买买车分销商有限公司", business: ["4s"] }}
+          />
+        )}
+
+        <SettingsList
+          styles={{ marginTop: this.state.isCompany ? 55 : 0 }}
+          data={this.state.listData}
+        />
       </View>
     );
   }
@@ -103,5 +126,14 @@ const styles = StyleSheet.create({
     color: "white",
     marginBottom: 17,
     alignItems: "center"
+  },
+  companyPanelStyle: {
+    height: 83,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 4,
+    position: "absolute",
+    left: 8,
+    right: 8,
+    top: 130
   }
 });

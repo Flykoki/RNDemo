@@ -243,7 +243,6 @@ export default class PersonalInfoScreen extends Component {
     const { status } = this.state;
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="white" />
         <RootView
           status={status}
           failed={{
