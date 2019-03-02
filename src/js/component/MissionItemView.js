@@ -5,11 +5,13 @@ import {
   Text,
   Animated,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ScrollView,
   Image,
   Easing,
   StyleSheet
 } from "react-native";
+import VehicleInofPanel from "../property/VehicleInofPanel";
 
 export default class MissionItemView extends Component {
   constructor(props) {
@@ -30,9 +32,15 @@ export default class MissionItemView extends Component {
             {"创建时间:" + missionItem.missionCreateTime}
           </Text>
         </View>
-        <View style={styles.divider} />
+        {this._getDividerView()}
         {/* ==================== content ========================== */}
-        <View style={styles.content}>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.content}
+          onPress={() => {
+            this._missionContentOnPress(missionItem);
+          }}
+        >
           <View style={styles.sourceNumber}>
             <Text style={styles.contentTextKey}>来源单号</Text>
             <Text style={styles.contentTextValue}>
@@ -46,19 +54,113 @@ export default class MissionItemView extends Component {
           </View>
           <View style={styles.sourceNumber}>
             <Text style={styles.contentTextKey}>车架号</Text>
-            <Text style={styles.contentTextValue}>
-              {missionItem.carFrame}
-            </Text>
+            <Text style={styles.contentTextValue}>{missionItem.carFrame}</Text>
           </View>
-        </View>
+          <View style={styles.vehicleModel}>
+            <Text style={styles.contentTextKey}>车型</Text>
+            <VehicleInofPanel
+              style={styles.contentTextValue}
+              vehicle={missionItem.vehicleModel}
+              vehicleType={missionItem.vehicleCondition}
+              vehicleColor={missionItem.vehicleColor}
+            />
+          </View>
+        </TouchableOpacity>
 
         {/* ==================== footer ========================== */}
-        {/* {任务集} */}
+        {this._showConcurrentMissions(missionItem.missionStatus) &&
+          this._getDividerView()}
+        {this._showConcurrentMissions(missionItem.missionStatus) &&
+          this._getConcurrentMissionViews(missionItem)}
       </View>
     );
   }
 
   //================================== 自定义方法 ========================
+
+  /**
+   * 任务集合内容点击事件
+   */
+  _missionContentOnPress = item => {
+    console.warn("任务集合点击事件");
+  };
+
+  /**
+   * 获取分割线
+   */
+  _getDividerView = () => {
+    return <View style={styles.divider} />;
+  };
+  /**
+   * 显示并行任务集合
+   */
+  _getConcurrentMissionViews = missionItem => {
+    let missionArray = missionItem.concurrentMissionArray;
+    return missionArray.map((item, index, missionArray) => {
+      return this._getConcurrentMissionItemView(
+        item,
+        index,
+        missionArray.length
+      );
+    });
+  };
+  /**
+   * 显示并行任务中的item
+   */
+  _getConcurrentMissionItemView = (item, index, total) => {
+    console.log("concurrent item index:", index, total);
+    return (
+      <View style={{ flexDirection: "column", justifyContent: "center" }}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => this._concurrentMissionOnPress(item)}
+          style={styles.concurrentMissionItem}
+        >
+          <Image
+            resizeMode={"contain"}
+            style={styles.concurrentMissionItemLeftImg}
+            source={require("../../res/img/icon_app_guide.png")}
+          />
+          <Text style={styles.concurrentMissionItemUpdateTime}>
+            {item.taskUpdateTime}
+          </Text>
+          <Text style={styles.concurrentMissionItemTask}>
+            {item.taskName + item.taskNumber + item.taskStatus}
+          </Text>
+          <Image
+            resizeMode={"contain"}
+            style={styles.concurrentMissionItemRightImg}
+            source={require("../../res/img/icon_app_arrow_right.png")}
+          />
+        </TouchableOpacity>
+
+        {index !== total - 1 && (
+          <View style={styles.concurrentMissionItemDivider} />
+        )}
+      </View>
+    );
+  };
+  /**
+   * 并行任务 子item 点击事件
+   */
+  _concurrentMissionOnPress = item => {
+    console.warn("并行任务 子item 点击事件", item);
+  };
+  /**
+   * 是否需要显示并行任务：任务集合状态为处理完毕及已取消，不显示当前进行任务。
+   */
+  _showConcurrentMissions = missionStatus => {
+    return missionStatus === "已取消" || missionStatus === "处理完毕"
+      ? false
+      : true;
+  };
+  /**
+   * item点击事件
+   */
+  _missionItemPress = () => {
+    console.log("lfj mission item click");
+  };
+
   /**
    * 根据任务集合状态获取style
    */
@@ -89,6 +191,48 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "#FFFFFF",
     marginTop: 10
+  },
+  concurrentMissionItem: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center"
+  },
+  concurrentMissionItemLeftImg: {
+    marginLeft: 20,
+    height: 15,
+    width: 14,
+    marginTop: 18,
+    marginBottom: 18
+  },
+  concurrentMissionItemRightImg: {
+    marginRight: 20,
+    marginTop: 18,
+    height: 10,
+    width: 6,
+    marginBottom: 18
+  },
+  concurrentMissionItemTask: {
+    fontSize: 14,
+    color: "#333333",
+    flex: 1,
+    textAlign: "right",
+    marginTop: 18,
+    marginRight: 10,
+    marginBottom: 18
+  },
+  concurrentMissionItemUpdateTime: {
+    fontSize: 14,
+    color: "#666666",
+    marginLeft: 10,
+    marginTop: 18,
+    marginBottom: 18
+  },
+  concurrentMissionItemDivider: {
+    height: 0.5,
+    flex: 1,
+    backgroundColor: "#E5E5E5",
+    marginLeft: 20,
+    marginRight: 20
   },
   title: {
     height: 45,
@@ -123,6 +267,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "flex-start"
+  },
+  vehicleModel: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    marginBottom: 15
   },
   contentTextKey: {
     color: "#666666",

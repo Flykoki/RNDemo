@@ -18,6 +18,7 @@ import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
+import SortView from "../component/SortView";
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -65,7 +66,6 @@ export class MissionsCenterPage extends PureComponent {
       recentlyDateFilterPress: false, //最近创建日期筛选图标样式
       recentlyDateFilterItems: new Map(), //最近创建日期筛选内容
       filterResponse: [], //筛选结果
-      calenderRange: {}, //日历筛选结果
       normalFilterPress: false, //筛选图标样式
       normalFilterItems: new Map(), //筛选内容
       pageCount: 0,
@@ -129,6 +129,23 @@ export class MissionsCenterPage extends PureComponent {
             (item.sourceNumber = "京P D2232"),
             (item.missionStatus = missionStatus[random]),
             (item.carFrame = "LAKSDJF23284RFJAL2323"),
+            (item.vehicleModel = "宝沃BXi7"),
+            (item.vehicleCondition = "新"),
+            (item.vehicleColor = "银色"),
+            (item.concurrentMissionArray = [
+              {
+                taskUpdateTime: "11/12 12:22",
+                taskName: "车辆出库",
+                taskNumber: "CK239",
+                taskStatus: "(待出库)"
+              },
+              {
+                taskUpdateTime: "11/12 12:22",
+                taskName: "车辆出库",
+                taskNumber: "CK239",
+                taskStatus: "(待出库)"
+              }
+            ]),
             imageUrlIndex++;
           dataBlob.push(item);
         });
@@ -186,14 +203,15 @@ export class MissionsCenterPage extends PureComponent {
                 最近创建日期
               </Text>
               <Image
-                style={{ marginLeft: 7.2 }}
+                style={{ marginLeft: 7.2, height: 8, width: 8 }}
+                resizeMode={"contain"}
                 source={
                   this.state.recentlyDateFilterItems.size > 0
                     ? this.state.recentlyDateFilterPress
                       ? require("../../res/img/icon_app_retract_up.png")
                       : require("../../res/img/icon_app_retract_down_chosen.png")
                     : this.state.recentlyDateFilterPress
-                    ? require("../../res/img/icon_app_retract_up.png")
+                    ? require("../../res/img/icon_app_retract_up_chosen.png")
                     : require("../../res/img/icon_app_retract_down.png")
                 }
               />
@@ -209,9 +227,7 @@ export class MissionsCenterPage extends PureComponent {
             >
               <Text
                 style={
-                  this.state.normalFilterItems.size > 0 ||
-                  (this.state.calenderRange.start &&
-                    this.state.calenderRange.end)
+                  this.state.normalFilterItems.size > 0
                     ? styles.filterTextPress
                     : this.state.normalFilterPress
                     ? styles.filterTextPress
@@ -221,16 +237,15 @@ export class MissionsCenterPage extends PureComponent {
                 筛选
               </Text>
               <Image
-                style={{ marginLeft: 7.2 }}
+                style={{ marginLeft: 7.2, height: 8, width: 8 }}
+                resizeMode={"contain"}
                 source={
-                  this.state.normalFilterItems.size > 0 ||
-                  (this.state.calenderRange.start &&
-                    this.state.calenderRange.end)
+                  this.state.normalFilterItems.size > 0
                     ? this.state.normalFilterPress
-                      ? require("../../res/img/icon_app_retract_up.png")
+                      ? require("../../res/img/icon_app_retract_up_chosen.png")
                       : require("../../res/img/icon_app_retract_down_chosen.png")
                     : this.state.normalFilterPress
-                    ? require("../../res/img/icon_app_retract_up.png")
+                    ? require("../../res/img/icon_app_retract_up_chosen.png")
                     : require("../../res/img/icon_app_retract_down.png")
                 }
               />
@@ -251,8 +266,13 @@ export class MissionsCenterPage extends PureComponent {
           // ItemSeparatorComponent={this._separator}
           keyExtractor={this._keyExtractor}
         />
-        {(this.state.recentlyDateFilterPress ||
-          this.state.normalFilterPress) && (
+        {/* {this.state.recentlyDateFilterPress && (
+          <SortView
+            style={styles.filterView}
+            data={["111111", "222222222", "33333333"]}
+          />
+        )} */}
+        {this.state.normalFilterPress && (
           <FilterView
             style={styles.filterView}
             data={[
@@ -286,7 +306,6 @@ export class MissionsCenterPage extends PureComponent {
               console.log("lfj onDateFilterCallback result:", filterMaps);
               this.setState({ recentlyDateFilterItems: filterMaps });
             }}
-            calenderRange={this.state.calenderRange}
             normalFilterMap={this.state.normalFilterItems}
             dateFilterMap={this.state.recentlyDateFilterItems}
             filterResponse={this.state.filterResponse}
