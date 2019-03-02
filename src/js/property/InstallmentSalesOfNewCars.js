@@ -20,6 +20,19 @@ export default class InstallmentSalesOfNewCars extends Component {
     super(props);
     this.state = {
       status: "loading",
+      taskInfo: {
+        taskNo: "DKJF3288",
+        fromNo: "ALJSD8FJOA323232323"
+      },
+      carInfo: {
+        plateNo: "京P E2342",
+        frameNo: "ASDFUAOJSDKBF872983IUR",
+        model: {
+          series: "哈弗 H5",
+          type: "新",
+          color: "银灰"
+        }
+      },
       data: [
         {
           key: "1",
@@ -87,6 +100,7 @@ export default class InstallmentSalesOfNewCars extends Component {
           onPress={() => {
             this.props.navigation.navigate("IntegratedTaskInfo");
           }}
+          taskInfo={this.state.taskInfo}
         />
         <View style={styles.dividerBg}>
           <View style={styles.divider} />
@@ -95,8 +109,12 @@ export default class InstallmentSalesOfNewCars extends Component {
           onPress={() => {
             this.props.navigation.navigate("CarInfoScreen");
           }}
+          carInfo={this.state.carInfo}
         />
-        <FlatList data={this.state.data} renderItem={this._renderTaskItem} />
+        <FlatList
+          data={this.state.data}
+          renderItem={this._renderTaskItem.bind(this)}
+        />
       </View>
     );
   }
@@ -119,7 +137,18 @@ export default class InstallmentSalesOfNewCars extends Component {
   }
 
   _renderTaskItem({ item }) {
-    return <TaskItem data={item} />;
+    return (
+      <TaskItem
+        data={item}
+        onPress={() => {
+          this._startTaskDetailScreen(item);
+        }}
+      />
+    );
+  }
+
+  _startTaskDetailScreen(item) {
+    this.props.navigation.navigate("TaskDetailScreen");
   }
 }
 
@@ -131,9 +160,9 @@ class TaskInfoPanel extends Component {
         onPress={this.props.onPress}
       >
         <Text style={styles.firstLineName}>{"任务集合"}</Text>
-        <Text style={styles.firstLineValue}>{"DKJF3288"}</Text>
+        <Text style={styles.firstLineValue}>{this.props.taskInfo.taskNo}</Text>
         <Text style={styles.secondLineName}>{"来源单号"}</Text>
-        <Text style={styles.secondLineValue}>{"ALJSD8FJOA323232323"}</Text>
+        <Text style={styles.secondLineValue}>{this.props.taskInfo.fromNo}</Text>
         <Image
           style={styles.salesTaskInfoRightArrow}
           source={require("../../res/img/icon_left_arrow_black.png")}
@@ -151,15 +180,15 @@ class CarInfoPanel extends Component {
         onPress={this.props.onPress}
       >
         <Text style={styles.firstLineName}>{"车牌号"}</Text>
-        <Text style={styles.firstLineValue}>{"京P E2342"}</Text>
+        <Text style={styles.firstLineValue}>{this.props.carInfo.plateNo}</Text>
         <Text style={styles.secondLineName}>{"车架号"}</Text>
-        <Text style={styles.secondLineValue}>{"ASDFUAOJSDKBF872983IUR"}</Text>
+        <Text style={styles.secondLineValue}>{this.props.carInfo.frameNo}</Text>
         <Text style={styles.thirdLineName}>{"车型"}</Text>
         <VehicleInofPanel
           style={styles.thirdLineValue}
-          vehicle="哈弗F5"
-          vehicleType="准"
-          vehicleColor="银灰"
+          vehicle={this.props.carInfo.model.series}
+          vehicleType={this.props.carInfo.model.type}
+          vehicleColor={this.props.carInfo.model.color}
         />
 
         <Image
@@ -186,7 +215,10 @@ class TaskItem extends Component {
     const item = this.props.data;
     const color = this._getLeftColor(item.status);
     return (
-      <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.itemContainer}
+        onPress={this.props.onPress}
+      >
         <View style={[styles.itemLeftView, { backgroundColor: color }]} />
         <Text style={styles.itemTaskNo}>{item.taskNo}</Text>
         <Text style={styles.itemTaskName}>{item.taskName}</Text>
@@ -194,7 +226,7 @@ class TaskItem extends Component {
         <Text style={[styles.itemRightText, { color: color }]}>
           {item.current}
         </Text>
-      </View>
+      </TouchableOpacity>
     );
   }
 }

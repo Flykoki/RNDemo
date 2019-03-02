@@ -36,6 +36,7 @@ import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCa
 import IntegratedTaskInfo from "./src/js/property/IntegratedTaskInfo";
 import CarInfoScreen from "./src/js/property/CarInfoScreen";
 import TestPage from "./src/js/home/TestPage";
+import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomePage,
@@ -88,6 +89,7 @@ const StackContainer = createStackNavigator(
     InstallmentSalesOfNewCars: InstallmentSalesOfNewCars,
     IntegratedTaskInfo: IntegratedTaskInfo,
     CarInfoScreen: CarInfoScreen,
+    TaskDetailScreen: TaskDetailScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {
