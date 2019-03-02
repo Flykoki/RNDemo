@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   },
   feedbackTextInput: {
     height: 90,
-    textAlignVertical: "top",
+    textAlignVertical:'top',
     color: "#666666",
     marginBottom: 10
   },

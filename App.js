@@ -19,6 +19,7 @@ import { MineScreen } from "./src/js/mine/MineScreen";
 import { PolicyList } from "./src/js/policy/PolicyList";
 import { PolicyDetail } from "./src/js/policy/PolicyDetail";
 import { HomePage } from "./src/js/home/HomePage";
+import { MissionsCenterPage } from "./src/js/missionscenter/MissionsCenterPage";
 import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
 import FeedbackScreen from "./src/js/mine/FeedbackScreen";
 import InitSecurityPhoneStep1 from "./src/js/mine/settings/initsecurityphone/InitSecurityPhoneStep1";
@@ -57,7 +58,8 @@ const TabNavigator = createBottomTabNavigator(
     tabBarOptions: {
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
-    }
+    },
+    initialRouteName: "我的"
   }
 );
 
@@ -65,6 +67,7 @@ const StackContainer = createStackNavigator(
   {
     Feedback: FeedbackScreen,
     PolicyList: PolicyList,
+    MissionsCenterPage: MissionsCenterPage,
     PolicyDetail: PolicyDetail,
     ChangeSecurityPhoneStep1: ChangeSecurityPhoneStep1,
     ChangeSecurityPhoneStep2: ChangeSecurityPhoneStep2,
