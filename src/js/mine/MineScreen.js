@@ -59,6 +59,16 @@ export class MineScreen extends Component {
           onPress: () => {
             this.props.navigation.navigate("MissionsCenterPage");
           }
+        },
+        { key: "9", type: "divider" },
+        {
+          key: "10",
+          type: "item",
+          name: "测试item",
+          showArrow: "1",
+          onPress: () => {
+            this.props.navigation.navigate("TestPage");
+          }
         }
       ]
     };

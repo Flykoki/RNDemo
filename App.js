@@ -35,6 +35,7 @@ import BasicInfo from "./src/js/property/BasicInfo";
 import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCars";
 import IntegratedTaskInfo from "./src/js/property/IntegratedTaskInfo";
 import CarInfoScreen from "./src/js/property/CarInfoScreen";
+import TestPage from "./src/js/home/TestPage";
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomePage,
@@ -68,6 +69,7 @@ const TabNavigator = createBottomTabNavigator(
 
 const StackContainer = createStackNavigator(
   {
+    TestPage: TestPage,
     Feedback: FeedbackScreen,
     PolicyList: PolicyList,
     MissionsCenterPage: MissionsCenterPage,

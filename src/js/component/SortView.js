@@ -22,24 +22,28 @@ export default class SortView extends Component {
       normalFilterPress: false, //筛选title点击状态
       normalFilterItems: new Map() //筛选内容
     };
+
+    this.titleItemHight = this.props.titleItemHight
+      ? this.props.titleItemHight
+      : 46;
   }
 
   render() {
     return (
       <View style={[styles.container, this.props.style]}>
         <View
-          style={[
-            styles.filterWholeContainer,
-            { height: this.props.titleItemHight }
-          ]}
+          style={[styles.filterWholeContainer, { height: this.titleItemHight }]}
         >
           <View style={styles.filterContainer}>
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                let showPanel = !this.state.sortDataPress;
                 this.setState({
-                  sortDataPress: !this.state.sortDataPress
-                })
-              }
+                  sortDataPress: showPanel,
+                  normalFilterPress: false
+                });
+                this._showSortPanel(showPanel);
+              }}
               style={styles.filter}
             >
               <Text
@@ -73,7 +77,8 @@ export default class SortView extends Component {
             <TouchableOpacity
               onPress={() =>
                 this.setState({
-                  normalFilterPress: !this.state.normalFilterPress
+                  normalFilterPress: !this.state.normalFilterPress,
+                  sortDataPress: false
                 })
               }
               style={styles.filter}
@@ -105,13 +110,24 @@ export default class SortView extends Component {
             </TouchableOpacity>
           </View>
           <View style={styles.topDivider} />
+
+          <TouchableOpacity
+            style={styles.touchCancel}
+            onPress={() => {
+              console.warn("touchCancel onPress");
+            }}
+          />
         </View>
       </View>
     );
   }
 
-  _onContainerPress = () => {
-    console.warn("container on press");
+  /**
+   * 显示排序面板
+   */
+  _showSortPanel = showPanel => {
+    console.warn("lfj showPanel=", showPanel);
+    showPanel;
   };
 
   _renderItem = ({ item }) => {
@@ -131,13 +147,16 @@ SortView.propTypes = {
   rightTitleText: PropTypes.string //右边排序title item 标题
 };
 const styles = StyleSheet.create({
+  touchCancel: {
+    height:'100%',
+    backgroundColor: "rgba(0,0,0,0.3)"
+  },
   filterDivider: {
     width: 0.5,
     backgroundColor: "#E5E5E5",
     height: "100%"
   },
   container: {
-    width: "100%",
     height: "100%",
     backgroundColor: "rgba(0,0,0,0.3)"
   },
@@ -169,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   filterContainer: {
-    flex: 1,
+    height: "100%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
