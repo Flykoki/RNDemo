@@ -15,7 +15,7 @@ export default class FilterView extends Component {
   animationLoading;
   constructor(props) {
     super(props);
-    console.log("lfj this.props:", this.props);
+    // console.log("lfj this.props:", this.props);
     this.state = {
       rotateVal: new Animated.Value(0),
       searchButtonOnPress: false,
@@ -90,9 +90,11 @@ export default class FilterView extends Component {
    * 获取 Filters 布局
    */
   _initFilterViews = dataArray => {
-    return dataArray.map((item, index, dataArray) => {
+    // console.log('lfj dataArray,',dataArray)
+    let items= dataArray.map((item, index, dataArray) => {
       return this._initFilterItem(item);
     });
+    return items;
   };
 
   /**
@@ -100,9 +102,11 @@ export default class FilterView extends Component {
    */
   _initFilterItem = item => {
     if (item.type === "normal") {
-      return this._initFilterItemNormal(item);
+      let items= this._initFilterItemNormal(item);
+      return items;
     } else if (item.type === "date") {
-      return this._initFilterItemDate(item);
+      let items= this._initFilterItemDate(item);
+      return items
     }
     return null;
   };
@@ -183,17 +187,18 @@ export default class FilterView extends Component {
    * 调用后台接口获取筛选结果
    */
   _getFilterResponse = tempMap => {
-    console.log("lfj start request ");
+    // console.log("lfj start request ");
     this.setState({ isLoading: true, normalFilterMap: tempMap });
     this._startLoadingAnimated();
     // todo
     setTimeout(() => {
-      console.log("lfj end request");
+      // console.log("lfj end request");
       let random = Math.floor((Math.random() * 100) % 100);
-      console.log("lfj random：", random);
+      // console.log("lfj random：", random);
       this.setState({ isLoading: false, filterResponse: new Array(random) });
       this._stopLoadingAnimated();
-      this.props.onFilterResponseCallback(this.state.filterResponse);
+      this.props.onFilterResponseCallback &&
+        this.props.onFilterResponseCallback(this.state.filterResponse);
     }, 1000);
   };
 
@@ -228,7 +233,7 @@ export default class FilterView extends Component {
     let multiple = item.filterMultiple;
     let type = item.type;
     let itemTitle = item.title;
-    console.log("lfj _getNormalItemChild:", this.state);
+    // console.log("lfj _getNormalItemChild:", this.state);
     return itemArray.map((detail, index) => {
       return (
         <TouchableOpacity
@@ -258,9 +263,10 @@ export default class FilterView extends Component {
                 tempMap.set(itemTitle, detail);
               }
             }
-            console.log("lfj map size", tempMap.size);
+            // console.log("lfj map size", tempMap.size);
             // this.setState({ normalFilterMap: tempMap });
-            this.props.onNormalFilterCallback(tempMap);
+            this.props.onNormalFilterCallback &&
+              this.props.onNormalFilterCallback(tempMap);
 
             //todo 到后台请求数据
             this._getFilterResponse(tempMap);
@@ -310,12 +316,12 @@ export default class FilterView extends Component {
    * 获取 buttonViews 布局
    */
   _initButtonViews = () => {
-    console.log(
-      "init button:",
-      this.state.isLoading,
-      this.state.filterResponse,
-      this.state.normalFilterMap
-    );
+    // console.log(
+    //   "init button:",
+    //   this.state.isLoading,
+    //   this.state.filterResponse,
+    //   this.state.normalFilterMap
+    // );
     return (
       <View style={styles.searchButtonContainer}>
         <TouchableOpacity
@@ -326,7 +332,8 @@ export default class FilterView extends Component {
               normalFilterMap: temp,
               filterResponse: []
             });
-            this.props.onNormalFilterCallback(temp);
+            this.props.onNormalFilterCallback &&
+              this.props.onNormalFilterCallback(temp);
             this._getFilterResponse(temp);
           }}
         >
@@ -550,9 +557,9 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   filterContainer: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.3)"
+    // width: "100%",
+    // height: "100%",
+    // backgroundColor: "rgba(0,0,0,0.3)"
   },
   filterContent: {
     marginBottom: 46,

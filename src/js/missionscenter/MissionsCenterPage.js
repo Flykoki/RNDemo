@@ -18,7 +18,7 @@ import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
-import SortView from "../component/SortView";
+import SortWithFilterView from "../component/SortWithFilterView";
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -58,16 +58,13 @@ export class MissionsCenterPage extends PureComponent {
       )
     };
   };
-
   constructor(props) {
     super(props);
     this.state = {
       page: 0,
       recentlyDateFilterPress: false, //最近创建日期筛选图标样式
       recentlyDateFilterItems: new Map(), //最近创建日期筛选内容
-      filterResponse: [], //筛选结果
       normalFilterPress: false, //筛选图标样式
-      normalFilterItems: new Map(), //筛选内容
       pageCount: 0,
       isLoading: true,
       //网络请求状态
@@ -79,6 +76,10 @@ export class MissionsCenterPage extends PureComponent {
       isRefreshing: false //下拉控制
     };
     _navigation = this.props.navigation;
+    this.sortDataIndex = 0; //排序选中item
+    this.filterResponse = []; //筛选结果
+    this.normalFilterItems = new Map(); //筛选内容
+    this.topClickViewHight = 46; //头部条件选择高度
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
@@ -154,6 +155,7 @@ export class MissionsCenterPage extends PureComponent {
           // if (this.state.page >= data.pageCount) {
           foot = 1; //listView底部显示没有更多数据了
         }
+        console.log("lfj setState response");
         this.setState({
           //复制数据源
           //  dataArray:this.state.dataArray.concat( responseData.results),
@@ -168,6 +170,7 @@ export class MissionsCenterPage extends PureComponent {
         dataBlob = null;
       })
       .catch(error => {
+        console.log("lfj setState response error");
         this.setState({
           error: true,
           errorInfo: error
@@ -178,142 +181,61 @@ export class MissionsCenterPage extends PureComponent {
 
   //显示FlatList
   renderData() {
+    console.log('lfj this.normalFilterItems',this.normalFilterItems)
     return (
       <View style={styles.flatListContain}>
-        {/* ============================== filter view ============================== */}
-        <View style={styles.filterWholeContainer}>
-          <View style={styles.filterContainer}>
-            <TouchableOpacity
-              onPress={() =>
-                this.setState({
-                  recentlyDateFilterPress: !this.state.recentlyDateFilterPress
-                })
-              }
-              style={styles.filter}
-            >
-              <Text
-                style={
-                  this.state.recentlyDateFilterItems.size > 0
-                    ? styles.filterTextPress
-                    : this.state.recentlyDateFilterPress
-                    ? styles.filterTextPress
-                    : styles.filterTextDefault
-                }
-              >
-                最近创建日期
-              </Text>
-              <Image
-                style={{ marginLeft: 7.2, height: 8, width: 8 }}
-                resizeMode={"contain"}
-                source={
-                  this.state.recentlyDateFilterItems.size > 0
-                    ? this.state.recentlyDateFilterPress
-                      ? require("../../res/img/icon_app_retract_up.png")
-                      : require("../../res/img/icon_app_retract_down_chosen.png")
-                    : this.state.recentlyDateFilterPress
-                    ? require("../../res/img/icon_app_retract_up_chosen.png")
-                    : require("../../res/img/icon_app_retract_down.png")
-                }
-              />
-            </TouchableOpacity>
-            <View style={styles.filterDivider} />
-            <TouchableOpacity
-              onPress={() =>
-                this.setState({
-                  normalFilterPress: !this.state.normalFilterPress
-                })
-              }
-              style={styles.filter}
-            >
-              <Text
-                style={
-                  this.state.normalFilterItems.size > 0
-                    ? styles.filterTextPress
-                    : this.state.normalFilterPress
-                    ? styles.filterTextPress
-                    : styles.filterTextDefault
-                }
-              >
-                筛选
-              </Text>
-              <Image
-                style={{ marginLeft: 7.2, height: 8, width: 8 }}
-                resizeMode={"contain"}
-                source={
-                  this.state.normalFilterItems.size > 0
-                    ? this.state.normalFilterPress
-                      ? require("../../res/img/icon_app_retract_up_chosen.png")
-                      : require("../../res/img/icon_app_retract_down_chosen.png")
-                    : this.state.normalFilterPress
-                    ? require("../../res/img/icon_app_retract_up_chosen.png")
-                    : require("../../res/img/icon_app_retract_down.png")
-                }
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.topDivider} />
-        </View>
-        {/* ============================== filter view ============================== */}
-
         <FlatList
+          style={{ marginTop: this.topClickViewHight }}
           data={this.state.dataArray}
           renderItem={this._renderItemView.bind(this)}
           ListFooterComponent={this._renderFooter}
           onEndReached={this._onEndReached}
-          onEndReachedThreshold={1}
+          onEndReachedThreshold={0.1}
           refreshing={this.state.isRefreshing}
           onRefresh={this.handleRefresh} //因为涉及到this.state
           // ItemSeparatorComponent={this._separator}
           keyExtractor={this._keyExtractor}
         />
-        {/* {this.state.recentlyDateFilterPress && (
-          <SortView
-            style={styles.filterView}
-            data={["111111", "222222222", "33333333"]}
-          />
-        )} */}
-        {this.state.normalFilterPress && (
-          <FilterView
-            style={styles.filterView}
-            data={[
-              {
-                type: "normal",
-                filterMultiple: true,
-                title: "任务集合状态",
-                items: ["待处理", "处理中", "处理完毕", "已取消"]
-              },
-              {
-                type: "normal",
-                title: "任务集合参与人",
-                filterMultiple: true,
-                items: ["我"]
-              },
-              {
-                type: "date",
-                title: "筛选时间名称",
-                filterMultiple: false,
-                items: ["今天", "近3天", "近7天", "近15天"]
-              }
-            ]}
-            onFilterResponseCallback={response => {
-              this.setState({ filterResponse: response });
-            }}
-            onNormalFilterCallback={filterMaps => {
-              console.log("lfj onNormalFilterCallback result:", filterMaps);
-              this.setState({ normalFilterItems: filterMaps });
-            }}
-            onDateFilterCallback={filterMaps => {
-              console.log("lfj onDateFilterCallback result:", filterMaps);
-              this.setState({ recentlyDateFilterItems: filterMaps });
-            }}
-            normalFilterMap={this.state.normalFilterItems}
-            dateFilterMap={this.state.recentlyDateFilterItems}
-            filterResponse={this.state.filterResponse}
-            onTouchCancel={() => {
-              console.warn("lfj on cancel");
-            }}
-          />
-        )}
+        <SortWithFilterView
+          titleItemHight={this.topClickViewHight}
+          onSortDataSelectedCallback={(item, index) => {
+            //排序item点击事件
+            this.sortDataIndex = index;
+            console.log("lfj onSortDataSelectedCallback,", item);
+          }}
+          sortDataObj={{
+            sortData: ["综合排序", "距我最近", "评价最好"],
+            index: 1
+          }}
+          onFilterResponseCallback={response => {
+            this.filterResponse = response;
+            console.log("lfj 筛选结果", this.filterResponse);
+          }}
+          onNormalFilterCallback={filterMaps => {
+            this.normalFilterItems = filterMaps;
+            console.log("lfj 筛选项", this.normalFilterItems);
+          }}
+          filterData={[
+            {
+              type: "normal",
+              filterMultiple: true,
+              title: "任务集合状态",
+              items: ["待处理", "处理中", "处理完毕", "已取消"]
+            },
+            {
+              type: "normal",
+              title: "任务集合参与人",
+              filterMultiple: true,
+              items: ["我"]
+            },
+            {
+              type: "date",
+              title: "筛选时间名称",
+              filterMultiple: false,
+              items: ["今天", "近3天", "近7天", "近15天"]
+            }
+          ]}
+        />
       </View>
     );
   }
@@ -321,7 +243,7 @@ export class MissionsCenterPage extends PureComponent {
   _keyExtractor = (item, index) => item.key;
   //item点击事件
   _onPress = ({ item }) => {
-    console.log("home item onpress,", item);
+    // console.log("home item onpress,", item);
     const ret = _navigation.navigate("PolicyList");
   };
 
@@ -378,6 +300,7 @@ export class MissionsCenterPage extends PureComponent {
     } else {
       this.state.page++;
     }
+    // console.log("lfj setState onEndReached");
     //底部显示正在加载更多数据
     this.setState({ showFoot: 2 });
     //获取数据，在componentDidMount()已经请求过数据了
@@ -388,7 +311,7 @@ export class MissionsCenterPage extends PureComponent {
 
   //头部控件
   _renderHeader = () => {
-    console.log("lfj showhearder:", this.state.showHeader);
+    // console.log("lfj showhearder:", this.state.showHeader);
     if (this.state.showHeader === 0) {
       return (
         <View style={{ height: 0, width: 0 }}>
@@ -458,7 +381,7 @@ export class MissionsCenterPage extends PureComponent {
         </View>
       );
     } else if (this.state.showFoot === 2) {
-      console.log("lfj showfoot===2");
+      // console.log("lfj showfoot===2");
       return (
         <View style={styles.footer}>
           <ActivityIndicator />
@@ -466,7 +389,7 @@ export class MissionsCenterPage extends PureComponent {
         </View>
       );
     } else if (this.state.showFoot === 0) {
-      console.log("lfj showfoot===0");
+      // console.log("lfj showfoot===0");
       return (
         <View style={styles.footer}>
           <Text />
@@ -489,7 +412,7 @@ export class MissionsCenterPage extends PureComponent {
   }
   //刷新时
   handleRefresh = () => {
-    console.log("lfj handleRefresh");
+    // console.log("lfj setState handleRefresh");
     this.setState({
       page: 1,
       showHeader: 1,

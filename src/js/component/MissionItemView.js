@@ -108,7 +108,7 @@ export default class MissionItemView extends Component {
    * 显示并行任务中的item
    */
   _getConcurrentMissionItemView = (item, index, total) => {
-    console.log("concurrent item index:", index, total);
+    // console.log("concurrent item index:", index, total);
     return (
       <View style={{ flexDirection: "column", justifyContent: "center" }}>
         <TouchableOpacity
