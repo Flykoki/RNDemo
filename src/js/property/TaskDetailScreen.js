@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Clipboard
+  Clipboard,
+  Dimensions
 } from "react-native";
 import { titleOptions } from "../component/Titie";
 import VehicleInfoPanel from "./VehicleInofPanel";
@@ -26,73 +27,7 @@ export default class TaskDetailScreen extends Component {
     this.state = {
       status: "loading",
       operation: "开始整备",
-      data: [
-        {
-          key: "0",
-          type: "baseInfo",
-          title: "基础信息",
-          taskNo: "KH232244",
-          business: "一级业务线 - 二级业务线",
-          fromNo: "SD283238923472283789320"
-        },
-        {
-          key: "1",
-          type: "carInfo",
-          title: "车辆信息",
-          vehicle: {
-            model: "宝沃 BX6 四驱锋锐 GT SUV",
-            type: "新",
-            color: "宝蓝",
-            frameNo: "SD283238923472283789320"
-          }
-        },
-        {
-          key: "2",
-          type: "invoiceInfo",
-          compony: "北京神州汽车租赁有限公司",
-          invoiceNo: "32435443783294837823234",
-          invoiceValue: "税价合计: 112,123.00"
-        },
-        {
-          key: "3",
-          type: "expressInfo",
-          contract: "李二狗 1588888888",
-          address: "北京市海淀区中关村东路118号",
-          express: "顺丰快递 134627381736173"
-        },
-        {
-          key: "4",
-          type: "insuranceInfo",
-          applicant: "李二狗",
-          insured: "李二狗",
-          beneficiary: "李二狗",
-          company: "中国平安保险有限公司"
-        },
-        {
-          key: "10",
-          type: "taskFollower",
-          title: "车辆信息",
-          tasks: [
-            {
-              key: "0",
-              taskName: "分配 - 状态一",
-              status: "done",
-              taskTime: "系统 2019/03/04 12:42:11",
-              taskInfo: "1D5H"
-            },
-            {
-              key: "1",
-              taskName: "操作类型 - 状态二",
-              status: "doing"
-            },
-            {
-              key: "2",
-              taskName: "操作类型 - 状态三",
-              status: "cancel"
-            }
-          ]
-        }
-      ]
+      data: demoData(this.props)
     };
     this._initData();
   }
@@ -137,27 +72,28 @@ export default class TaskDetailScreen extends Component {
   };
 
   _renderItem({ item }) {
-    if (item.type === "carInfo") {
-      return <CarInfoPanel item={item} />;
-    }
+    switch (item.type) {
+      case "carInfo":
+        return <CarInfoPanel item={item} />;
 
-    if (item.type === "taskFollower") {
-      return <TaskFollower item={item} />;
-    }
+      case "taskFollower":
+        return <TaskFollower item={item} />;
 
-    if (item.type === "invoiceInfo") {
-      return <InvoicePanel item={item} />;
-    }
+      case "invoiceInfo":
+        return <InvoicePanel item={item} />;
 
-    if (item.type === "expressInfo") {
-      return <ExpressPanel item={item} />;
-    }
+      case "expressInfo":
+        return <ExpressPanel item={item} />;
 
-    if (item.type === "insuranceInfo") {
-      return <InsurancePanel item={item} />;
-    }
+      case "insuranceInfo":
+        return <InsurancePanel item={item} />;
 
-    return <BaseInfoPanel item={item} />;
+      case "attachmentInfo":
+        return <AttachmentPanel item={item} />;
+
+      default:
+        return <BaseInfoPanel item={item} />;
+    }
   }
 }
 
@@ -330,12 +266,13 @@ export class TaskFollowerItem extends Component {
 
 export class InvoicePanel extends Component {
   render() {
+    invoice = this.props.item.invoice;
     return (
       <View style={styles.invoiceContainer}>
-        <ItemTitle title="发票信息" onPress={() => {}} />
-        <Text style={styles.invoiceCompony}>{this.props.item.compony}</Text>
-        <Text style={styles.invoiceNo}>{this.props.item.invoiceNo}</Text>
-        <Text style={styles.invoiceValue}>{this.props.item.invoiceValue}</Text>
+        <ItemTitle title="发票信息" onPress={this.props.item.titlePress} />
+        <Text style={styles.invoiceCompony}>{invoice.compony}</Text>
+        <Text style={styles.invoiceNo}>{invoice.NO}</Text>
+        <Text style={styles.invoiceValue}>{invoice.value}</Text>
       </View>
     );
   }
@@ -343,52 +280,112 @@ export class InvoicePanel extends Component {
 
 export class ExpressPanel extends Component {
   render() {
-    return (
-      <View style={styles.invoiceContainer}>
-        <ItemTitle title="邮寄信息" />
-        <Text style={[styles.panelLeftText, styles.panelFirstLineTop]}>
-          {"收件人"}
-        </Text>
-        <Text style={styles.expressContract}>{this.props.item.contract}</Text>
-        <Text style={styles.expressAddress}>{this.props.item.address}</Text>
-        <Text style={[styles.panelLeftText, styles.expressNoName]}>
-          {"快递"}
-        </Text>
-        <TextWithCopy style={styles.expressNo} text={this.props.item.express} />
-      </View>
-    );
+    express = this.props.item.express;
+    if (express) {
+      return (
+        <View style={styles.invoiceContainer}>
+          <ItemTitle title="邮寄信息" />
+          <Text style={[styles.panelLeftText, styles.panelFirstLineTop]}>
+            {"收件人"}
+          </Text>
+          <Text style={styles.expressContract}>{express.contract}</Text>
+          <Text style={styles.expressAddress}>{express.address}</Text>
+          <Text style={[styles.panelLeftText, styles.expressNoName]}>
+            {"快递"}
+          </Text>
+          <TextWithCopy style={styles.expressNo} text={express.NO} />
+        </View>
+      );
+    }
+    return <TaskUndo title="邮寄信息" status="待邮寄" />;
   }
 }
 
 export class InsurancePanel extends Component {
   render() {
+    insurance = this.props.item.insurance;
+    if (insurance) {
+      return (
+        <View style={styles.insuranceContainer}>
+          <ItemTitle title="保险信息" onPress={this.props.item.titlePress} />
+          <Text style={[styles.panelLeftText, styles.panelFirstLineTop]}>
+            {"投保人"}
+          </Text>
+          <Text style={[styles.panelLeftText, styles.panelSecondLineTop]}>
+            {"被保险人"}
+          </Text>
+          <Text style={[styles.panelLeftText, styles.panelThirdLineTop]}>
+            {"受益人"}
+          </Text>
+          <Text style={[styles.panelLeftText, styles.panelFourthLineTop]}>
+            {"保险公司"}
+          </Text>
+          <Text style={[styles.panelRightText, styles.panelFirstLineTop]}>
+            {insurance.applicant}
+          </Text>
+          <Text style={[styles.panelRightText, styles.panelSecondLineTop]}>
+            {insurance.insured}
+          </Text>
+          <Text style={[styles.panelRightText, styles.panelThirdLineTop]}>
+            {insurance.beneficiary}
+          </Text>
+          <Text style={[styles.panelRightText, styles.panelFourthLineTop]}>
+            {insurance.company}
+          </Text>
+        </View>
+      );
+    }
+    return <TaskUndo title="保险信息" status="未投保" />;
+  }
+}
+
+export class TaskUndo extends Component {
+  render() {
     return (
-      <View style={styles.insuranceContainer}>
-        <ItemTitle title="保险信息" onPress={() => {}} />
-        <Text style={[styles.panelLeftText, styles.panelFirstLineTop]}>
-          {"投保人"}
+      <View style={{ backgroundColor: "white", height: 92 }}>
+        <ItemTitle title={this.props.title} />
+        <Text style={[styles.panelFirstLineTop, styles.panelLeftText]}>
+          {this.props.status}
         </Text>
-        <Text style={[styles.panelLeftText, styles.panelSecondLineTop]}>
-          {"被保险人"}
-        </Text>
-        <Text style={[styles.panelLeftText, styles.panelThirdLineTop]}>
-          {"受益人"}
-        </Text>
-        <Text style={[styles.panelLeftText, styles.panelFourthLineTop]}>
-          {"保险公司"}
-        </Text>
-        <Text style={[styles.panelRightText, styles.panelFirstLineTop]}>
-          {this.props.item.applicant}
-        </Text>
-        <Text style={[styles.panelRightText, styles.panelSecondLineTop]}>
-          {this.props.item.insured}
-        </Text>
-        <Text style={[styles.panelRightText, styles.panelThirdLineTop]}>
-          {this.props.item.beneficiary}
-        </Text>
-        <Text style={[styles.panelRightText, styles.panelFourthLineTop]}>
-          {this.props.item.company}
-        </Text>
+      </View>
+    );
+  }
+}
+
+const { width } = Dimensions.get("window");
+const imageWidth = width * 0.28;
+const imageMargin = width * (10 / 375);
+const panelPadding = width * (20 / 375);
+export class AttachmentPanel extends Component {
+  _renderImageItem(imageSource) {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          this.props.item.imagePress("CarInfoScreen");
+        }}
+      >
+        <Image style={styles.imageStyles} source={{ uri: imageSource }} />
+      </TouchableOpacity>
+    );
+  }
+
+  _renderImages() {
+    let images = [];
+    if (this.props.item) {
+      let imageUris = this.props.item.imageUris;
+      imageUris.forEach(uri => {
+        images.push(this._renderImageItem(uri));
+      });
+
+      return images;
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.attachmentContainer}>
+        <ItemTitle title="附件信息" />
+        {this._renderImages()}
       </View>
     );
   }
@@ -582,5 +579,134 @@ const styles = StyleSheet.create({
   insuranceContainer: {
     height: 182,
     backgroundColor: "white"
+  },
+  attachmentContainer: {
+    backgroundColor: "white",
+    flex: 1,
+    paddingTop: 61,
+    paddingLeft: panelPadding,
+    flexWrap: "wrap",
+    flexDirection: "row"
+  },
+  imageStyles: {
+    height: imageWidth,
+    width: imageWidth,
+    marginRight: imageMargin,
+    marginBottom: imageMargin
   }
 });
+
+const imageUris = [
+  "http://c.hiphotos.baidu.com/image/pic/item/060828381f30e92452b0863f4e086e061d95f7ac.jpg",
+  "http://f.hiphotos.baidu.com/image/pic/item/d4628535e5dde711cd2a5cfca5efce1b9d16613b.jpg",
+  "http://c.hiphotos.baidu.com/image/pic/item/00e93901213fb80e31c566dd34d12f2eb93894a7.jpg",
+  "http://f.hiphotos.baidu.com/image/pic/item/472309f790529822dff183cad5ca7bcb0b46d4fd.jpg",
+  "http://a.hiphotos.baidu.com/image/pic/item/d1a20cf431adcbeffe42a207aeaf2edda3cc9fb9.jpg",
+  "http://c.hiphotos.baidu.com/image/pic/item/5243fbf2b211931372c468a064380cd791238d1f.jpg",
+  "http://c.hiphotos.baidu.com/image/pic/item/96dda144ad345982f06dfa980ef431adcaef84d0.jpg"
+];
+
+const demoData = props => {
+  data = [
+    {
+      key: "0",
+      type: "baseInfo",
+      title: "基础信息",
+      taskNo: "KH232244",
+      business: "一级业务线 - 二级业务线",
+      fromNo: "SD283238923472283789320",
+      titlePress: () => {
+        props.navigation.navigate("TaskBasicInfo");
+      }
+    },
+    {
+      key: "1",
+      type: "carInfo",
+      title: "车辆信息",
+      vehicle: {
+        model: "宝沃 BX6 四驱锋锐 GT SUV",
+        type: "新",
+        color: "宝蓝",
+        frameNo: "SD283238923472283789320"
+      },
+      titlePress: () => {
+        props.navigation.navigate("CarInfoScreen");
+      }
+    },
+    {
+      key: "2",
+      type: "invoiceInfo",
+      invoice: {
+        compony: "北京神州汽车租赁有限公司",
+        NO: "32435443783294837823234",
+        value: "税价合计: 112,123.00"
+      },
+      titlePress: () => {
+        props.navigation.navigate("InvoiceInfoScreen");
+      }
+    },
+    {
+      key: "3",
+      type: "expressInfo",
+      express: {
+        contract: "李二狗 1588888888",
+        address: "北京市海淀区中关村东路118号",
+        NO: "顺丰快递 134627381736173"
+      }
+    },
+    {
+      key: "3",
+      type: "expressInfo"
+    },
+    {
+      key: "4",
+      type: "insuranceInfo",
+      insurance: {
+        applicant: "李二狗",
+        insured: "李二狗",
+        beneficiary: "李二狗",
+        company: "中国平安保险有限公司"
+      },
+      titlePress: () => {
+        props.navigation.navigate("InsuranceDetailScreen");
+      }
+    },
+    {
+      key: "4",
+      type: "insuranceInfo"
+    },
+    {
+      key: "5",
+      type: "attachmentInfo",
+      imageUris: imageUris,
+      imagePress: uri => {
+        props.navigation.navigate("CarInfoScreen");
+      }
+    },
+    {
+      key: "10",
+      type: "taskFollower",
+      title: "车辆信息",
+      tasks: [
+        {
+          key: "0",
+          taskName: "分配 - 状态一",
+          status: "done",
+          taskTime: "系统 2019/03/04 12:42:11",
+          taskInfo: "1D5H"
+        },
+        {
+          key: "1",
+          taskName: "操作类型 - 状态二",
+          status: "doing"
+        },
+        {
+          key: "2",
+          taskName: "操作类型 - 状态三",
+          status: "cancel"
+        }
+      ]
+    }
+  ];
+  return data;
+};
