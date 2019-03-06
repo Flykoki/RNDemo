@@ -34,6 +34,7 @@ import CityList from "./src/js/component/city/CityList";
 import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCars";
 import TestPage from "./src/js/home/TestPage";
 import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
+import CalenderScreen from "./src/js/component/CalenderScreen";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -96,6 +97,7 @@ const StackContainer = createStackNavigator(
     TaskDetailScreen: TaskDetailScreen,
     InsuranceDetailScreen: InsuranceDetailScreen,
     InvoiceInfoScreen: InvoiceInfoScreen,
+    CalenderScreen: CalenderScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {
