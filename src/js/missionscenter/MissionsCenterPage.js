@@ -19,7 +19,7 @@ import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
-import SearchView from "../component/SearchView";
+import SearchViewPage from "./SearchViewPage";
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -48,6 +48,7 @@ export class MissionsCenterPage extends PureComponent {
           onPress={() => {
             //todo 弹出搜索框
             console.warn("go search");
+            _navigation.navigate('SearchViewPage')
           }}
           style={styles.searchButtonStyle}
         >
