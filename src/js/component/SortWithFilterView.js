@@ -21,20 +21,21 @@ export default class SortWithFilterView extends Component {
       showSortDataPanel: false, //排序面板是否显示
       lastSortDataIndex: this.props.sortDataIndex
         ? this.props.sortDataIndex
-        : 0, //默认选中排序项
+        : -1, //默认选中排序项
       filterResponse: [], //筛选结果
       normalFilterPress: false, //筛选title点击状态
       normalFilterItems: this.props.normalFilterItems
         ? this.props.normalFilterItems
         : new Map() //筛选内容
     };
-
+    console.log('lfj sortViewFilter constructor')
     this.titleItemHight = this.props.titleItemHight
       ? this.props.titleItemHight
       : 46;
     this.onSortDataSelectedCallback = this.props.onSortDataSelectedCallback;
   }
   render() {
+    console.log('lfj sortView render')
     return (
       <TouchableOpacity
         activeOpacity={1}
@@ -69,7 +70,7 @@ export default class SortWithFilterView extends Component {
             >
               <Text
                 style={
-                  this.state.lastSortDataIndex !== 0
+                  this.state.lastSortDataIndex !== -1
                     ? styles.filterTextPress
                     : this.state.showSortDataPanel
                     ? styles.filterTextPress
@@ -84,9 +85,9 @@ export default class SortWithFilterView extends Component {
                 style={{ marginLeft: 7.2, height: 8, width: 8 }}
                 resizeMode={"contain"}
                 source={
-                  this.state.lastSortDataIndex !== 0
+                  this.state.lastSortDataIndex !== -1
                     ? this.state.showSortDataPanel
-                      ? require("../../res/img/icon_app_retract_up.png")
+                      ? require("../../res/img/icon_app_retract_up_chosen.png")
                       : require("../../res/img/icon_app_retract_down_chosen.png")
                     : this.state.showSortDataPanel
                     ? require("../../res/img/icon_app_retract_up_chosen.png")
@@ -201,7 +202,7 @@ export default class SortWithFilterView extends Component {
     return (
       <TouchableOpacity
         style={styles.sortItemContainer}
-        activeOpacity={0}
+        activeOpacity={1}
         onPress={() => {
           this.setState({
             lastSortDataIndex: index

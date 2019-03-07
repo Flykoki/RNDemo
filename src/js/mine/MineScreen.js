@@ -67,7 +67,7 @@ export class MineScreen extends Component {
           name: "测试item",
           showArrow: "1",
           onPress: () => {
-            this.props.navigation.navigate("TestPage");
+            this.props.navigation.navigate("SearchViewPage");
           }
         }
       ]

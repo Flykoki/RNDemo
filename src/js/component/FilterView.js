@@ -438,7 +438,14 @@ const styles = StyleSheet.create({
     marginRight: 15
   },
   calenderClearDisable: {
-    color: "transparent"
+    color: "transparent",
+    marginTop: 10,
+    paddingBottom: 6,
+    paddingTop: 6,
+    fontSize: 14,
+    textAlign: "center",
+    marginLeft: 15,
+    marginRight: 15
   },
   normalItemTextDefault: {
     borderColor: "#333333",

@@ -19,6 +19,7 @@ import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
+import SearchView from "../component/SearchView";
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -51,7 +52,8 @@ export class MissionsCenterPage extends PureComponent {
           style={styles.searchButtonStyle}
         >
           <Image
-            style={{ height: 13, width: 13 }}
+            resizeMode={"contain"}
+            style={{ height: 20, width: 20, paddingRight: 20 }}
             source={require("../../res/img/icon_app_search.png")}
           />
         </TouchableOpacity>
@@ -67,6 +69,9 @@ export class MissionsCenterPage extends PureComponent {
       normalFilterPress: false, //筛选图标样式
       pageCount: 0,
       isLoading: true,
+      updatePanelState: 0,
+      searchResponseData: [],
+      selectedItem: {},
       //网络请求状态
       error: false,
       errorInfo: "",
@@ -105,7 +110,6 @@ export class MissionsCenterPage extends PureComponent {
     return this.renderData();
   }
   //=========================== 自定义方法 =========================
-
   //获取数据
   fetchData() {
     url = "article/list/" + this.state.page + "/json";
@@ -181,7 +185,7 @@ export class MissionsCenterPage extends PureComponent {
 
   //显示FlatList
   renderData() {
-    console.log('lfj this.normalFilterItems',this.normalFilterItems)
+    console.log("lfj render this.normalFilterItems", this.normalFilterItems);
     return (
       <View style={styles.flatListContain}>
         <FlatList
@@ -201,7 +205,8 @@ export class MissionsCenterPage extends PureComponent {
           onSortDataSelectedCallback={(item, index) => {
             //排序item点击事件
             this.sortDataIndex = index;
-            console.log("lfj onSortDataSelectedCallback,", item);
+            this.setState({ a: 1 });
+            console.log("lfj onSortDataSelectedCallback,", item, this.sortView);
           }}
           sortDataObj={{
             sortData: ["综合排序", "距我最近", "评价最好"],

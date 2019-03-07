@@ -35,7 +35,7 @@ import BasicInfo from "./src/js/property/BasicInfo";
 import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCars";
 import IntegratedTaskInfo from "./src/js/property/IntegratedTaskInfo";
 import CarInfoScreen from "./src/js/property/CarInfoScreen";
-import TestPage from "./src/js/home/TestPage";
+import SearchViewPage from "./src/js/missionscenter/SearchViewPage";
 import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
 const TabNavigator = createBottomTabNavigator(
   {
@@ -70,7 +70,7 @@ const TabNavigator = createBottomTabNavigator(
 
 const StackContainer = createStackNavigator(
   {
-    TestPage: TestPage,
+    SearchViewPage: SearchViewPage,
     Feedback: FeedbackScreen,
     PolicyList: PolicyList,
     MissionsCenterPage: MissionsCenterPage,
