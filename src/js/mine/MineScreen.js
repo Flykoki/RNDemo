@@ -69,6 +69,16 @@ export class MineScreen extends Component {
           onPress: () => {
             this.props.navigation.navigate("SearchViewPage");
           }
+        },
+        { key: "9", type: "divider" },
+        {
+          key: "10",
+          type: "item",
+          name: "日历",
+          showArrow: "1",
+          onPress: () => {
+            this.props.navigation.navigate("CalenderScreen");
+          }
         }
       ]
     };

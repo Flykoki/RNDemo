@@ -31,12 +31,17 @@ import ModifyPwdScreen from "./src/js/mine/settings/ModifyPwdScreen";
 import QrCodeScreen from "./src/js/mine/personal/QrCodeScreen";
 import NotificationManager from "./src/js/mine/settings/notification/NotificationManager";
 import CityList from "./src/js/component/city/CityList";
-import BasicInfo from "./src/js/property/BasicInfo";
 import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCars";
-import IntegratedTaskInfo from "./src/js/property/IntegratedTaskInfo";
-import CarInfoScreen from "./src/js/property/CarInfoScreen";
 import SearchViewPage from "./src/js/missionscenter/SearchViewPage";
 import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
+import CalenderScreen from "./src/js/component/CalenderScreen";
+import {
+  InsuranceDetailScreen,
+  CarInfoScreen,
+  IntegratedTaskInfo,
+  TaskBasicInfo,
+  InvoiceInfoScreen
+} from "./src/js/property/TaskInfoDetailsScreen";
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomePage,
@@ -85,11 +90,14 @@ const StackContainer = createStackNavigator(
     QrCode: QrCodeScreen,
     NotificationManager: NotificationManager,
     CityList: CityList,
-    BasicInfo: BasicInfo,
+    TaskBasicInfo: TaskBasicInfo,
     InstallmentSalesOfNewCars: InstallmentSalesOfNewCars,
     IntegratedTaskInfo: IntegratedTaskInfo,
     CarInfoScreen: CarInfoScreen,
     TaskDetailScreen: TaskDetailScreen,
+    InsuranceDetailScreen: InsuranceDetailScreen,
+    InvoiceInfoScreen: InvoiceInfoScreen,
+    CalenderScreen: CalenderScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {
