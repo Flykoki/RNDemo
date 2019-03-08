@@ -5,151 +5,32 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBar
 } from "react-native";
+import PropTypes from "prop-types";
+import { stat } from "react-native-fs";
 
 const { width } = Dimensions.get("window");
 const dayItemWidth = width / 7;
 const rangedDate = [0, 0];
+const today = [0];
 
-export default class CalenderScreen extends Component {
-  static navigationOptions = {
-    title: "请选择日期",
-    headerLeft: null
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      xx: "",
-      date: [
-        {
-          year: 2019,
-          month: 3,
-          data: [11],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 4,
-          data: [11],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 5,
-          data: [11],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 6,
-          data: [11],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 7,
-          data: [11],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 8,
-          data: [11],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 9,
-          data: [1],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 10,
-          data: [1],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        {
-          year: 2019,
-          month: 11,
-          data: [1],
-          selected: 0,
-          onDayPress: this._onDayPressed.bind(this)
-        },
-        { year: 2019, month: 12, data: [1], selected: 0 },
-        { year: 2020, month: 1, data: [1], selected: 0 },
-        { year: 2020, month: 2, data: [1], selected: 0 },
-        { year: 2020, month: 3, data: [1], selected: 0 },
-        { year: 2020, month: 4, data: [1], selected: 0 }
-      ]
-    };
-  }
-
-  _onDayPressed(pressDay) {
-    if (rangedDate[0] === pressDay) {
-      rangedDate[0] = 0;
-      rangedDate[1] = 0;
-    } else if (
-      (rangedDate[0] != 0 && rangedDate[1] != 0) ||
-      (rangedDate[0] === 0 && rangedDate[1] === 0)
-    ) {
-      rangedDate[0] = pressDay;
-      rangedDate[1] = 0;
-    } else if (rangedDate[0] != 0 && rangedDate[1] === 0) {
-      rangedDate[1] = pressDay;
-    }
-    this.setState({ xx: "aaa" });
-  }
-
-  _renderListItem({ item, index, section }) {
-    return <MonthPanel section={section} />;
-  }
-
-  _renderListHeader({ section: { year, month, clear } }) {
-    return (
-      <View style={styles.sectionHeaderContainer}>
-        <Text style={styles.sectionHeaderText}>{`${year}年${month}月`}</Text>
-        <View style={styles.sectionHeaderDivider} />
-      </View>
-    );
-  }
-
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <WeekPanel />
-        <SectionList
-          renderItem={this._renderListItem}
-          renderSectionHeader={this._renderListHeader}
-          sections={this.state.date}
-          keyExtractor={(item, index) => item + index}
-          stickySectionHeadersEnabled={true}
-        />
-      </View>
-    );
-  }
-}
+const PubSub = require("pubsub-js");
 
 class MonthPanel extends Component {
   constructor(props) {
     super(props);
     this.state = { days: [] };
+    this.daysItems = [];
+    this._initData();
+
+    this.firstDayInWeek = 0;
   }
 
-  firstDayInWeek;
   _initData() {
     year = this.props.section.year;
-    month = this.props.section.month - 1;
+    month = this.props.section.month;
     date = new Date();
 
     YEAR = date.getFullYear();
@@ -162,37 +43,83 @@ class MonthPanel extends Component {
     date.setMonth(this.props.section.month - 1); //把当前月份设为某月
     date.setDate(1);
 
-    firstDayInWeek = date.getDay();
+    this.firstDayInWeek = date.getDay();
     days = [];
-    isCurrentMonth = month === MONTH && year === YEAR;
-    yearNMonth = year * 10000 + month * 100;
+    this.state.yearNMonth = year * 10000 + month * 100;
     for (i = 0; i < monthTotalDate; i++) {
-      value = yearNMonth + i + 1;
-      current = "normal";
-      if (isCurrentMonth && i < DAY - 1) {
-        current = "unavailable";
-      } else if (value === rangedDate[0]) {
-        current = "start";
-      } else if (value === rangedDate[1]) {
-        current = "end";
-      } else if (value < rangedDate[1] && value > rangedDate[0]) {
-        current = "contain";
-      }
       days.push({
         day: i + 1,
-        status: current,
-        today: isCurrentMonth && i === DAY - 1
+        yearNMonth: this.state.yearNMonth,
+        holiday: this._getHoliday(month, i + 1),
+        firstDayInWeek: this.firstDayInWeek,
+        onDayPress: this.props.section.onDayPress
       });
     }
-    daysItems = [];
+
     days.forEach(element => {
-      daysItems.push(this._renderDayItem(element));
+      this.daysItems.push(this._renderDayItem(element));
     });
-    return daysItems;
+    return this.daysItems;
   }
 
-  _renderDayItem({ day, status, today, holiday }) {
-    switch (status) {
+  _getHoliday(month, day) {
+    if (month === 1 && day === 1) return "元旦";
+
+    if (month === 5 && day === 1) return "劳动节";
+
+    if (month === 10 && day === 1) return "国庆";
+    return "";
+  }
+
+  _renderDayItem(day) {
+    return <DayItem day={day} />;
+  }
+
+  render() {
+    return (
+      <View style={[styles.monthContainer, this.props.style]}>
+        {this.daysItems}
+      </View>
+    );
+  }
+}
+
+class DayItem extends Component {
+  constructor(props) {
+    super(props);
+    PubSub.subscribe("MY TOPIC", this.refreshItems.bind(this));
+  }
+
+  refreshItems(msg, data) {
+    dayData = this.props.day;
+    day = dayData.yearNMonth + dayData.day;
+    if (rangedDate[0] === day || rangedDate[1] === day) {
+      this.setState({});
+    } else if (rangedDate[0] < day && rangedDate[1] > day) {
+      this.setState({});
+    } else if (this.current != "normal" && this.current != "unavailable") {
+      this.setState({});
+    }
+  }
+
+  _getItemStatus(day) {
+    value = day.yearNMonth + day.day;
+    this.current = "normal";
+    if (value === today[0]) {
+      day.today = true;
+    }
+
+    if (value < today[0]) {
+      this.current = "unavailable";
+    } else if (value === rangedDate[0]) {
+      this.current = "start";
+    } else if (value === rangedDate[1]) {
+      this.current = "end";
+    } else if (value < rangedDate[1] && value > rangedDate[0]) {
+      this.current = "contain";
+    }
+
+    switch (this.current) {
       case "start":
         containerStyle = styles.dayStartContainer;
         dayStyle = styles.dayStart;
@@ -220,33 +147,43 @@ class MonthPanel extends Component {
         dayHoliday = styles.holidayNormal;
         break;
     }
+  }
+  render() {
+    const dayData = this.props.day;
+    this._getItemStatus(dayData);
 
     return (
       <TouchableOpacity
         style={[
           containerStyle,
-          { marginLeft: day === 1 ? dayItemWidth * firstDayInWeek : 0 }
+          {
+            marginLeft:
+              dayData.day === 1 ? dayItemWidth * dayData.firstDayInWeek : 0
+          }
         ]}
         onPress={() => {
-          this.props.section.onDayPress(
-            this.props.section.year * 10000 +
-              (this.props.section.month - 1) * 100 +
-              day
-          );
+          ynm = dayData.yearNMonth;
+          ynd = ynm + dayData.day;
+          if (rangedDate[0] === ynd) {
+            rangedDate[0] = 0;
+            rangedDate[1] = 0;
+          } else if (
+            (rangedDate[0] != 0 && rangedDate[1] != 0) ||
+            (rangedDate[0] === 0 && rangedDate[1] === 0) ||
+            ynd < rangedDate[0]
+          ) {
+            rangedDate[0] = ynd;
+            rangedDate[1] = 0;
+          } else if (rangedDate[0] != 0 && rangedDate[1] === 0) {
+            rangedDate[1] = ynd;
+          }
+          PubSub.publish("MY TOPIC", "hello world!");
         }}
       >
-        <Text style={dayHoliday}>{holiday}</Text>
-        <Text style={dayStyle}>{day}</Text>
-        <Text style={dayHoliday}>{today ? "今天" : ""}</Text>
+        <Text style={dayHoliday}>{dayData.holiday}</Text>
+        <Text style={dayStyle}>{dayData.day}</Text>
+        <Text style={dayHoliday}>{dayData.today ? "今天" : ""}</Text>
       </TouchableOpacity>
-    );
-  }
-
-  render() {
-    return (
-      <View style={[styles.monthContainer, this.props.style]}>
-        {this._initData()}
-      </View>
     );
   }
 }
@@ -280,6 +217,241 @@ class WeekPanel extends Component {
     );
   }
 }
+
+export default class CalenderScreen extends Component {
+  static navigationOptions = {
+    title: "请选择日期",
+    headerLeft: null
+  };
+
+  constructor(props) {
+    super(props);
+    this.panels = new Map();
+  }
+
+  _initData(cYear, cMonth) {
+    startYear = this.props.navigation.getParam("startYear");
+    startMonth = this.props.navigation.getParam("startMonth");
+    endYear = this.props.navigation.getParam("endYear");
+    endMonth = this.props.navigation.getParam("endMonth");
+    limit = this.props.navigation.getParam("limit");
+
+    if (startYear) {
+      if (endYear) {
+      } else if (limit) {
+        month = startMonth + (limit % 12) - 1;
+        if (month > 12) {
+          endMonth = month - 12;
+          endYear = startYear + Math.floor(limit / 12) + 1;
+        } else {
+          endMonth = month;
+          endYear = startYear + Math.floor(limit / 12);
+        }
+      } else if (startYear < cYear) {
+        endYear = cYear;
+        if (startMonth) {
+          endMonth = startMonth - 1;
+        } else {
+          startMonth = 1;
+          endMonth = 12;
+        }
+      } else if (startYear === cYear) {
+        if (startMonth) {
+          if (startMonth < cMonth) {
+            endYear = cYear;
+            endMonth = cMonth;
+          } else if (cMonth < startMonth) {
+            endYear = cYear;
+            endMonth = startMonth;
+            startMonth = cMonth;
+          } else {
+            endYear = startYear + 1;
+            endMonth = startMonth - 1;
+          }
+        } else {
+          endYear = startYear + 1;
+          endMonth = startMonth - 1;
+        }
+      }
+    } else {
+      if (endYear) {
+        if (!limit) {
+          limit = 12;
+        }
+        if (!endMonth) {
+          endMonth = 12;
+        }
+        month = endMonth - (limit % 12);
+        if (month < 1) {
+          endMonth = 12 + month;
+          startYear = endYear - Math.floor(limit / 12) - 1;
+        } else {
+          endMonth = month;
+          startYear = endYear - Math.floor(limit / 12);
+        }
+      } else {
+        if (!limit) {
+          limit = 12;
+        }
+        startYear = cYear;
+        startMonth = cMonth;
+        month = cMonth + (limit % 12);
+        if (month > 12) {
+          endMonth = month - 12;
+          endYear = startYear + Math.floor(limit / 12) + 1;
+        } else {
+          endMonth = month;
+          endYear = startYear + Math.floor(limit / 12);
+        }
+      }
+    }
+
+    this.setState({
+      date: this._fetchMonth(startYear, startMonth, endYear, endMonth)
+    });
+  }
+
+  _fetchMonth(startYear, startMonth, endYear, endMonth) {
+    console.log(
+      "_fetchMonth() startYear = ",
+      startYear,
+      " startMonth = ",
+      startMonth,
+      " endYear = ",
+      endYear,
+      " endMonth = ",
+      endMonth
+    );
+    data = [];
+    for (y = startYear; y <= endYear; y++) {
+      m = y === startYear ? startMonth : 1;
+      for (; m <= 12; m++) {
+        if (y === endYear && m === endMonth) {
+          data.push({ year: y, month: m, data: [11] });
+          break;
+        }
+        data.push({ year: y, month: m, data: [11] });
+      }
+    }
+    return data;
+  }
+
+  componentWillMount() {
+    param = this.props.navigation.getParam("startYear");
+    console.log("componentWillMount() param = ", param);
+    date = new Date();
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    today[0] = year * 10000 + month * 100 + date.getDate();
+    console.log("mount today = " + today);
+    this._initData(year, month);
+  }
+
+  componentWillUnmount() {
+    today[0] = 0;
+    rangedDate[0] = 0;
+    rangedDate[1] = 0;
+  }
+
+  _renderListItem({ item, index, section }) {
+    return <MonthPanel section={section} />;
+  }
+
+  _renderListHeader({ section: { year, month, clear } }) {
+    return (
+      <View style={styles.sectionHeaderContainer}>
+        <Text style={styles.sectionHeaderText}>{`${year}年${month}月`}</Text>
+        <View style={styles.sectionHeaderDivider} />
+      </View>
+    );
+  }
+
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        <WeekPanel />
+        <SectionList
+          ref="monthList"
+          renderItem={this._renderListItem.bind(this)}
+          renderSectionHeader={this._renderListHeader}
+          sections={this.state.date}
+          keyExtractor={(item, index) => {
+            item + index;
+          }}
+          stickySectionHeadersEnabled={true}
+        />
+
+        <View style={styles.buttonPanel}>
+          <TouchableOpacity
+            style={[styles.buttonContainer, styles.cancelContainer]}
+            onPress={() => {
+              this.props.navigation.goBack();
+            }}
+          >
+            <Text style={styles.disableTextColor}>{"取消"}</Text>
+          </TouchableOpacity>
+
+          <ConfirmButton onPress={this._onConfirmPressed.bind(this)} />
+        </View>
+      </View>
+    );
+  }
+
+  _onConfirmPressed() {
+    confirm = this.props.navigation.getParam("onConfirm");
+    if (confirm) {
+      confirm(rangedDate);
+    }
+    this.props.navigation.goBack();
+  }
+}
+
+class ConfirmButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      enable: false
+    };
+  }
+  componentWillMount() {
+    PubSub.subscribe("MY TOPIC", this._updateState.bind(this));
+  }
+
+  _updateState() {
+    this.setState({ enable: rangedDate[0] != 0 && rangedDate[1] != 0 });
+  }
+
+  render() {
+    style = this.state.enable
+      ? styles.enableContainerColor
+      : styles.disableContainerColor;
+    textStyle = this.state.enable
+      ? styles.enableTextColor
+      : styles.disableTextColor;
+    return (
+      <TouchableOpacity
+        style={[this.props.style, styles.buttonContainer, style]}
+        activeOpacity={this.state.enable ? 0.5 : 1}
+        onPress={() => {
+          if (this.state.enable) {
+            this.props.onPress();
+          }
+        }}
+      >
+        <Text style={textStyle}>{"确认"}</Text>
+      </TouchableOpacity>
+    );
+  }
+}
+
+CalenderScreen.propTypes = {
+  startYear: PropTypes.number,
+  startMonth: PropTypes.oneOf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  endYear: PropTypes.number,
+  endMonth: PropTypes.oneOf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  limit: PropTypes.number
+};
 
 const styles = StyleSheet.create({
   weekPanel: {
@@ -374,6 +546,40 @@ const styles = StyleSheet.create({
   },
   holidayUnavailable: {
     fontSize: 10,
-    color: "#FFFFFF"
+    color: "#B2B2B2"
+  },
+  buttonPanel: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingBottom: 14,
+    paddingTop: 4
+  },
+  buttonContainer: {
+    height: 42,
+    width: 152,
+    borderRadius: 6,
+    alignItems: "center"
+  },
+  cancelContainer: {
+    borderWidth: 1,
+    borderColor: "#DDDDDD"
+  },
+  enableContainerColor: {
+    backgroundColor: "#F12E49"
+  },
+  disableContainerColor: {
+    backgroundColor: "#F6F6F6"
+  },
+  enableTextColor: {
+    color: "#FFFFFF",
+    textAlignVertical: "center",
+    textAlign: "center",
+    flex: 1
+  },
+  disableTextColor: {
+    color: "#666666",
+    textAlignVertical: "center",
+    textAlign: "center",
+    flex: 1
   }
 });

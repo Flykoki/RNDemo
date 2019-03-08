@@ -77,7 +77,11 @@ export class MineScreen extends Component {
           name: "日历",
           showArrow: "1",
           onPress: () => {
-            this.props.navigation.navigate("CalenderScreen");
+            this.props.navigation.navigate("CalenderScreen", {
+              onConfirm: item => {
+                console.log("item = ", item);
+              }
+            });
           }
         }
       ]
