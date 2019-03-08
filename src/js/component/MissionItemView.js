@@ -26,10 +26,10 @@ export default class MissionItemView extends Component {
         {/* ==================== title ========================== */}
         <View style={styles.title}>
           <Text style={styles.missionName}>
-            {missionItem.missionName + missionItem.missionNumber}
+            {missionItem.taskGroupName + missionItem.taskGroupCode}
           </Text>
           <Text style={styles.missionCreateTime}>
-            {"创建时间:" + missionItem.missionCreateTime}
+            {"创建时间:" + missionItem.createTime}
           </Text>
         </View>
         {this._getDividerView()}
@@ -38,39 +38,39 @@ export default class MissionItemView extends Component {
           activeOpacity={1}
           style={styles.content}
           onPress={() => {
-            this._missionContentOnPress(missionItem);
+            this.props.onTaskGroupPress
+              ? this.props.onTaskGroupPress(missionItem)
+              : this._missionContentOnPress(missionItem);
           }}
         >
           <View style={styles.sourceNumber}>
             <Text style={styles.contentTextKey}>来源单号</Text>
             <Text style={styles.contentTextValue}>
-              {missionItem.sourceNumber}
+              {missionItem.sourceCode}
             </Text>
-            <Text
-              style={this._getMissionStatusStyle(missionItem.missionStatus)}
-            >
-              {missionItem.missionStatus}
+            <Text style={this._getMissionStatusStyle(missionItem.status)}>
+              {missionItem.status}
             </Text>
           </View>
           <View style={styles.sourceNumber}>
             <Text style={styles.contentTextKey}>车架号</Text>
-            <Text style={styles.contentTextValue}>{missionItem.carFrame}</Text>
+            <Text style={styles.contentTextValue}>{missionItem.frameNo}</Text>
           </View>
           <View style={styles.vehicleModel}>
             <Text style={styles.contentTextKey}>车型</Text>
             <VehicleInofPanel
               style={styles.contentTextValue}
-              vehicle={missionItem.vehicleModel}
-              vehicleType={missionItem.vehicleCondition}
-              vehicleColor={missionItem.vehicleColor}
+              vehicle={missionItem.modeName}
+              vehicleType={missionItem.vehicleTypeName}
+              vehicleColor={missionItem.exteriorColor}
             />
           </View>
         </TouchableOpacity>
 
         {/* ==================== footer ========================== */}
-        {this._showConcurrentMissions(missionItem.missionStatus) &&
+        {this._showConcurrentMissions(missionItem.status) &&
           this._getDividerView()}
-        {this._showConcurrentMissions(missionItem.missionStatus) &&
+        {this._showConcurrentMissions(missionItem.status) &&
           this._getConcurrentMissionViews(missionItem)}
       </View>
     );
@@ -95,7 +95,7 @@ export default class MissionItemView extends Component {
    * 显示并行任务集合
    */
   _getConcurrentMissionViews = missionItem => {
-    let missionArray = missionItem.concurrentMissionArray;
+    let missionArray = missionItem.taskList;
     return missionArray.map((item, index, missionArray) => {
       return this._getConcurrentMissionItemView(
         item,
@@ -108,7 +108,7 @@ export default class MissionItemView extends Component {
    * 显示并行任务中的item
    */
   _getConcurrentMissionItemView = (item, index, total) => {
-    // console.log("concurrent item index:", index, total);
+    console.log("lfj concurrent item index:", index, total);
     return (
       <View style={{ flexDirection: "column", justifyContent: "center" }}>
         <TouchableOpacity
@@ -122,10 +122,10 @@ export default class MissionItemView extends Component {
             source={require("../../res/img/icon_app_guide.png")}
           />
           <Text style={styles.concurrentMissionItemUpdateTime}>
-            {item.taskUpdateTime}
+            {item.modifyTime}
           </Text>
           <Text style={styles.concurrentMissionItemTask}>
-            {item.taskName + item.taskNumber + item.taskStatus}
+            {item.taskName + item.taskCode + item.taskStatus}
           </Text>
           <Image
             resizeMode={"contain"}

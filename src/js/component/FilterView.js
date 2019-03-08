@@ -13,6 +13,7 @@ import {
 
 export default class FilterView extends Component {
   animationLoading;
+  _navigation;
   constructor(props) {
     super(props);
     // console.log("lfj this.props:", this.props);
@@ -27,6 +28,7 @@ export default class FilterView extends Component {
         ? this.props.normalFilterMap
         : new Map()
     };
+    _navigation = this.props.navigation;
     animationLoading = Animated.timing(
       this.state.rotateVal, // 初始值
       {
@@ -91,7 +93,7 @@ export default class FilterView extends Component {
    */
   _initFilterViews = dataArray => {
     // console.log('lfj dataArray,',dataArray)
-    let items= dataArray.map((item, index, dataArray) => {
+    let items = dataArray.map((item, index, dataArray) => {
       return this._initFilterItem(item);
     });
     return items;
@@ -102,11 +104,11 @@ export default class FilterView extends Component {
    */
   _initFilterItem = item => {
     if (item.type === "normal") {
-      let items= this._initFilterItemNormal(item);
+      let items = this._initFilterItemNormal(item);
       return items;
     } else if (item.type === "date") {
-      let items= this._initFilterItemDate(item);
-      return items
+      let items = this._initFilterItemDate(item);
+      return items;
     }
     return null;
   };
@@ -144,19 +146,20 @@ export default class FilterView extends Component {
           onPress={() => {
             console.warn("calender 事件");
             //先将已选date数据清空
-            let calender = "1-2";
             tempMap.delete(itemTitle);
-            //todo启动日历控件选择时间
-            this._getDateFromCalenderView(calender);
-
-            //重新设置date数据
-            tempMap.set(itemTitle, calender);
-            // this.setState({
-            //   normalFilterMap: tempMap
-            // });
-            this.props.onNormalFilterCallback(tempMap);
-            //todo 到后台请求数据
-            this._getFilterResponse(tempMap);
+            // 启动日历控件选择时间
+            console.log('lfj start calender screen')
+            _navigation &&
+              this.props.navigation.navigate("CalenderScreen", {
+                onConfirm: item => {
+                  console.log("lfj item = ", item);
+                  tempMap.set(itemTitle, item[0] + "-" + item[1]);
+                  this.setState({ normalFilterMap: tempMap });
+                  this.props.onNormalFilterCallback(tempMap);
+                  //todo 到后台请求数据
+                  this._getFilterResponse(tempMap);
+                }
+              });
           }}
         >
           {lastDate && this._lastDateIsCusDefined(lastDate, itemArray)
@@ -334,6 +337,7 @@ export default class FilterView extends Component {
             });
             this.props.onNormalFilterCallback &&
               this.props.onNormalFilterCallback(temp);
+              // todo
             this._getFilterResponse(temp);
           }}
         >

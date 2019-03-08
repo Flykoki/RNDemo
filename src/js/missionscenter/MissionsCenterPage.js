@@ -19,11 +19,11 @@ import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
-import SearchViewPage from "./SearchViewPage";
+import { RootView } from "../component/CommonView";
 
 let _navigation;
 let imageUrlIndex = 0;
-const windowWidth = Dimensions.get("window").width;
+const width = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 const topIndicatorHeight = 25;
 export class MissionsCenterPage extends PureComponent {
@@ -48,7 +48,7 @@ export class MissionsCenterPage extends PureComponent {
           onPress={() => {
             //todo 弹出搜索框
             console.warn("go search");
-            _navigation.navigate('SearchViewPage')
+            _navigation.navigate("SearchViewPage");
           }}
           style={styles.searchButtonStyle}
         >
@@ -113,7 +113,8 @@ export class MissionsCenterPage extends PureComponent {
   //=========================== 自定义方法 =========================
   //获取数据
   fetchData() {
-    url = "article/list/" + this.state.page + "/json";
+    // url = "http://10.104.113.244:8888/app/mock/45/action/task/taskGroupList";
+    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
     let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
 
     fetchRequest(url, "GET")
@@ -129,26 +130,26 @@ export class MissionsCenterPage extends PureComponent {
           let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
 
           item.key = imageUrls[imageUrlIndex];
-          (item.missionName = "新车分期销售"),
-            (item.missionNumber = "ASDLK"),
-            (item.missionCreateTime = "11/11 09:22"),
-            (item.sourceNumber = "京P D2232"),
-            (item.missionStatus = missionStatus[random]),
-            (item.carFrame = "LAKSDJF23284RFJAL2323"),
-            (item.vehicleModel = "宝沃BXi7"),
-            (item.vehicleCondition = "新"),
-            (item.vehicleColor = "银色"),
-            (item.concurrentMissionArray = [
+          (item.taskGroupName = "新车分期销售"),
+            (item.taskGroupCode = "ASDLK"),
+            (item.createTime = "11/11 09:22"),
+            (item.sourceCode = "京P D2232"),
+            (item.status = missionStatus[random]),
+            (item.frameNo = "LAKSDJF23284RFJAL2323"),
+            (item.modeName = "宝沃BXi7"),
+            (item.vehicleTypeName = "新"),
+            (item.exteriorColor = "银色"),
+            (item.taskList = [
               {
-                taskUpdateTime: "11/12 12:22",
+                modifyTime: "11/12 12:22",
                 taskName: "车辆出库",
-                taskNumber: "CK239",
+                taskCode: "CK239",
                 taskStatus: "(待出库)"
               },
               {
-                taskUpdateTime: "11/12 12:22",
+                modifyTime: "11/12 12:22",
                 taskName: "车辆出库",
-                taskNumber: "CK239",
+                taskCode: "CK239",
                 taskStatus: "(待出库)"
               }
             ]),
@@ -181,6 +182,7 @@ export class MissionsCenterPage extends PureComponent {
           errorInfo: error
         });
       })
+      .finally(this.pull && this.pull.finishRefresh())
       .done();
   }
 
@@ -198,7 +200,6 @@ export class MissionsCenterPage extends PureComponent {
           onEndReachedThreshold={0.1}
           refreshing={this.state.isRefreshing}
           onRefresh={this.handleRefresh} //因为涉及到this.state
-          // ItemSeparatorComponent={this._separator}
           keyExtractor={this._keyExtractor}
         />
         <SortWithFilterView
@@ -206,13 +207,14 @@ export class MissionsCenterPage extends PureComponent {
           onSortDataSelectedCallback={(item, index) => {
             //排序item点击事件
             this.sortDataIndex = index;
-            this.setState({ a: 1 });
-            console.log("lfj onSortDataSelectedCallback,", item, this.sortView);
+            // this.setState({ a: 1 });
+            console.log("lfj onSortDataSelectedCallback,", item, index);
           }}
           sortDataObj={{
             sortData: ["综合排序", "距我最近", "评价最好"],
-            index: 1
+            sortDataIndex: 1
           }}
+          navigation={_navigation}
           onFilterResponseCallback={response => {
             this.filterResponse = response;
             console.log("lfj 筛选结果", this.filterResponse);
@@ -245,6 +247,16 @@ export class MissionsCenterPage extends PureComponent {
       </View>
     );
   }
+  //下拉释放回调
+  _onPullRelease = () => {
+    this.setState({
+      page: 1,
+      showHeader: 1,
+      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
+      dataArray: []
+    });
+    this.fetchData();
+  };
   //key
   _keyExtractor = (item, index) => item.key;
   //item点击事件
@@ -255,43 +267,16 @@ export class MissionsCenterPage extends PureComponent {
 
   //返回itemView
   _renderItemView({ item }) {
-    let imageKey = item.key;
-    return <MissionItemView missionItem={item} />;
-    //跳转并传值
-    // return (
-    //   // <TouchableNativeFeedback onPress={() => {Actions.news({'url':item.url})}} >////切记不能带（）不能写成gotoDetails()
-    //   <TouchableNativeFeedback onPress={this._onPress}>
-    //     <View style={styles.flatListItemWithShadow}>
-    //       <Image
-    //         style={{
-    //           width: 100,
-    //           height: 90,
-    //           marginLeft: 15,
-    //           marginTop: 16,
-    //           marginBottom: 15.6
-    //         }}
-    //         source={{ uri: imageKey }}
-    //       />
-    //       <View
-    //         style={{
-    //           flex: 1,
-    //           flexDirection: "column",
-    //           justifyContent: "space-between"
-    //         }}
-    //       >
-    //         <Text style={styles.title}>{item.title}</Text>
-    //         <Text
-    //           style={{
-    //             marginLeft: 15,
-    //             marginBottom: 15.6
-    //           }}
-    //         >
-    //           {item.niceDate}
-    //         </Text>
-    //       </View>
-    //     </View>
-    //   </TouchableNativeFeedback>
-    // );
+    return (
+      <MissionItemView
+        onTaskGroupPress={pressItem => {
+          _navigation.navigate("InstallmentSalesOfNewCars", {
+            data: pressItem
+          });
+        }}
+        missionItem={item}
+      />
+    );
   }
 
   //滑动到底部
@@ -431,7 +416,6 @@ export class MissionsCenterPage extends PureComponent {
   renderLoadingView() {
     return (
       <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
         <ActivityIndicator animating={true} color="blue" size="large" />
       </View>
     );
@@ -440,13 +424,12 @@ export class MissionsCenterPage extends PureComponent {
   renderErrorView() {
     return (
       <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
         <Text>{this.state.errorInfo}</Text>
       </View>
     );
   }
   //header在不同的pullstate下的展示
-  onPullStateChangeHeight = (pullState, moveHeight) => {
+  _onPullStateChangeHeight = (pullState, moveHeight) => {
     if (pullState == "pulling") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
@@ -482,7 +465,7 @@ export class MissionsCenterPage extends PureComponent {
   };
 
   //header view
-  topIndicatorRender = () => {
+  _topIndicatorRender = () => {
     return (
       <View
         style={{

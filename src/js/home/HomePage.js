@@ -66,7 +66,7 @@ export class HomePage extends PureComponent {
 
   //获取数据
   fetchData() {
-    url = "article/list/" + this.state.page + "/json";
+    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
 
     fetchRequest(url, "GET")
       .then(responseData => {

@@ -19,8 +19,8 @@ export default class SortWithFilterView extends Component {
     super(props);
     this.state = {
       showSortDataPanel: false, //排序面板是否显示
-      lastSortDataIndex: this.props.sortDataIndex
-        ? this.props.sortDataIndex
+      lastSortDataIndex: this.props.sortDataObj.sortDataIndex
+        ? this.props.sortDataObj.sortDataIndex
         : -1, //默认选中排序项
       filterResponse: [], //筛选结果
       normalFilterPress: false, //筛选title点击状态
@@ -155,6 +155,7 @@ export default class SortWithFilterView extends Component {
         <FilterView
           style={this.props.filterViewStyle}
           data={this.props.filterData}
+          navigation={this.props.navigation}
           onFilterResponseCallback={response => {
             this.setState({ filterResponse: response });
             this.props.onFilterResponseCallback &&
@@ -172,6 +173,11 @@ export default class SortWithFilterView extends Component {
       </TouchableOpacity>
     );
   };
+
+  /**
+   * 自定义日期点击事件
+   */
+  _onCalenderPress=()=>{}
 
   /**
    * 显示排序面板

@@ -367,6 +367,7 @@ export default class CalenderScreen extends Component {
   }
 
   render() {
+    console.log("start render calender screen");
     return (
       <View style={{ flex: 1 }}>
         <StatusBar barStyle="dark-content" backgroundColor="white" />

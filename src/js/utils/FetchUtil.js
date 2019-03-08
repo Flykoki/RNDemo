@@ -20,7 +20,7 @@ export const fetchRequest = (url, method, params) => {
   if (!params) {
     //如果网络请求中没有参数
     return new Promise(function(resolve, reject) {
-      fetch(common_url + url, {
+      fetch( url, {
         method: method
         // headers: header
       })
@@ -42,7 +42,7 @@ export const fetchRequest = (url, method, params) => {
     //如果网络请求中带有参数
     console.log('linfj fetch with params');
     return new Promise(function(resolve, reject) {
-        detailUrl= common_url + url;
+        detailUrl=  url;
         console.log('linfj url:'+detailUrl);
       fetch(detailUrl, {
         method: method,

@@ -65,15 +65,31 @@ export default class SearchView extends Component {
             <TextInput
               ref={c => (this.textInputRef = c)}
               style={styles.topInputText}
+              autoFocus={true}
               maxLength={20}
               placeholder={"请输入车架号或车牌号"}
               selectionColor={"#CCCCCC"}
               onSubmitEditing={Keyboard.dismiss}
               onChangeText={text => {
+                console.log("lfj text", text);
                 this.setState({ searchText: text, panelState: 1 });
-                this.props.onChangeText
-                  ? this.props.onChangeText(text)
-                  : this._onSearchTextChange(text);
+                if (text) {
+                  this.props.onChangeText
+                    ? this.props.onChangeText(text)
+                    : this._onSearchTextChange(text);
+                } else {
+                  this.state.historyData.length > 0
+                    ? this.setState({
+                        searchText: "",
+                        panelState: 4,
+                        searchResponseData: []
+                      })
+                    : this.setState({
+                        searchText: "",
+                        panelState: 0,
+                        searchResponseData: []
+                      });
+                }
               }}
               value={this.state.searchText}
             />
@@ -105,9 +121,7 @@ export default class SearchView extends Component {
             取消
           </Text>
         </View>
-        {this.state.historyData.length === 0 && (
-          <View style={styles.topDivider} />
-        )}
+        {this.state.panelState !== 4 && <View style={styles.topDivider} />}
         {this._getPanelViewFromPanelState(this.state.panelState)}
       </View>
     );
@@ -152,13 +166,14 @@ export default class SearchView extends Component {
       console.log(e);
     }
   };
-
+  lastUpdatePanelState = this.props.updatePanelState; //用户保存外部传入的panel状态
   /**
    * 根据props更新state
    */
   _updateStateFromProps = props => {
-    props.updatePanelState
-      ? (this.state.panelState = props.updatePanelState)
+    this.lastUpdatePanelState !== props.updatePanelState
+      ? (this.state.panelState = props.updatePanelState) &&
+        (this.lastUpdatePanelState = props.updatePanelState)
       : {};
     this.state.searchResponseData = props.searchResponseData;
     props.selectedItem.data !== undefined
@@ -271,7 +286,7 @@ export default class SearchView extends Component {
         </View>
         <FlatList
           style={styles.searchHistoryList}
-          data={this.state.historyData.reverse()}
+          data={this._getData(this.state.historyData, 8)}
           renderItem={this._renderHistoryListItem}
         />
       </View>
@@ -279,20 +294,39 @@ export default class SearchView extends Component {
   };
 
   /**
+   * 获取去重后的最近 n 个搜索历史记录
+   */
+  _getData = (data, count) => {
+    let obj = {};
+    //去重
+    data = data.reduce((cur, next) => {
+      obj[next.data.key] ? "" : (obj[next.data.key] = true && cur.push(next));
+      return cur;
+    }, []);
+    data.reverse();
+    //截取前count 个数据
+    data = data.slice(0, count);
+    return data;
+  };
+
+  /**
    * render 历史记录item
    */
   _renderHistoryListItem = ({ item }) => {
     let value = item.data.value;
-    let showHistoryData = this.state.showHistoryData;
-    if (showHistoryData.size < 8 && !showHistoryData.has(value)) {
-      showHistoryData.add(value);
-      return this._renderHistoryListItemView(value);
-    } else {
-      return null;
-    }
+    return this._renderHistoryListItemView(value);
+    // let showHistoryData = this.state.showHistoryData;
+    // console.log("lfj current history", showHistoryData, item);
+    // if (showHistoryData.size < 8 && !showHistoryData.has(value)) {
+    //   showHistoryData.add(value);
+    //   return this._renderHistoryListItemView(value);
+    // } else {
+    //   return null;
+    // }
   };
 
   _renderHistoryListItemView = value => {
+    console.log("lfj render history item ", value);
     return (
       <TouchableOpacity
         activeOpacity={1}
@@ -382,7 +416,17 @@ export default class SearchView extends Component {
    */
   _onTextInputRightImgPress = () => {
     this.state.searchText.length > 0
-      ? this.setState({ searchText: "", panelState: 0, searchResponseData: [] })
+      ? this.state.historyData.length > 0
+        ? this.setState({
+            searchText: "",
+            panelState: 4,
+            searchResponseData: []
+          })
+        : this.setState({
+            searchText: "",
+            panelState: 0,
+            searchResponseData: []
+          })
       : console.warn("start scan view");
   };
 }

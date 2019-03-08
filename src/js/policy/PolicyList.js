@@ -325,7 +325,7 @@ export class PolicyList extends PureComponent {
 
   //获取数据
   fetchData() {
-    url = "article/list/" + this.state.page + "/json";
+    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
     fetchRequest(url, "GET")
       .then(responseData => {
         let data = responseData.data; //获取json 数据并存在data数组中

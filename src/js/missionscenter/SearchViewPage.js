@@ -49,6 +49,7 @@ export default class SearchViewPage extends Component {
       <View>
         <SearchView
           ref="confirmPassText"
+          placeholder={"请输入车架号或车牌号"}
           onCancelCallback={() => {
             _navigation.goBack();
           }}
@@ -61,6 +62,7 @@ export default class SearchViewPage extends Component {
             console.warn("lfj test page get history item", item);
             this.setState({ updatePanelState: 2 });
           }}
+          searchType={0}
           searchResponseData={this.state.searchResponseData}
           selectedItem={this.state.selectedItem}
           renderItem={this._renderItem}
@@ -70,24 +72,33 @@ export default class SearchViewPage extends Component {
     );
   }
 
+  /**
+   * 搜索框文本变化事件
+   */
   _onChangeText = text => {
-    this.setState({ updatePanelState: 1 });
-    clearTimeout(this.timerId); //如搜索的内容变化在1秒之中，可以清除变化前的fetch请求，继而减少fetch请求。但不能中断fetch请求
-    this.timerId = setTimeout(() => {
-      let random = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
-      let result = [];
-      for (let i = 0; i < random; i++) {
-        result.push({ key: text + i, value: text + i });
-      }
-      this.setState({ updatePanelState: 3, searchResponseData: result });
-    }, 500); //让每次要进行fetch请求时先延迟1秒在进行
+    if (text) {
+      this.setState({ updatePanelState: 1 });
+      clearTimeout(this.timerId); //如搜索的内容变化在1秒之中，可以清除变化前的fetch请求，继而减少fetch请求。但不能中断fetch请求
+      this.timerId = setTimeout(() => {
+        let random = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
+        let result = [];
+        for (let i = 0; i < random; i++) {
+          result.push({ key: text + i, value: text + i });
+        }
+        console.log("lfj random result", result);
+        this.setState({ updatePanelState: 3, searchResponseData: result });
+      }, 500); //让每次要进行fetch请求时先延迟1秒在进行
+    }
   };
 
+  /**
+   * 搜索结果flatLsit item view布局
+   */
   _renderItem = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          // [{type:historyType,data:itemData},{type:historyType,data:itemData}]
+          // [{type:searchType,data:itemData},{type:searchType,data:itemData}]
           this.setState({ selectedItem: { data: item } });
           _navigation.goBack();
         }}

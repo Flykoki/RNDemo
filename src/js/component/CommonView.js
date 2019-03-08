@@ -39,7 +39,7 @@ export class LoadingView extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={this.props.style}>
         <Animated.Image
           style={[
             styles.loadingImg,
@@ -92,7 +92,7 @@ export class RootView extends Component {
     return (
       <View style={this.props.style}>
         <StatusBar barStyle="dark-content" backgroundColor="white" />
-        {status === "loading" && <LoadingView />}
+        {status === "loading" && <LoadingView style={styles.container}/>}
 
         {status === "loadingFailed" && (
           <LoadFailedView
