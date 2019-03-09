@@ -11,6 +11,7 @@ import {
   StyleSheet
 } from "react-native";
 import BannerView from "../component/BannerView";
+import ListItem from '../component/ListItem';
 
 let _navigation;
 const screenWidth = Dimensions.get("window").width;
@@ -68,14 +69,18 @@ export default class StrategyPage extends PureComponent {
     return (
       <View style={styles.container}>
         <BannerView onBannerItemPress={() => console.warn("banner press")} />
-        <FlatList data={this.state.infos} renderItem={this._renderItem}/>
+        <FlatList
+          data={this.state.infos}
+          renderItem={this._renderItem}
+          numColumns={3}
+        />
       </View>
     );
   }
 
-
-  _renderItem=({item})=>{
-  }
+  _renderItem = ({ item }) => {
+      return<Text>{item.key}</Text>
+  };
 }
 const styles = StyleSheet.create({
   container: {
