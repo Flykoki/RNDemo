@@ -11,7 +11,7 @@ import {
   StyleSheet
 } from "react-native";
 import BannerView from "../component/BannerView";
-import ListItem from '../component/ListItem';
+import ListItem from "../component/ListItem";
 
 let _navigation;
 const screenWidth = Dimensions.get("window").width;
@@ -79,7 +79,12 @@ export default class StrategyPage extends PureComponent {
   }
 
   _renderItem = ({ item }) => {
-      return<Text>{item.key}</Text>
+    return (
+      <View style={styles.listItem}>
+        <Image source={item.icon} />
+        <Text>{item.key}</Text>
+      </View>
+    );
   };
 }
 const styles = StyleSheet.create({
@@ -93,6 +98,11 @@ const styles = StyleSheet.create({
   banner: {
     width: screenWidth,
     height: 172
+  },
+  listItem: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
   },
   bannerItemShow: { fontSize: 30, color: "green" },
   bannerItemHide: { fontSize: 40, color: "grey" },
