@@ -16,8 +16,8 @@ import {
 } from "react-navigation";
 import HomeStack from "./src/js/home/HomeStack";
 import { MineScreen } from "./src/js/mine/MineScreen";
-import { PolicyList } from "./src/js/policy/PolicyList";
-import { PolicyDetail } from "./src/js/policy/PolicyDetail";
+import { PolicyList } from "./src/js/strategy/policy/PolicyList";
+import { PolicyDetail } from "./src/js/strategy/policy/PolicyDetail";
 import { HomePage } from "./src/js/home/HomePage";
 import { MissionsCenterPage } from "./src/js/missionscenter/MissionsCenterPage";
 import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
@@ -35,6 +35,7 @@ import InstallmentSalesOfNewCars from "./src/js/property/InstallmentSalesOfNewCa
 import SearchViewPage from "./src/js/missionscenter/SearchViewPage";
 import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
 import CalenderScreen from "./src/js/component/CalenderScreen";
+import StrategyPage from "./src/js/strategy/StrategyPage";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -45,6 +46,7 @@ import {
 const TabNavigator = createBottomTabNavigator(
   {
     首页: HomePage,
+    咨询攻略: StrategyPage,
     我的: MineScreen
   },
   {
@@ -60,6 +62,10 @@ const TabNavigator = createBottomTabNavigator(
           iconName = focused
             ? require("./src/res/img/app_mine_tab_pre.png")
             : require("./src/res/img/app_mine_tab_nor.png");
+        } else if (routeName === "咨询攻略") {
+          iconName = focused
+            ? require("./src/res/img/app_strategy_tab_pre.png")
+            : require("./src/res/img/app_strategy_tab_nor.png");
         }
 
         return <Image style={{ width: 20, height: 18 }} source={iconName} />;
@@ -69,12 +75,13 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
     },
-    initialRouteName: "我的"
+    initialRouteName: "咨询攻略"
   }
 );
 
 const StackContainer = createStackNavigator(
   {
+    StrategyPage: StrategyPage,
     SearchViewPage: SearchViewPage,
     Feedback: FeedbackScreen,
     PolicyList: PolicyList,
@@ -102,7 +109,7 @@ const StackContainer = createStackNavigator(
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {
         const { index } = navigation.state;
-        if (index === 1) {
+        if (index == 1 || index === 2) {
           return { header: null };
         }
         if (index === 0) {

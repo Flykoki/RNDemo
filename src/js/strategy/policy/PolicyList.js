@@ -10,7 +10,7 @@ import {
   TouchableNativeFeedback,
   Dimensions
 } from "react-native";
-import { fetchRequest } from "../utils/FetchUtil";
+import { fetchRequest } from "../../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
 import reactNavigation from "react-navigation";
 const width = Dimensions.get("window").width;
@@ -30,7 +30,7 @@ export class PolicyList extends PureComponent {
           }}
           style={styles.backButtonStyle}
         >
-          <Image source={require("../../res/img/icon_back.png")} />
+          <Image source={require("../../../res/img/icon_back.png")} />
         </TouchableOpacity>
       )
     };
@@ -243,7 +243,7 @@ export class PolicyList extends PureComponent {
               marginTop: 16,
               marginBottom: 15.6
             }}
-            source={require("../../res/img/swiper_1.jpg")}
+            source={require("../../../res/img/swiper_1.jpg")}
             source={{ uri: item.key }}
           />
           <View
@@ -385,7 +385,7 @@ export class PolicyList extends PureComponent {
         <Image
           style={styles.hide}
           ref={c => (this.imgPulling = c)}
-          source={require("../../res/img/icon_arrow_down.png")}
+          source={require("../../../res/img/icon_arrow_down.png")}
         />
         <Text ref={c => (this.txtPulling = c)} style={styles.hide}>
           下拉可以刷新
@@ -393,7 +393,7 @@ export class PolicyList extends PureComponent {
         <Image
           style={styles.hide}
           ref={c => (this.imgPullok = c)}
-          source={require("../../res/img/icon_arrow_up.png")}
+          source={require("../../../res/img/icon_arrow_up.png")}
         />
         <Text ref={c => (this.txtPullok = c)} style={styles.hide}>
           释放立即刷新

@@ -108,7 +108,6 @@ export default class MissionItemView extends Component {
    * 显示并行任务中的item
    */
   _getConcurrentMissionItemView = (item, index, total) => {
-    console.log("lfj concurrent item index:", index, total);
     return (
       <View style={{ flexDirection: "column", justifyContent: "center" }}>
         <TouchableOpacity

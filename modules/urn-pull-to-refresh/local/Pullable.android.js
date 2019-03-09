@@ -58,16 +58,18 @@ export default class Pullable extends PullRoot {
       this.pullState = "pullrelease";
     }
 
-    //此时刷新完成
-    if (state == 4) {
-      this.pullState = "pullDone";
-    }
+    // //此时刷新完成
+    // if (state == 4) {
+    //   this.pullState = "pullDone";
+    // }
 
     //默认的设置
     this.defaultTopSetting();
     //告诉外界是否要锁住
     this.props.onPushing &&
       this.props.onPushing(this.pullState != "pullrelease");
+
+    console.log('lfj pull able state',this.pullState)
     //进行状态和下拉距离的回调
     this.props.onPullStateChangeHeight &&
       this.props.onPullStateChangeHeight(this.pullState, moveHeight);

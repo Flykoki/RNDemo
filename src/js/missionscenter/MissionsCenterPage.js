@@ -19,7 +19,7 @@ import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
-import { RootView } from "../component/CommonView";
+import { RootView, LoadingView, LoadFailedView } from "../component/CommonView";
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -47,7 +47,6 @@ export class MissionsCenterPage extends PureComponent {
         <TouchableOpacity
           onPress={() => {
             //todo 弹出搜索框
-            console.warn("go search");
             _navigation.navigate("SearchViewPage");
           }}
           style={styles.searchButtonStyle}
@@ -73,6 +72,7 @@ export class MissionsCenterPage extends PureComponent {
       updatePanelState: 0,
       searchResponseData: [],
       selectedItem: {},
+      status: "loading",
       //网络请求状态
       error: false,
       errorInfo: "",
@@ -107,6 +107,7 @@ export class MissionsCenterPage extends PureComponent {
       //请求失败view
       return this.renderErrorView();
     }
+
     //加载数据
     return this.renderData();
   }
@@ -170,7 +171,8 @@ export class MissionsCenterPage extends PureComponent {
           showFoot: foot,
           showHeader: 0,
           isRefreshing: false,
-          pageCount: data.pageCount
+          pageCount: data.pageCount,
+          status: "custom"
         });
         data = null; //重置为空
         dataBlob = null;
@@ -178,19 +180,40 @@ export class MissionsCenterPage extends PureComponent {
       .catch(error => {
         console.log("lfj setState response error");
         this.setState({
+          status: "loadingFailed",
           error: true,
           errorInfo: error
         });
       })
-      .finally(this.pull && this.pull.finishRefresh())
+      .finally(
+        console.log("lfj fetchData finally", this.pull) &&
+          this.pull &&
+          this.pull.finishRefresh()
+      )
       .done();
   }
 
   //显示FlatList
   renderData() {
-    console.log("lfj render this.normalFilterItems", this.normalFilterItems);
     return (
       <View style={styles.flatListContain}>
+        {/* <PullFlatList
+          ref={c => (this.pull = c)}
+          isContentScroll={true}
+          onPullStateChangeHeight={this._onPullStateChangeHeight}
+          topIndicatorRender={this._topIndicatorRender}
+          topIndicatorHeight={topIndicatorHeight}
+          style={{ flex: 1, width: width }}
+          // style={{ marginTop: this.topClickViewHight }}
+          onPullRelease={this._onPullRelease}
+          data={this.state.dataArray}
+          onEndReached={this._onEndReached}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={this._renderFooter}
+          refreshing={this.state.isRefreshing}
+          renderItem={this._renderItemView}
+          keyExtractor={this._keyExtractor}
+        /> */}
         <FlatList
           style={{ marginTop: this.topClickViewHight }}
           data={this.state.dataArray}
@@ -249,13 +272,7 @@ export class MissionsCenterPage extends PureComponent {
   }
   //下拉释放回调
   _onPullRelease = () => {
-    this.setState({
-      page: 1,
-      showHeader: 1,
-      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
-      dataArray: []
-    });
-    this.fetchData();
+    this.handleRefresh();
   };
   //key
   _keyExtractor = (item, index) => item.key;
@@ -415,21 +432,37 @@ export class MissionsCenterPage extends PureComponent {
   //加载等待页
   renderLoadingView() {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator animating={true} color="blue" size="large" />
-      </View>
+      <LoadingView
+        style={{
+          flex: 1,
+          alignContent: "center",
+          alignItems: "center",
+          paddingTop: 128
+        }}
+      />
     );
   }
   //加载失败view
   renderErrorView() {
     return (
-      <View style={styles.container}>
-        <Text>{this.state.errorInfo}</Text>
-      </View>
+      <LoadFailedView
+        tips={"加载失败"}
+        btnText={"重新加载"}
+        onPress={this._onLoadFailedButtonPress()}
+      />
     );
   }
+
+  /**
+   * 加载失败按钮点击事件
+   */
+  _onLoadFailedButtonPress = () => {
+    this._onPullRelease();
+  };
+
   //header在不同的pullstate下的展示
   _onPullStateChangeHeight = (pullState, moveHeight) => {
+    console.log("lfj pull state", pullState);
     if (pullState == "pulling") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });

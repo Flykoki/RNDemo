@@ -10,7 +10,7 @@ import {
   TouchableNativeFeedback,
   Dimensions
 } from "react-native";
-import { fetchRequest } from "../utils/FetchUtil";
+import { fetchRequest } from "../../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
 import reactNavigation from "react-navigation";
 const width = Dimensions.get("window").width;
@@ -30,7 +30,7 @@ export class PolicyDetail extends PureComponent {
           }}
           style={styles.backButtonStyle}
         >
-          <Image source={require("../../res/img/icon_back.png")} />
+          <Image source={require("../../../res/img/icon_back.png")} />
         </TouchableOpacity>
       )
     };
