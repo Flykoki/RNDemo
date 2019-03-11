@@ -89,6 +89,7 @@ export class MissionsCenterPage extends PureComponent {
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
@@ -289,6 +290,11 @@ export class MissionsCenterPage extends PureComponent {
         onTaskGroupPress={pressItem => {
           _navigation.navigate("InstallmentSalesOfNewCars", {
             data: pressItem
+          });
+        }}
+        onTaskListItemPress={dataItem => {
+          _navigation.navigate("TaskDetailScreen", {
+            data: dataItem
           });
         }}
         missionItem={item}

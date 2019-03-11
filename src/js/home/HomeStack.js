@@ -15,6 +15,7 @@ const AppContainer = createAppContainer(HomeNavigator);
 export default class HomeStack extends Component {
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setTranslucent(false);//关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });

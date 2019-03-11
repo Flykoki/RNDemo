@@ -89,6 +89,7 @@ export class MineScreen extends Component {
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setTranslucent(false);
       StatusBar.setBarStyle("light-content");
       StatusBar.setBackgroundColor("#F1314B");
     });

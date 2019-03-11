@@ -35,11 +35,14 @@ export default class BannerView extends Component {
         ++this.state.currentPage == this.state.data.length
           ? 0
           : this.state.currentPage;
-      this.refs.scrollView.scrollTo({
-        x: currentPage * screenWidth,
-        y: 0,
-        animated: true
-      });
+      this &&
+        this.refs &&
+        this.refs.scrollView.scrollTo({
+          x: currentPage * screenWidth,
+          y: 0,
+          animated: true
+        });
+
       this.setState({ currentPage: currentPage });
     }, scrollStep);
   };
@@ -52,8 +55,8 @@ export default class BannerView extends Component {
           onScrollBeginDrag={e => this._handleScrollBegin(e)}
           onScrollEndDrag={e => this._handleScrollEnd(e)}
           // 当一帧滚动结束
-            onMomentumScrollEnd={e => this._onAnimationEnd(e)}
-        //   onScroll={e => this._onScroll(e)}
+          onMomentumScrollEnd={e => this._onAnimationEnd(e)}
+          //   onScroll={e => this._onScroll(e)}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
         >
@@ -80,7 +83,7 @@ export default class BannerView extends Component {
     var currentPage = Math.floor(Math.ceil(offSetX) / Math.floor(screenWidth));
 
     // 3.更新状态机,重新绘制UI
-    console.log('lfj cur end',currentPage,this.state.data.length)
+    console.log("lfj cur end", currentPage, this.state.data.length);
     this.setState({
       currentPage: currentPage
     });
@@ -116,6 +119,7 @@ export default class BannerView extends Component {
     return this.state.data.map((item, index) => {
       return (
         <TouchableOpacity
+          style={{ width: screenWidth }}
           activeOpacity={1}
           onPress={() => {
             this.props.onBannerItemPress
@@ -124,14 +128,13 @@ export default class BannerView extends Component {
           }}
         >
           <Image
-            key={item}
             style={styles.banner}
             source={
-              typeof item === "number"
-                ? require("../../res/img/app_strategy_banner.png")
-                : item
+              item.banner
+                ? {uri:item.banner}
+                :  require("../../res/img/app_strategy_banner.png")
             }
-            resizeMode={"contain"}
+            resizeMode={"stretch"}
           />
         </TouchableOpacity>
       );

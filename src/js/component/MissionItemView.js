@@ -112,7 +112,11 @@ export default class MissionItemView extends Component {
       <View style={{ flexDirection: "column", justifyContent: "center" }}>
         <TouchableOpacity
           activeOpacity={1}
-          onPress={() => this._concurrentMissionOnPress(item)}
+          onPress={() => {
+            this.props.onTaskListItemPress
+              ? this.props.onTaskListItemPress(item)
+              : this._concurrentMissionOnPress(item);
+          }}
           style={styles.concurrentMissionItem}
         >
           <Image
@@ -181,7 +185,9 @@ export default class MissionItemView extends Component {
   };
 }
 MissionItemView.propTypes = {
-  missionItem: PropTypes.object // 任务集合item
+  missionItem: PropTypes.object, // 任务集合item
+  onTaskListItemPress: PropTypes.func ,// taskList item 点击事件
+  onTaskGroupPress: PropTypes.func // taskGroup content 点击事件
 };
 const styles = StyleSheet.create({
   container: {

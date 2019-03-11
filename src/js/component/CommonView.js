@@ -90,9 +90,9 @@ export class RootView extends Component {
   render() {
     const { status, failed, custom } = this.props;
     return (
-      <View style={this.props.style}>
+      <View style={[{ flex: 1 }, this.props.style]}>
         <StatusBar barStyle="dark-content" backgroundColor="white" />
-        {status === "loading" && <LoadingView style={styles.container}/>}
+        {status === "loading" && <LoadingView style={styles.container} />}
 
         {status === "loadingFailed" && (
           <LoadFailedView

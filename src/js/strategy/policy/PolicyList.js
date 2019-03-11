@@ -13,6 +13,8 @@ import {
 import { fetchRequest } from "../../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
 import reactNavigation from "react-navigation";
+import { RootView } from "../../component/CommonView";
+
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
 let _navigation;
@@ -41,10 +43,8 @@ export class PolicyList extends PureComponent {
     this.state = {
       page: 0,
       pageCount: 0,
-      isLoading: true,
       //网络请求状态
-      error: false,
-      errorInfo: "",
+      status: "loading",
       dataArray: [],
       showHeader: 0, //控制header 0:隐藏 1：显示加载中
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
@@ -53,9 +53,11 @@ export class PolicyList extends PureComponent {
     _navigation = this.props.navigation;
     // this._onPress.bind(this);
   }
+
   componentDidMount() {
     //设置statusbar样式
     this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
@@ -67,15 +69,19 @@ export class PolicyList extends PureComponent {
   };
 
   render() {
-    //第一次加载等待的view
-    if (this.state.isLoading && !this.state.error) {
-      return this._renderLoadingView();
-    } else if (this.state.error) {
-      //请求失败view
-      return this._renderErrorView();
-    }
-    //加载数据
-    return this._renderData();
+    return (
+      <RootView
+        status={this.state.status}
+        failed={{
+          tips: "加载失败",
+          onPress: () => {
+            this.fetchData();
+          },
+          btnText: "重新加载"
+        }}
+        custom={this._renderData()}
+      />
+    );
   }
 
   // ======================================= 自定义方法 =======================================
@@ -100,24 +106,6 @@ export class PolicyList extends PureComponent {
           <View style={{ flex: 1, height: 0.5, backgroundColor: "#cbcbcb" }} />
         )}
       />
-    );
-  }
-  //加载等待页
-  _renderLoadingView() {
-    return (
-      <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
-        <ActivityIndicator animating={true} color="blue" size="large" />
-      </View>
-    );
-  }
-  //加载失败view
-  _renderErrorView() {
-    return (
-      <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="white" /> */}
-        <Text>{this.state.errorInfo}</Text>
-      </View>
     );
   }
   //刷新时
@@ -275,7 +263,7 @@ export class PolicyList extends PureComponent {
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
       this.txtPullrelease &&
         this.txtPullrelease.setNativeProps({ style: styles.hide });
-        this.txtPullDone &&
+      this.txtPullDone &&
         this.txtPullDone.setNativeProps({ style: styles.hide });
       //设置img
       this.imgPulling && this.imgPulling.setNativeProps({ style: styles.show });
@@ -287,7 +275,7 @@ export class PolicyList extends PureComponent {
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.show });
       this.txtPullrelease &&
         this.txtPullrelease.setNativeProps({ style: styles.hide });
-        this.txtPullDone &&
+      this.txtPullDone &&
         this.txtPullDone.setNativeProps({ style: styles.hide });
       //设置img
       this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
@@ -299,14 +287,13 @@ export class PolicyList extends PureComponent {
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
       this.txtPullrelease &&
         this.txtPullrelease.setNativeProps({ style: styles.show });
-        this.txtPullDone &&
+      this.txtPullDone &&
         this.txtPullDone.setNativeProps({ style: styles.hide });
       //设置img
       this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
       this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
       this.imgPullrelease &&
         this.imgPullrelease.setNativeProps({ style: styles.show });
-
     } else if (pullState == "pullDone") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
@@ -348,10 +335,10 @@ export class PolicyList extends PureComponent {
           //复制数据源
           //  dataArray:this.state.dataArray.concat( responseData.results),
           dataArray: this.state.dataArray.concat(dataBlob),
-          isLoading: false,
           showFoot: foot,
           showHeader: 0,
           isRefreshing: false,
+          status: "custom",
           pageCount: data.pageCount
         });
 
@@ -359,9 +346,9 @@ export class PolicyList extends PureComponent {
         dataBlob = null;
       })
       .catch(error => {
+        console.log(error);
         this.setState({
-          error: true,
-          errorInfo: error
+          status: "failed"
         });
       })
       .finally(this.pull && this.pull.finishRefresh())
