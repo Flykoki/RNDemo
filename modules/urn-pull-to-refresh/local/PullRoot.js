@@ -23,12 +23,13 @@ export default class PullRoot extends PureComponent {
 
     static defaultProps = {
         refreshable: true,     //是否需要下拉刷新
-        isContentScroll: false //内容是否需要跟着滚动，默认为false
+        isContentScroll: true //内容是否需要跟着滚动，默认为false
     };
 
     renderTopIndicator = () => {
         if (this.props.topIndicatorRender == null) {
-            return this.defaultTopIndicatorRender();
+            return this._topIndicatorRender();
+            // return this.defaultTopIndicatorRender();
         } else {
             return this.props.topIndicatorRender();
         }

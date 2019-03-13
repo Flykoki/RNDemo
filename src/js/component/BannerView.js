@@ -11,7 +11,9 @@ import {
 import PropTypes from "prop-types";
 const screenWidth = Dimensions.get("window").width;
 const scrollStep = 5 * 1000; //banner轮播时间间隔
+
 export default class BannerView extends Component {
+  startAutoScroll = false;
   constructor(props) {
     super(props);
     let banner = [1, 2, 3];
@@ -36,8 +38,8 @@ export default class BannerView extends Component {
           ? 0
           : this.state.currentPage;
       this &&
-        this.refs &&
-        this.refs.scrollView.scrollTo({
+        this.scrollView &&
+        this.scrollView.scrollTo({
           x: currentPage * screenWidth,
           y: 0,
           animated: true
@@ -50,8 +52,9 @@ export default class BannerView extends Component {
     return (
       <View style={[styles.banner, this.props.style]}>
         <ScrollView
-          ref="scrollView"
+          ref={f => (this.scrollView = f)}
           horizontal={true}
+          {...this.props}
           onScrollBeginDrag={e => this._handleScrollBegin(e)}
           onScrollEndDrag={e => this._handleScrollEnd(e)}
           // 当一帧滚动结束
@@ -83,7 +86,6 @@ export default class BannerView extends Component {
     var currentPage = Math.floor(Math.ceil(offSetX) / Math.floor(screenWidth));
 
     // 3.更新状态机,重新绘制UI
-    console.log("lfj cur end", currentPage, this.state.data.length);
     this.setState({
       currentPage: currentPage
     });
@@ -95,7 +97,9 @@ export default class BannerView extends Component {
   };
   //停止拖拽
   _handleScrollEnd = e => {
-    this._startTimer();
+    if (this.state.autoScroll) {
+      this._startTimer();
+    }
   };
   //banner滑动时候
   _onScroll = e => {
@@ -131,8 +135,8 @@ export default class BannerView extends Component {
             style={styles.banner}
             source={
               item.banner
-                ? {uri:item.banner}
-                :  require("../../res/img/app_strategy_banner.png")
+                ? { uri: item.banner }
+                : require("../../res/img/app_strategy_banner.png")
             }
             resizeMode={"stretch"}
           />

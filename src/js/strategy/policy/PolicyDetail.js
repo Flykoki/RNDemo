@@ -11,14 +11,20 @@ import {
   Dimensions
 } from "react-native";
 import { fetchRequest } from "../../utils/FetchUtil";
-import { PullFlatList } from "urn-pull-to-refresh";
+import {
+  RootView,
+  LoadFailedView,
+  LoadingView
+} from "../../component/CommonView";
 import reactNavigation from "react-navigation";
+import { WebView } from "react-native-gesture-handler";
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
 let _navigation;
 let imageUrlIndex = 0;
 export class PolicyDetail extends PureComponent {
   static navigationOptions = ({ navigation }) => {
+    _navigation = navigation;
     return {
       title: "政策公告详情",
       headerTitleStyle: { flex: 1, textAlign: "center" },
@@ -35,13 +41,25 @@ export class PolicyDetail extends PureComponent {
       )
     };
   };
-  componentDidMount() {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: {},
+      status: "loading"
+    };
+  }
+
+  componentWillMount() {
     //设置statusbar样式
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setTranslucent(false);//关闭沉浸式
+      StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
+
+    let data = _navigation.getParam("data", {});
+    this.state.data = data;
   }
 
   componentWillUnmount = () => {
@@ -49,30 +67,65 @@ export class PolicyDetail extends PureComponent {
   };
   render() {
     return (
-      <Text style={{ justifyContent: "center", textAlign: "center" }}>
-        政策公告详情
-      </Text>
+      <View style={{ flex: 1 }}>
+        {this.state.status !== "loadingFailed" && (
+          <WebView
+            style={{ flex: 1 }}
+            onError={() => {
+              this.setState({ status: "loadingFailed" });
+            }}
+            onLoad={() => {
+              this.setState({ status: "custom" });
+            }}
+            onLoadStart={() => {
+              this.setState({ status: "loading" });
+            }}
+            source={{ uri: this.state.data.link }}
+          />
+        )}
+        {this.state.status === "loading" && (
+          <LoadingView style={styles.loadingView} />
+        )}
+        {this.state.status === "loadingFailed" && (
+          <LoadFailedView
+            style={styles.loadFailedView}
+            tips={"加载失败"}
+            onPress={() => {
+              this.setState({ status: "custom" });
+            }}
+            btnText={"重新加载"}
+          />
+        )}
+      </View>
     );
   }
 }
 const styles = StyleSheet.create({
   backButtonStyle: { marginLeft: 20, width: 50 },
-  hide: {
+  loadingView: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
     position: "absolute",
-    left: 10000
-  },
-  show: {
-    position: "relative",
+    top: 0,
     left: 0,
-    backgroundColor: "transparent"
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  loadFailedView: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0
   },
   container: {
-    padding: 10,
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    backgroundColor: "#F8F8F8"
   },
   title: {
     fontSize: 16,

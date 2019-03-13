@@ -46,7 +46,6 @@ export class PolicyList extends PureComponent {
       //网络请求状态
       status: "loading",
       dataArray: [],
-      showHeader: 0, //控制header 0:隐藏 1：显示加载中
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
       isRefreshing: false //下拉控制
     };
@@ -91,14 +90,10 @@ export class PolicyList extends PureComponent {
       <PullFlatList
         ref={c => (this.pull = c)}
         isContentScroll={true}
-        onPullStateChangeHeight={this._onPullStateChangeHeight}
-        topIndicatorRender={this._topIndicatorRender}
-        topIndicatorHeight={topIndicatorHeight}
         style={{ flex: 1, width: width }}
         onPullRelease={this._onPullRelease}
         data={this.state.dataArray}
         onEndReached={this._onEndReached}
-        onEndReachedThreshold={0.1}
         ListFooterComponent={this._renderFooter}
         refreshing={this.state.isRefreshing}
         renderItem={this._renderItemView}
@@ -112,7 +107,6 @@ export class PolicyList extends PureComponent {
   _handleRefresh = () => {
     this.setState({
       page: 1,
-      showHeader: 1,
       isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
       dataArray: []
     });
@@ -219,7 +213,7 @@ export class PolicyList extends PureComponent {
     return (
       <TouchableNativeFeedback
         onPress={() => {
-          _navigation.navigate("PolicyDetail");
+          _navigation.navigate("PolicyDetail", { data: item });
         }}
       >
         <View style={styles.flatListItemWithShadow}>
@@ -256,60 +250,6 @@ export class PolicyList extends PureComponent {
     );
   }
 
-  //header 在不同的状态下的样式
-  _onPullStateChangeHeight = (pullState, moveHeight) => {
-    if (pullState == "pulling") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.hide });
-      this.txtPullDone &&
-        this.txtPullDone.setNativeProps({ style: styles.hide });
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.show });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.hide });
-    } else if (pullState == "pullok") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.show });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.hide });
-      this.txtPullDone &&
-        this.txtPullDone.setNativeProps({ style: styles.hide });
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.show });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.hide });
-    } else if (pullState == "pullrelease") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.show });
-      this.txtPullDone &&
-        this.txtPullDone.setNativeProps({ style: styles.hide });
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.show });
-    } else if (pullState == "pullDone") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.hide });
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.hide });
-
-      this.txtPullDone &&
-        this.txtPullDone.setNativeProps({ style: styles.show });
-    }
-  };
-
   //获取数据
   fetchData() {
     url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
@@ -336,7 +276,6 @@ export class PolicyList extends PureComponent {
           //  dataArray:this.state.dataArray.concat( responseData.results),
           dataArray: this.state.dataArray.concat(dataBlob),
           showFoot: foot,
-          showHeader: 0,
           isRefreshing: false,
           status: "custom",
           pageCount: data.pageCount
@@ -354,53 +293,6 @@ export class PolicyList extends PureComponent {
       .finally(this.pull && this.pull.finishRefresh())
       .done();
   }
-
-  //header view
-  _topIndicatorRender = () => {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          height: topIndicatorHeight
-        }}
-      >
-        <Text ref={c => (this.txtPullDone = c)} style={styles.hide}>
-          刷新完成
-        </Text>
-        <Image
-          style={styles.hide}
-          ref={c => (this.imgPulling = c)}
-          source={require("../../../res/img/icon_arrow_down.png")}
-        />
-        <Text ref={c => (this.txtPulling = c)} style={styles.hide}>
-          下拉可以刷新
-        </Text>
-        <Image
-          style={styles.hide}
-          ref={c => (this.imgPullok = c)}
-          source={require("../../../res/img/icon_arrow_up.png")}
-        />
-        <Text ref={c => (this.txtPullok = c)} style={styles.hide}>
-          释放立即刷新
-        </Text>
-        <ActivityIndicator
-          style={styles.hide}
-          ref={c => (this.imgPullrelease = c)}
-          size="small"
-          color="gray"
-          style={{ marginRight: 5 }}
-        />
-        <Text ref={c => (this.txtPullrelease = c)} style={styles.hide}>
-          正在刷新...
-        </Text>
-        <Text ref={c => (this.txtPullDone = c)} style={styles.hide}>
-          刷新完成
-        </Text>
-      </View>
-    );
-  };
 
   // ======================================= 自定义方法 =======================================
 }

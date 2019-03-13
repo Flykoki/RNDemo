@@ -26,7 +26,7 @@ export default class Pullable extends PullRoot {
         ref={c => (this.refresh = c)}
       >
         <RefreshHeader
-          style={{ flex: 1,  height: this.topIndicatorHeight  }}
+          style={{ flex: 1, height: this.topIndicatorHeight }}
           viewHeight={index.dip2px(this.topIndicatorHeight)}
           onPushingState={e => this.onPushingState(e)}
         >
@@ -69,10 +69,10 @@ export default class Pullable extends PullRoot {
     this.props.onPushing &&
       this.props.onPushing(this.pullState != "pullrelease");
 
-    console.log('lfj pull able state',this.pullState)
     //进行状态和下拉距离的回调
-    this.props.onPullStateChangeHeight &&
-      this.props.onPullStateChangeHeight(this.pullState, moveHeight);
+    this.props.onPullStateChangeHeight
+      ? this.props.onPullStateChangeHeight(this.pullState, moveHeight)
+      : this._onPullStateChangeHeight(this.pullState, moveHeight);
   };
 
   finishRefresh = () => {

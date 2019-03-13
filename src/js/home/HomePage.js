@@ -42,7 +42,7 @@ export class HomePage extends PureComponent {
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setTranslucent(false);//关闭沉浸式
+      StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
@@ -149,6 +149,7 @@ export class HomePage extends PureComponent {
   //item点击事件
   _onPress = ({ item }) => {
     console.log("home item onpress,", item);
+    // const ret = _navigation.navigate("PolicyDetail", { data: item });
     const ret = _navigation.navigate("PolicyList");
   };
 
@@ -157,8 +158,11 @@ export class HomePage extends PureComponent {
     let imageKey = item.key;
     //跳转并传值
     return (
-      // <TouchableNativeFeedback onPress={() => {Actions.news({'url':item.url})}} >////切记不能带（）不能写成gotoDetails()
-      <TouchableNativeFeedback onPress={this._onPress}>
+      <TouchableNativeFeedback
+        onPress={() => {
+          this._onPress({ item });
+        }}
+      >
         <View style={styles.flatListItemWithShadow}>
           <Image
             style={{

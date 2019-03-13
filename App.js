@@ -36,6 +36,7 @@ import SearchViewPage from "./src/js/missionscenter/SearchViewPage";
 import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
 import CalenderScreen from "./src/js/component/CalenderScreen";
 import StrategyPage from "./src/js/strategy/StrategyPage";
+import TestPage from "./src/js/home/TestPage";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -82,6 +83,7 @@ const TabNavigator = createBottomTabNavigator(
 const StackContainer = createStackNavigator(
   {
     StrategyPage: StrategyPage,
+    TestPage: TestPage,
     SearchViewPage: SearchViewPage,
     Feedback: FeedbackScreen,
     PolicyList: PolicyList,
