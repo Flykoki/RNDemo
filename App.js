@@ -38,6 +38,7 @@ import CalenderScreen from "./src/js/component/CalenderScreen";
 import StrategyPage from "./src/js/strategy/StrategyPage";
 import TestPage from "./src/js/home/TestPage";
 import LoginPage from "./src/js/login/LoginPage";
+import DistributePage from "./src/js/login/DistributePage";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -84,6 +85,7 @@ const TabNavigator = createBottomTabNavigator(
 const StackContainer = createStackNavigator(
   {
     LoginPage: LoginPage,
+    DistributePage: DistributePage,
     StrategyPage: StrategyPage,
     TestPage: TestPage,
     SearchViewPage: SearchViewPage,
@@ -123,7 +125,7 @@ const StackContainer = createStackNavigator(
     }
   },
   {
-    initialRouteName: "LoginPage",
+    initialRouteName: "DistributePage",
     defaultNavigationOptions: {
       headerTitleStyle: { flex: 1, textAlign: "center" }
     }

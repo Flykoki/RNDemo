@@ -131,21 +131,14 @@ export default class LoginPage extends Component {
           </Text>
         </TouchableOpacity>
 
-        <Text
-          style={styles.forgetPwd}
-          onPress={() => {
-            this._forgetPwd();
-          }}
-        >
-          忘记密码?
-        </Text>
+        <Text style={styles.forgetPwd} onPress={()=>{this._forgetPwd()}}>忘记密码?</Text>
       </View>
     );
   }
-  _forgetPwd = () => {
-    console.warn("忘记密码");
-    _navigation.navigate("HomeTab");
-  };
+  _forgetPwd=()=>{
+      console.warn('忘记密码');
+      _navigation.navigate("HomeTab")
+  }
   _validFormData = () => {
     let pwd = this.state.loginPwd;
     let name = this.state.loginName;
@@ -153,6 +146,8 @@ export default class LoginPage extends Component {
       console.warn("密码长度 6-20");
       return;
     }
+
+
   };
 }
 
