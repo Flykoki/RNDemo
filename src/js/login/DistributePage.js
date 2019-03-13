@@ -96,9 +96,7 @@ const styles = StyleSheet.create({
   loginDivider: {
     width: 0.8,
     backgroundColor: "#FFFFFF",
-    height: "100%",
-    marginTop: 7.5,
-    marginBottom: 7.5
+    height: 30,
   },
   loginText: {
     color: "#FFFFFF",

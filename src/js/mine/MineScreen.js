@@ -67,7 +67,7 @@ export class MineScreen extends Component {
           name: "测试item",
           showArrow: "1",
           onPress: () => {
-            this.props.navigation.navigate("LoginPage",{title:'员工登录'});
+            this.props.navigation.navigate("TestPage");
           }
         },
         { key: "9", type: "divider" },
