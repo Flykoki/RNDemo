@@ -234,8 +234,9 @@ export class MissionsCenterPage extends PureComponent {
             // this.setState({ a: 1 });
             console.log("lfj onSortDataSelectedCallback,", item, index);
           }}
+          leftTitleText={"新建事件正序"}
           sortDataObj={{
-            sortData: ["综合排序", "距我最近", "评价最好"],
+            sortData: ["新建事件正序", "新建事件倒序"],
             sortDataIndex: 1
           }}
           navigation={_navigation}
@@ -247,22 +248,23 @@ export class MissionsCenterPage extends PureComponent {
             this.normalFilterItems = filterMaps;
             console.log("lfj 筛选项", this.normalFilterItems);
           }}
+          rightTitleText={'筛选'}
           filterData={[
             {
               type: "normal",
               filterMultiple: true,
-              title: "任务集合状态",
+              title: "状态",
               items: ["待处理", "处理中", "处理完毕", "已取消"]
             },
             {
               type: "normal",
-              title: "任务集合参与人",
+              title: "参与人",
               filterMultiple: true,
               items: ["我"]
             },
             {
               type: "date",
-              title: "筛选时间名称",
+              title: "创建时间",
               filterMultiple: false,
               items: ["今天", "近3天", "近7天", "近15天"]
             }

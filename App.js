@@ -37,6 +37,7 @@ import TaskDetailScreen from "./src/js/property/TaskDetailScreen";
 import CalenderScreen from "./src/js/component/CalenderScreen";
 import StrategyPage from "./src/js/strategy/StrategyPage";
 import TestPage from "./src/js/home/TestPage";
+import LoginPage from "./src/js/login/LoginPage";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -76,12 +77,13 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
     },
-    initialRouteName: "咨询攻略"
+    initialRouteName: "我的"
   }
 );
 
 const StackContainer = createStackNavigator(
   {
+    LoginPage: LoginPage,
     StrategyPage: StrategyPage,
     TestPage: TestPage,
     SearchViewPage: SearchViewPage,
@@ -121,7 +123,7 @@ const StackContainer = createStackNavigator(
     }
   },
   {
-    initialRouteName: "HomeTab",
+    initialRouteName: "LoginPage",
     defaultNavigationOptions: {
       headerTitleStyle: { flex: 1, textAlign: "center" }
     }

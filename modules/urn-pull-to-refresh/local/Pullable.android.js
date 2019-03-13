@@ -41,6 +41,7 @@ export default class Pullable extends PullRoot {
   onPushingState = event => {
     let moveHeight = event.nativeEvent.moveHeight;
     let state = event.nativeEvent.state;
+
     //因为返回的moveHeight单位是px，所以要将this.topIndicatorHeight转化为px进行计算
     let topHeight = index.dip2px(this.topIndicatorHeight);
     if (moveHeight > 0 && moveHeight < topHeight) {
@@ -62,7 +63,7 @@ export default class Pullable extends PullRoot {
     // if (state == 4) {
     //   this.pullState = "pullDone";
     // }
-
+    console.log("lfj pull state", this.pullState);
     //默认的设置
     this.defaultTopSetting();
     //告诉外界是否要锁住

@@ -33,6 +33,7 @@ export default class TextInputWithClearButton extends Component {
         >
           {leftImg && (
             <Image
+              resizeMode={"contain"}
               style={[styles.leftImage, this.props.leftImgStyle]}
               source={leftImg}
             />

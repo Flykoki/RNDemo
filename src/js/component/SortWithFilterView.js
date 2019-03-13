@@ -19,30 +19,41 @@ export default class SortWithFilterView extends Component {
     super(props);
     this.state = {
       showSortDataPanel: false, //排序面板是否显示
-      lastSortDataIndex: this.props.sortDataObj.sortDataIndex
-        ? this.props.sortDataObj.sortDataIndex
-        : -1, //默认选中排序项
+      lastSortDataIndex:
+        this.props.sortDataObj.sortDataIndex !== undefined
+          ? this.props.sortDataObj.sortDataIndex
+          : -1, //默认选中排序项
       filterResponse: [], //筛选结果
+      leftTitleText: this.props.leftTitleText
+        ? this.props.leftTitleText
+        : "新建时间正序", //左侧点击区域title
+      rightTitleText: this.props.rightTitleText
+        ? this.props.rightTitleText
+        : "筛选",
       normalFilterPress: false, //筛选title点击状态
       normalFilterItems: this.props.normalFilterItems
         ? this.props.normalFilterItems
         : new Map() //筛选内容
     };
-    console.log('lfj sortViewFilter constructor')
+    console.log("lfj sortViewFilter constructor");
     this.titleItemHight = this.props.titleItemHight
       ? this.props.titleItemHight
       : 46;
     this.onSortDataSelectedCallback = this.props.onSortDataSelectedCallback;
   }
   render() {
-    console.log('lfj sortView render')
+    console.log("lfj sortView render");
     return (
       <TouchableOpacity
         activeOpacity={1}
         style={
           this.state.showSortDataPanel || this.state.normalFilterPress
             ? [styles.container, this.props.style]
-            : [styles.container,this.props.style, { height: this.titleItemHight }]
+            : [
+                styles.container,
+                this.props.style,
+                { height: this.titleItemHight }
+              ]
         }
         onPress={() => {
           console.warn("sortView click");
@@ -70,16 +81,15 @@ export default class SortWithFilterView extends Component {
             >
               <Text
                 style={
-                  this.state.lastSortDataIndex !== -1
-                    ? styles.filterTextPress
-                    : this.state.showSortDataPanel
-                    ? styles.filterTextPress
-                    : styles.filterTextDefault
+                  // this.state.lastSortDataIndex !== -1
+                  //   ? styles.filterTextPress
+                  //   : this.state.showSortDataPanel
+                  //   ? styles.filterTextPress
+                  //   :
+                  styles.filterTextDefault
                 }
               >
-                {this.props.leftTitleText
-                  ? this.props.leftTitleText
-                  : "最近创建日期"}
+                {this.state.leftTitleText}
               </Text>
               <Image
                 style={{ marginLeft: 7.2, height: 8, width: 8 }}
@@ -87,10 +97,10 @@ export default class SortWithFilterView extends Component {
                 source={
                   this.state.lastSortDataIndex !== -1
                     ? this.state.showSortDataPanel
-                      ? require("../../res/img/icon_app_retract_up_chosen.png")
-                      : require("../../res/img/icon_app_retract_down_chosen.png")
+                      ? require("../../res/img/icon_app_retract_up.png")
+                      : require("../../res/img/icon_app_retract_down.png")
                     : this.state.showSortDataPanel
-                    ? require("../../res/img/icon_app_retract_up_chosen.png")
+                    ? require("../../res/img/icon_app_retract_up.png")
                     : require("../../res/img/icon_app_retract_down.png")
                 }
               />
@@ -114,7 +124,7 @@ export default class SortWithFilterView extends Component {
                     : styles.filterTextDefault
                 }
               >
-                {this.props.rightTitleText ? this.props.rightTitleText : "筛选"}
+                {this.state.rightTitleText}
               </Text>
               <Image
                 style={{ marginLeft: 7.2, height: 8, width: 8 }}
@@ -177,7 +187,7 @@ export default class SortWithFilterView extends Component {
   /**
    * 自定义日期点击事件
    */
-  _onCalenderPress=()=>{}
+  _onCalenderPress = () => {};
 
   /**
    * 显示排序面板
@@ -205,13 +215,16 @@ export default class SortWithFilterView extends Component {
    * 排序面板item
    */
   _renderItemSortView = ({ item, index }) => {
+    console.log("lfj state index", this.state.lastSortDataIndex, index);
     return (
       <TouchableOpacity
         style={styles.sortItemContainer}
         activeOpacity={1}
         onPress={() => {
+          console.log("lfj sort item", item);
           this.setState({
-            lastSortDataIndex: index
+            lastSortDataIndex: index,
+            leftTitleText: item
           });
           this.props.onSortDataSelectedCallback &&
             this.props.onSortDataSelectedCallback(item, index);
@@ -241,24 +254,24 @@ export default class SortWithFilterView extends Component {
 }
 
 SortWithFilterView.propTypes = {
-  //============== filter view =====================
-  filterViewStyle: PropTypes.object, //filter View 样式
-  filterData: PropTypes.array, // 所有的filter集合
-  items: PropTypes.array, // 具体的子 item 中 filter数组
-  title: PropTypes.string, //filter的标题
+  style: PropTypes.object, //整个View style
+  titleItemHight: PropTypes.number, //头部点击view高度
+
+  //============== 右侧筛选View filter view =====================
+  filterViewStyle: PropTypes.object, //filter View 面板 样式
+  filterData: PropTypes.array, // 所有的filter集合[{},{}]
+  items: PropTypes.array, // 具体的筛选项，filterData[0].items =>[]
+  rightTitleText: PropTypes.string, //右侧filter的标题
   type: PropTypes.oneOf(["date", "normal"]), //filter 类型 ：日期和普通
-  filterMultiple: PropTypes.bool, // 是否多选
+  filterMultiple: PropTypes.bool, // 是否支持多选
   normalFilterMap: PropTypes.object, // 已选中普通filter map
   onNormalFilterCallback: PropTypes.func, // 普通筛选item点击事件回调
   onFilterResponseCallback: PropTypes.func, // 后台返回筛选结果回调
-  //================= sort view ===================
-  style: PropTypes.object, //全部
+  //================= 左侧排序View sort view ===================
   onSortDataSelectedCallback: PropTypes.func, // 排序列表item点击事件回调
-  sortDataIndex: PropTypes.number, //排序默认选中item
+  sortDataIndex: PropTypes.number, //排序选中item下标
   leftTitleText: PropTypes.string, //左边排序title item 标题
-  titleItemHight: PropTypes.number, //头部点击view高度
-  sortDataObj: PropTypes.object, //排序列表data与默认选中排序项
-  rightTitleText: PropTypes.string //右边排序title item 标题
+  sortDataObj: PropTypes.object //排序列表data => {sortData:[],sortDataIndex:number}
 };
 const styles = StyleSheet.create({
   touchCancel: {

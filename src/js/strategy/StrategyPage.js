@@ -37,19 +37,35 @@ export default class StrategyPage extends PureComponent {
       showType: 0, //页面展示类型。 0：默认加载中，1，加载完成，显示数据，2，加载失败显示失败页面
       dataSource: [], //
       refreshEnable: true, //是否支持下拉刷新，解决banner左右滑动时与 pullFlatList冲突
-      bannerDisplayList: [1, 2, 3, 4], //头部banner数据源
+      bannerDisplayList: [
+        {
+          banner:
+            "http://udfstest02.10101111.com/ucarudfs/resource/V2/201811/1/6-002dd72a8fa6479d8b5eb14c587d5ec1-g-sr-scale.jpg"
+        },
+        1,
+        {
+          banner:
+            "http://udfstest.10101111.com/ucarudfs/resource/V2/201901/1/6-09311a61221a42c28c8352cbb5cb740b-g-sr-scale.png"
+        },
+        {
+          banner:
+            "http://udfstest02.10101111.com/ucarudfs/resource/V2/201812/1/6-7d6f024a3b7b466eaa0da9aa32ded971-g-sr-scale.jpg"
+        }
+      ], //头部banner数据源
       hotDisplayList: {}, //热门活动数据源
       latestPublishList: [
         {
           key: "1",
-          banner: "",
+          banner:
+            "http://udfstest02.10101111.com/ucarudfs/resource/V2/201811/1/6-002dd72a8fa6479d8b5eb14c587d5ec1-g-sr-scale.jpg",
           publishTimeStr: "2017/05/25",
           businessLine: "1;2;3",
           title: "神州买买车荣获“2017诚信"
         },
         {
           key: "1",
-          banner: "",
+          banner:
+            "http://udfstest.10101111.com/ucarudfs/resource/V2/201901/1/6-09311a61221a42c28c8352cbb5cb740b-g-sr-scale.png",
           publishTimeStr: "2017/05/25",
           businessLine: "1;2",
           title: "神州买买车荣获“2017诚信消费品牌”奖"
@@ -177,11 +193,10 @@ export default class StrategyPage extends PureComponent {
             Math.abs(this.pageX - e.nativeEvent.pageX)
           ) {
             //下拉
-            this.setState({refreshEnable:true})
+            this.setState({ refreshEnable: true });
           } else {
             //左右
-            this.setState({refreshEnable:false})
-
+            this.setState({ refreshEnable: false });
           }
         }}
       />
