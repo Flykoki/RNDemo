@@ -36,7 +36,11 @@ export class PolicyDetail extends PureComponent {
           }}
           style={styles.backButtonStyle}
         >
-          <Image source={require("../../../res/img/icon_back.png")} />
+          <Image
+            source={require("../../../res/img/icon_back.png")}
+            resizeMode={"contain"}
+            style={{ height: 14.6, width: 8.3 }}
+          />
         </TouchableOpacity>
       )
     };

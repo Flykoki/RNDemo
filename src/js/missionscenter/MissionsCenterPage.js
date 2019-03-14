@@ -39,7 +39,8 @@ export class MissionsCenterPage extends PureComponent {
         >
           <Image
             source={require("../../res/img/icon_back.png")}
-            resizeMode="cover"
+            resizeMode={"contain"}
+            style={{ height: 14.6, width: 8.3 }}
           />
         </TouchableOpacity>
       ),

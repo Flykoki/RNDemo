@@ -20,7 +20,9 @@ export class HomePage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       title: "首页",
-      headerTitleStyle: { flex: 1, textAlign: "center" }
+      headerTitleStyle: { flex: 1, textAlign: "center" },
+      headerLeft: null,
+      headerRight: null
     };
   };
 

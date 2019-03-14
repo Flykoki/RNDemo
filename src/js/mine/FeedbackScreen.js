@@ -27,7 +27,11 @@ export default class FeedbackScreen extends Component {
           }}
           style={styles.backButtonStyle}
         >
-          <Image source={require("../../res/img/icon_back.png")} />
+          <Image
+            source={require("../../res/img/icon_back.png")}
+            resizeMode={"contain"}
+            style={{ height: 14.6, width: 8.3 }}
+          />
         </TouchableOpacity>
       )
     };
@@ -55,7 +59,7 @@ export default class FeedbackScreen extends Component {
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setTranslucent(false);//关闭沉浸式
+      StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
@@ -367,7 +371,7 @@ const styles = StyleSheet.create({
   },
   feedbackTextInput: {
     height: 90,
-    textAlignVertical:'top',
+    textAlignVertical: "top",
     color: "#666666",
     marginBottom: 10
   },
