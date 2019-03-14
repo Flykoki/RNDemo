@@ -20,6 +20,7 @@
     "react-native-view-shot": "^2.5.0",
     "react-navigation": "^3.0.9",
     "rn-fetch-blob": "^0.10.15",
+    "sz-network-module": "file:modules/sz-network-module",
     "urn-pull-to-refresh": "file:modules/urn-pull-to-refresh"
   },
   "devDependencies": {

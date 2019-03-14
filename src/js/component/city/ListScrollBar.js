@@ -7,7 +7,7 @@ import {
   ImageBackground,
   StyleSheet
 } from "react-native";
-const rightIndex = [
+const defaultIndex = [
   { title: "最近" },
   { title: "全部" },
   { title: "A" },
@@ -41,8 +41,7 @@ const rightIndex = [
 export default class ListScrollBar extends Component {
   constructor(props) {
     super(props);
-    const { data } = this.props;
-    this._siderBarList = data ? data : rightIndex;
+    this.rightIndex = [];
     this.state = {
       pressed: false,
       position: 0,
@@ -82,14 +81,14 @@ export default class ListScrollBar extends Component {
         let index = Math.floor(margin / 16);
         index =
           index > -1
-            ? index < rightIndex.length
+            ? index < this.rightIndex.length
               ? index
-              : rightIndex.length - 1
+              : this.rightIndex.length - 1
             : 0;
         margin = index * 16 - 17;
         this.setState({
           pressed: true,
-          currentLetter: rightIndex[index].title,
+          currentLetter: this.rightIndex[index].title,
           currentIndex: index,
           position:
             margin > -17
@@ -116,8 +115,10 @@ export default class ListScrollBar extends Component {
   }
 
   render() {
+    data = this.props.data;
+    this.rightIndex = data ? data : defaultIndex;
     let rightData = [
-      this._siderBarList.map((item, index) => {
+      this.rightIndex.map((item, index) => {
         let currentIndex = this.state.currentIndex;
         let isCurrentFoucesd = this.state.pressed && index === currentIndex;
         let backgroundColor = isCurrentFoucesd ? "#F12E49" : "transparent";

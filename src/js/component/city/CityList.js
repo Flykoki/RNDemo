@@ -1,23 +1,29 @@
 import React, { Component } from "react";
 import { View, Text, SectionList, Dimensions, StyleSheet } from "react-native";
 import ListScrollBar from "./ListScrollBar";
+import CityListData from "../../../../assets/citylist";
 
 const { width, height } = Dimensions.get("window");
-
+const ITEM_HEIGHT = 47;
 export default class CityList extends Component {
   constructor(props, context) {
     super(props, context);
+    this.state = { data: [] };
+  }
+
+  componentDidMount() {
+    this.getCityInfos();
   }
 
   _renderListItem({ item, index, section }) {
     return (
       <View style={styles.itemContainer}>
         <Text style={styles.itemLeftText} key={index}>
-          {item}
+          {item.city_child}
         </Text>
 
         <Text style={styles.itemRightText} key={index}>
-          {item}
+          {item.city_child}
         </Text>
       </View>
     );
@@ -31,116 +37,57 @@ export default class CityList extends Component {
     );
   }
 
-  render() {
-    let rightIndex = [
-      { title: "最近", data: ["安庆市", "鞍山市"], clear: "clear" },
-      { title: "全部", data: ["全部"] },
-      { title: "A", data: ["安庆市", "鞍山市"] },
-      { title: "B", data: ["北京市"] },
-      { title: "C", data: ["重庆市", "item6"] },
-      {
-        title: "D",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "E",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "F",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "G",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "H",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "I",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "J",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "K",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "L",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "M",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "N",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "O",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "P",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "Q",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "R",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "S",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "T",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "U",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "V",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "W",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "X",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "Y",
-        data: ["重庆市", "item6"]
-      },
-      {
-        title: "Z",
-        data: ["重庆市", "item6"]
+  async getCityInfos() {
+    let data = await require("../../../../assets/citylist");
+    let jsonData = data.data;
+    //每组的开头在列表中的位置
+    let totalSize = 0;
+    //SectionList的数据源
+    let cityInfos = [];
+    //分组头的数据源
+    let citySection = [];
+    //分组头在列表中的位置
+    let citySectionSize = [];
+    for (let i = 0; i < jsonData.length; i++) {
+      citySectionSize[i] = totalSize;
+      //给右侧的滚动条进行使用的
+      citySection[i] = { title: jsonData[i].title };
+      let section = {};
+      section.title = jsonData[i].title;
+      section.data = jsonData[i].city;
+      section.key = i.toString();
+      for (let j = 0; j < section.data.length; j++) {
+        section.data[j].key = (i * 1000 + j).toString();
       }
-    ];
+      cityInfos[i] = section;
+      //每一项的header的index
+      totalSize += section.data.length + 1;
+    }
+    this.setState({
+      data: cityInfos,
+      sections: citySection,
+      sectionSize: citySectionSize
+    });
+  }
 
+  _getItemLayout = (data, index) => ({
+    length: ITEM_HEIGHT,
+    offset: ITEM_HEIGHT * index,
+    index
+  });
+
+  render() {
+    const sectionList = this.state.sections;
     return (
       <View>
         <SectionList
           ref="list"
           renderItem={this._renderListItem}
           renderSectionHeader={this._renderListHeader}
-          sections={rightIndex}
+          sections={this.state.data}
           keyExtractor={(item, index) => item + index}
           stickySectionHeadersEnabled={true}
+          getItemLayout={this._getItemLayout}
         />
         <View style={styles.scrollBarContainer}>
           <ListScrollBar
@@ -150,7 +97,7 @@ export default class CityList extends Component {
                 itemIndex: -1
               });
             }}
-            data={rightIndex}
+            data={sectionList}
           />
         </View>
       </View>
