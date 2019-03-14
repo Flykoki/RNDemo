@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Image, StyleSheet, Dimensions } from "react-native";
+import { Image, StyleSheet, Dimensions, StatusBar } from "react-native";
 import AccountHelper from "../login/AccountHelper";
 import { NavigationActions } from "react-navigation";
 
@@ -13,6 +13,10 @@ export default class SplashView extends Component {
   };
 
   componentDidMount() {
+    this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setTranslucent(true); //开启沉浸式
+      StatusBar.setBackgroundColor("transparent");
+    });
     setTimeout(() => {
       AccountHelper.getAccountInfo().then(result => {
         if (result) {
@@ -23,6 +27,10 @@ export default class SplashView extends Component {
       });
     }, 2000);
   }
+
+  componentWillUnmount = () => {
+    this._navListener.remove();
+  };
 
   _jumpToHomeTab() {
     this.props.navigation.reset(
