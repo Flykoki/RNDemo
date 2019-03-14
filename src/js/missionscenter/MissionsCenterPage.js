@@ -16,9 +16,11 @@ import {
 } from "react-native";
 import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
+// import { PullFlatList } from "react-native-rk-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
+import { FetchUtils } from "sz-network-module";
 import { RootView, LoadingView, LoadFailedView } from "../component/CommonView";
 
 let _navigation;
@@ -117,82 +119,101 @@ export class MissionsCenterPage extends PureComponent {
   //获取数据
   fetchData() {
     // url = "http://10.104.113.244:8888/app/mock/45/action/task/taskGroupList";
-    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
-    let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
 
-    fetchRequest(url, "GET")
-      .then(responseData => {
-        let data = responseData.data; //获取json 数据并存在data数组中
-        let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
+    FetchUtils.fetch({
+      params: {
+        execDeptIds: [323],
+        pageNum: 0,
+        pageSize: 20,
+        accountId:421415,
+        sortTime: "0",
+        taskStatusList: [1, -1, -1]
+      },
+      api: "action/vih/warehousingTaskGroupList",
+      success: response => {
+        console.warn("missionCenter success = ", response);
+      },
+      error: err => {
+        console.warn("missionCenter error = ", err);
+      }
+    });
 
-        data.datas.map(function(item) {
-          if (imageUrlIndex == 499) {
-            imageUrlIndex = 0;
-          }
+    // url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
+    // let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
 
-          let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+    // fetchRequest(url, "GET")
+    //   .then(responseData => {
+    //     let data = responseData.data; //获取json 数据并存在data数组中
+    //     let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
 
-          item.key = imageUrls[imageUrlIndex];
-          (item.taskGroupName = "新车分期销售"),
-            (item.taskGroupCode = "ASDLK"),
-            (item.createTime = "11/11 09:22"),
-            (item.sourceCode = "京P D2232"),
-            (item.status = missionStatus[random]),
-            (item.frameNo = "LAKSDJF23284RFJAL2323"),
-            (item.modeName = "宝沃BXi7"),
-            (item.vehicleTypeName = "新"),
-            (item.exteriorColor = "银色"),
-            (item.taskList = [
-              {
-                modifyTime: "11/12 12:22",
-                taskName: "车辆出库",
-                taskCode: "CK239",
-                taskStatus: "(待出库)"
-              },
-              {
-                modifyTime: "11/12 12:22",
-                taskName: "车辆出库",
-                taskCode: "CK239",
-                taskStatus: "(待出库)"
-              }
-            ]),
-            imageUrlIndex++;
-          dataBlob.push(item);
-        });
-        let foot = 0;
-        if (this.state.page >= 5) {
-          // if (this.state.page >= data.pageCount) {
-          foot = 1; //listView底部显示没有更多数据了
-        }
-        console.log("lfj setState response");
-        this.setState({
-          //复制数据源
-          //  dataArray:this.state.dataArray.concat( responseData.results),
-          dataArray: this.state.dataArray.concat(dataBlob),
-          isLoading: false,
-          showFoot: foot,
-          showHeader: 0,
-          isRefreshing: false,
-          pageCount: data.pageCount,
-          status: "custom"
-        });
-        data = null; //重置为空
-        dataBlob = null;
-      })
-      .catch(error => {
-        console.log("lfj setState response error");
-        this.setState({
-          status: "loadingFailed",
-          error: true,
-          errorInfo: error
-        });
-      })
-      .finally(
-        console.log("lfj fetchData finally", this.pull) &&
-          this.pull &&
-          this.pull.finishRefresh()
-      )
-      .done();
+    //     data.datas.map(function(item) {
+    //       if (imageUrlIndex == 499) {
+    //         imageUrlIndex = 0;
+    //       }
+
+    //       let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+
+    //       item.key = imageUrls[imageUrlIndex];
+    //       (item.taskGroupName = "新车分期销售"),
+    //         (item.taskGroupCode = "ASDLK"),
+    //         (item.createTime = "11/11 09:22"),
+    //         (item.sourceCode = "京P D2232"),
+    //         (item.status = missionStatus[random]),
+    //         (item.frameNo = "LAKSDJF23284RFJAL2323"),
+    //         (item.modeName = "宝沃BXi7"),
+    //         (item.vehicleTypeName = "新"),
+    //         (item.exteriorColor = "银色"),
+    //         (item.taskList = [
+    //           {
+    //             modifyTime: "11/12 12:22",
+    //             taskName: "车辆出库",
+    //             taskCode: "CK239",
+    //             taskStatus: "(待出库)"
+    //           },
+    //           {
+    //             modifyTime: "11/12 12:22",
+    //             taskName: "车辆出库",
+    //             taskCode: "CK239",
+    //             taskStatus: "(待出库)"
+    //           }
+    //         ]),
+    //         imageUrlIndex++;
+    //       dataBlob.push(item);
+    //     });
+    //     let foot = 0;
+    //     if (this.state.page >= 5) {
+    //       // if (this.state.page >= data.pageCount) {
+    //       foot = 1; //listView底部显示没有更多数据了
+    //     }
+    //     console.log("lfj setState response");
+    //     this.setState({
+    //       //复制数据源
+    //       //  dataArray:this.state.dataArray.concat( responseData.results),
+    //       dataArray: this.state.dataArray.concat(dataBlob),
+    //       isLoading: false,
+    //       showFoot: foot,
+    //       showHeader: 0,
+    //       isRefreshing: false,
+    //       pageCount: data.pageCount,
+    //       status: "custom"
+    //     });
+    //     data = null; //重置为空
+    //     dataBlob = null;
+    //   })
+    //   .catch(error => {
+    //     console.log("lfj setState response error");
+    //     this.setState({
+    //       status: "loadingFailed",
+    //       error: true,
+    //       errorInfo: error
+    //     });
+    //   })
+    //   .finally(
+    //     console.log("lfj fetchData finally", this.pull) &&
+    //       this.pull &&
+    //       this.pull.finishRefresh()
+    //   )
+    //   .done();
   }
 
   //显示FlatList
@@ -249,7 +270,7 @@ export class MissionsCenterPage extends PureComponent {
             this.normalFilterItems = filterMaps;
             console.log("lfj 筛选项", this.normalFilterItems);
           }}
-          rightTitleText={'筛选'}
+          rightTitleText={"筛选"}
           filterData={[
             {
               type: "normal",
@@ -471,7 +492,6 @@ export class MissionsCenterPage extends PureComponent {
 
   //header在不同的pullstate下的展示
   _onPullStateChangeHeight = (pullState, moveHeight) => {
-    console.log("lfj pull state", pullState);
     if (pullState == "pulling") {
       this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
       this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });

@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
+// import { PullFlatList } from "react-native-rk-pull-to-refresh";
 let _navigation;
 let imageUrlIndex = 0;
 const width = Dimensions.get("window").width;
@@ -44,7 +45,7 @@ export class HomePage extends PureComponent {
   }
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setTranslucent(false); //关闭沉浸式
+      StatusBar.setTranslucent(false); //沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });

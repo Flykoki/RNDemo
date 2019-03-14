@@ -3,18 +3,16 @@ import {
   View,
   Text,
   Image,
-  FlatList,
   StatusBar,
   Dimensions,
-  ActivityIndicator,
   TouchableOpacity,
   StyleSheet
 } from "react-native";
 import BannerView from "../component/BannerView";
-import ListItem from "../component/ListItem";
 import { RootView } from "../component/CommonView";
-import { fetchRequest } from "../utils/FetchUtil";
 import { PullFlatList } from "urn-pull-to-refresh";
+// import { PullFlatList, PullView } from "react-native-rk-pull-to-refresh";
+import { FetchUtils } from "sz-network-module";
 
 let _navigation;
 const screenWidth = Dimensions.get("window").width;
@@ -38,80 +36,20 @@ export default class StrategyPage extends PureComponent {
       dataSource: [], //
       refreshEnable: true, //是否支持下拉刷新，解决banner左右滑动时与 pullFlatList冲突
       bannerDisplayList: [
-        {
-          banner:
-            "http://udfstest02.10101111.com/ucarudfs/resource/V2/201811/1/6-002dd72a8fa6479d8b5eb14c587d5ec1-g-sr-scale.jpg"
-        },
-        1,
-        {
-          banner:
-            "http://udfstest.10101111.com/ucarudfs/resource/V2/201901/1/6-09311a61221a42c28c8352cbb5cb740b-g-sr-scale.png"
-        },
-        {
-          banner:
-            "http://udfstest02.10101111.com/ucarudfs/resource/V2/201812/1/6-7d6f024a3b7b466eaa0da9aa32ded971-g-sr-scale.jpg"
-        }
+        // {
+        //   banner:
+        //     "http://udfstest02.10101111.com/ucarudfs/resource/V2/201811/1/6-002dd72a8fa6479d8b5eb14c587d5ec1-g-sr-scale.jpg"
+        // },
       ], //头部banner数据源
       hotDisplayList: {}, //热门活动数据源
       latestPublishList: [
-        {
-          key: "1",
-          banner:
-            "http://udfstest02.10101111.com/ucarudfs/resource/V2/201811/1/6-002dd72a8fa6479d8b5eb14c587d5ec1-g-sr-scale.jpg",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1;2;3",
-          title: "神州买买车荣获“2017诚信"
-        },
-        {
-          key: "1",
-          banner:
-            "http://udfstest.10101111.com/ucarudfs/resource/V2/201901/1/6-09311a61221a42c28c8352cbb5cb740b-g-sr-scale.png",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1;2",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        },
-        {
-          key: "1",
-          banner: "",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        },
-        {
-          key: "1",
-          banner: "",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1;2",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        },
-        {
-          key: "1",
-          banner: "",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1;2",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        },
-        {
-          key: "1",
-          banner: "",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        },
-        {
-          key: "1",
-          banner: "",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1;2",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        },
-        {
-          key: "1",
-          banner: "",
-          publishTimeStr: "2017/05/25",
-          businessLine: "1;2",
-          title: "神州买买车荣获“2017诚信消费品牌”奖"
-        }
+        // {
+        //   key: "1",
+        //   banner: "",
+        //   publishTimeStr: "2017/05/25",
+        //   businessLine: "1;2",
+        //   title: "神州买买车荣获“2017诚信消费品牌”奖"
+        // }
       ], //最新发布数据源
 
       infos: [
@@ -145,11 +83,15 @@ export default class StrategyPage extends PureComponent {
 
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setTranslucent(true); //开启沉浸式
-      StatusBar.setBackgroundColor("transparent");
+      console.log("lfj currentHeight", StatusBar.currentHeight);
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("#FFFFFF");
+      // StatusBar.setTranslucent(true); //是否沉浸式
+      // StatusBar.setBackgroundColor("transparent");
     });
 
-    this._initData();
+    this._fetchData();
+    // this._initData();
   }
   componentWillUnmount = () => {
     this._navListener.remove();
@@ -163,7 +105,8 @@ export default class StrategyPage extends PureComponent {
         failed={{
           tips: "加载失败",
           onPress: () => {
-            this.setState({ status: "custom" });
+            this.setState({ status: "loading" });
+            this._fetchData();
           },
           btnText: "重新加载"
         }}
@@ -178,9 +121,10 @@ export default class StrategyPage extends PureComponent {
         ref={c => (this.pull = c)}
         isContentScroll={true}
         refreshable={this.state.refreshEnable}
-        style={{ height: "100%", width: screenWidth }}
+        // style={{ flex: 1, width: screenWidth }}
         onPullRelease={this._onPullRelease}
         data={this.state.dataSource}
+        topIndicatorHeight={50}
         refreshing={this.state.isRefreshing}
         renderItem={({ item, index, separators }) => this._renderItem(item)}
         onTouchStart={e => {
@@ -239,57 +183,67 @@ export default class StrategyPage extends PureComponent {
   };
 
   _fetchData = () => {
-    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
-    // url = "http://www.wanandroid.com/article/list/" + '/action/cmt/queryExhibitionList';
-    fetchRequest(url, "GET")
-      .then(responseData => {
-        console.log("lfj responseData", responseData);
+    FetchUtils.fetch({
+      url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
+      params: {
+        account: "xuxu.wang01",
+        passwd: "Aa1234"
+      },
+      api: "action/employee/login",
+      success: response => {
+        console.log("登陆.js success = ", response);
+        FetchUtils.fetch({
+          url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
+          params: {},
+          api: "action/cmt/queryExhibitionList",
+          success: response => {
+            console.log("资讯攻略 success = ", response);
+            let content = response;
+            let operationBannerDisplayList = content.operationBannerDisplayList; //banner list
+            let operationHotDisplay = content.operationHotDisplayList[0]; //热门活动
+            let operationInfoList = content.operationInfoList; //最新发布
+            let tempData = [];
+            tempData.push({
+              key: "banner",
+              data: operationBannerDisplayList
+                ? operationBannerDisplayList
+                : this.state.bannerDisplayList
+            }); //banner图片
+            tempData.push({ key: "strategy", data: this.state.infos }); //业务入口
+            tempData.push({
+              key: "hot",
+              data: operationHotDisplay
+                ? operationHotDisplay
+                : this.state.hotDisplayList
+            }); //热门活动
+            tempData.push({
+              key: "publish",
+              data: operationInfoList
+                ? operationInfoList
+                : this.state.latestPublishList
+            }); //热门活动
 
-        // if (responseData.code == 1) {
-        let content = responseData.content;
-        let operationBannerDisplayList = content.operationBannerDisplayList; //banner list
-        let operationHotDisplay = content.operationHotDisplayList[0]; //热门活动
-        let operationInfoList = content.operationInfoList; //最新发布
-        let tempData = this.state.dataSource;
-        tempData.push({
-          key: "banner",
-          data: operationBannerDisplayList
-            ? operationBannerDisplayList
-            : this.state.bannerDisplayList
-        }); //banner图片
-        tempData.push({ key: "strategy", data: this.state.infos }); //业务入口
-        tempData.push({
-          key: "hot",
-          data: operationHotDisplay
-            ? operationHotDisplay
-            : this.state.hotDisplayList
-        }); //热门活动
-        tempData.push({
-          key: "publish",
-          data: operationInfoList
-            ? operationInfoList
-            : this.state.latestPublishList
-        }); //热门活动
-
-        this.setState({
-          dataSource: tempData,
-          hotDisplayList: operationHotDisplay,
-          latestPublishList: operationInfoList,
-          bannerDisplayList: operationBannerDisplayList,
-          isRefreshing: false
+            this.setState({
+              dataSource: tempData,
+              status: "custom",
+              hotDisplayList: operationHotDisplay,
+              latestPublishList: operationInfoList,
+              bannerDisplayList: operationBannerDisplayList,
+              isRefreshing: false
+            });
+            this.pull && this.pull.finishRefresh();
+          },
+          error: err => {
+            console.log("资讯攻略.js error = ", err);
+            this.setState({ status: "loadingFailed", isRefreshing: false });
+          }
         });
-        // } else {
-        // }
-      })
-      .catch(error => {
-        console.log(error);
-        this.setState({
-          status: "loadingFailed",
-          isRefreshing: false
-        });
-      })
-      .finally()
-      .done();
+      },
+      error: err => {
+        console.log("登陆.js error = ", err);
+        this.setState({ status: "loadingFailed", isRefreshing: false });
+      }
+    });
   };
 
   _renderItem = item => {
@@ -297,42 +251,61 @@ export default class StrategyPage extends PureComponent {
     switch (item.key) {
       case "banner":
         return (
-          <BannerView
-            style={{ flex: 1 }}
-            data={data}
-            onBannerItemPress={onBannerItemPress =>
-              this._onBannerPress(onBannerItemPress)
-            }
-          />
+          data &&
+          data.length > 0 && (
+            <View style={{ flex: 1, marginBottom: 10 }}>
+              <BannerView
+                data={data}
+                onBannerItemPress={onBannerItemPress =>
+                  this._onBannerPress(onBannerItemPress)
+                }
+              />
+            </View>
+          )
         );
         break;
       case "strategy":
         return (
-          <View style={styles.strategyList}>
+          <View
+            style={[
+              styles.strategyList
+              // ,
+              // this.state.bannerDisplayList.length == 0
+              //   ? { marginTop: StatusBar.currentHeight }
+              //   : {}
+            ]}
+          >
             {this._renderStrategyList(data)}
           </View>
         );
         break;
       case "publish":
-        return this._renderLatestPublishItem(data);
+        return (
+          <View style={{ marginBottom: 10 }}>
+            {this._renderLatestPublishHeader()}
+            {this._renderLatestPublishItem(data)}
+          </View>
+        );
         break;
       case "hot":
         return (
-          <TouchableOpacity
-            onPress={() => {
-              this._onHotDisplayPress();
-            }}
-          >
-            <Image
-              style={styles.topBusiness}
-              resizeMode={"stretch"}
-              source={
-                data.banner
-                  ? { uri: data.banner }
-                  : require("../../res/img/app_strategy_banner.png")
-              }
-            />
-          </TouchableOpacity>
+          data.banner !== undefined && (
+            <TouchableOpacity
+              onPress={() => {
+                this._onHotDisplayPress(data);
+              }}
+            >
+              <Image
+                style={styles.topBusiness}
+                resizeMode={"stretch"}
+                source={
+                  data.banner !== undefined
+                    ? { uri: data.banner }
+                    : require("../../res/img/app_strategy_banner.png")
+                }
+              />
+            </TouchableOpacity>
+          )
         );
         break;
 
@@ -343,8 +316,8 @@ export default class StrategyPage extends PureComponent {
   _onBannerPress = item => {
     console.warn("banner item", item);
   };
-  _onHotDisplayPress = () => {
-    console.warn("hot display", this.state.hotDisplayList);
+  _onHotDisplayPress = data => {
+    _navigation.navigate("PolicyDetail", { data: data });
   };
   _keyExtractor = (item, index) => {
     return item.key;
@@ -385,86 +358,103 @@ export default class StrategyPage extends PureComponent {
   };
   //最新发布flat item
   _renderLatestPublishItem = itemArray => {
-    return itemArray.map(item => {
+    return itemArray.map((item, index, itemArray) => {
       return (
-        <TouchableOpacity
-          style={styles.latestPublishIemWithShadow}
-          onPress={() => {
-            _navigation.navigate("PolicyDetail", { data: item });
-          }}
-        >
-          <Image
-            style={{
-              width: 100,
-              height: 90,
-              marginLeft: 15,
-              marginTop: 16,
-              marginBottom: 15.6
-            }}
-            resizeMode={"stretch"}
-            source={
-              item.banner.length > 0
-                ? { uri: item.banner }
-                : require("../../res/img/swiper_1.jpg")
-            }
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "space-between"
+        <View style={{ flex: 1, flexDirection: "column" }}>
+          <TouchableOpacity
+            style={styles.latestPublishIemWithShadow}
+            onPress={() => {
+              console.warn("lfj publish", item);
+              _navigation.navigate("PolicyDetail", { data: item });
             }}
           >
-            <Text style={styles.latestPublishIemTitle}>{item.title}</Text>
-            <View
+            <Image
               style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
+                width: 100,
+                height: 90,
                 marginLeft: 15,
-                marginRight: 19
-              }}
-            >
-              {this._getBusinessLineTag(item.businessLine)}
-            </View>
-            <Text
-              style={{
-                marginLeft: 15,
+                marginTop: 16,
                 marginBottom: 15.6
               }}
+              resizeMode={"stretch"}
+              source={
+                item.banner.length > 0
+                  ? { uri: item.banner }
+                  : require("../../res/img/swiper_1.jpg")
+              }
+            />
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "space-between"
+              }}
             >
-              {item.publishTimeStr}
-            </Text>
-          </View>
-        </TouchableOpacity>
+              <Text style={styles.latestPublishIemTitle}>{item.title}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  marginLeft: 15,
+                  marginRight: 19
+                }}
+              >
+                {this._getBusinessLineTag(item.businessLine)}
+              </View>
+              <Text
+                style={{
+                  marginLeft: 15,
+                  marginBottom: 15.6
+                }}
+              >
+                {item.publishTimeStr}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          {index != itemArray.length - 1 && (
+            <View
+              style={{
+                backgroundColor: "#E3E3E3",
+                height: 0.5,
+                marginLeft: 17,
+                marginRight: 13
+              }}
+            />
+          )}
+        </View>
       );
     });
   };
 
   _getBusinessLineTag = businessLine => {
-    let array = businessLine.split(";");
-    return array.map((item, index, array) => {
-      let img;
-      switch (item) {
-        case "1":
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-        case "6":
-          img = require("../../res/img/icon_app_strategy_4s_finance.png");
-          break;
+    if (businessLine) {
+      let array = businessLine.split(";");
+      return array.map((item, index, array) => {
+        let img;
+        switch (item) {
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "5":
+          case "6":
+            img = require("../../res/img/icon_app_strategy_4s_finance.png");
+            break;
 
-        default:
-          break;
-      }
-      return (
-        <Image
-          style={{ height: 17, width: 50, marginRight: 5 }}
-          resizeMode={"stretch"}
-          source={img}
-        />
-      );
-    });
+          default:
+            break;
+        }
+        return (
+          <Image
+            style={{ height: 17, width: 50, marginRight: 5 }}
+            resizeMode={"stretch"}
+            source={img}
+          />
+        );
+      });
+    } else {
+      return null;
+    }
   };
 
   _renderStrategyListItem = ({ item }) => {
@@ -531,19 +521,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     color: "#333333",
     fontSize: 16,
-    marginLeft: 19,
+    paddingLeft: 19,
     textAlignVertical: "center",
     textAlign: "left"
   },
   topBusiness: {
     height: 80,
     width: screenWidth,
-    marginTop: 10
+    marginBottom: 10
   },
 
   strategyList: {
-    marginTop: 10,
+    marginBottom: 10,
     width: screenWidth,
+    flex: 1,
     flexWrap: "wrap",
     flexDirection: "row"
   },

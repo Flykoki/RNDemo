@@ -1,4 +1,6 @@
 rootProject.name = 'RNDemo'
+// include ':react-native-rk-pull-to-refresh'
+// project(':react-native-rk-pull-to-refresh').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-rk-pull-to-refresh/android')
 include ':sz-network-module'
 project(':sz-network-module').projectDir = new File(rootProject.projectDir, '../modules/sz-network-module/android')
 include ':react-native-view-shot'

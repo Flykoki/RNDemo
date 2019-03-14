@@ -64,3 +64,5 @@ build/
 *.settings
 *.classpath
 bin/
+sz-network-module
+modules/urn-pull-to-refresh.rar

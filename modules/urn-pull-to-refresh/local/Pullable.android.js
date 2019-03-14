@@ -63,7 +63,6 @@ export default class Pullable extends PullRoot {
     // if (state == 4) {
     //   this.pullState = "pullDone";
     // }
-    console.log("lfj pull state", this.pullState);
     //默认的设置
     this.defaultTopSetting();
     //告诉外界是否要锁住

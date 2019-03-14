@@ -84,7 +84,7 @@ export class PolicyDetail extends PureComponent {
             onLoadStart={() => {
               this.setState({ status: "loading" });
             }}
-            source={{ uri: this.state.data.link }}
+            source={{ uri: this.state.data.linkAddress }}
           />
         )}
         {this.state.status === "loading" && (

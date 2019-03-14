@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  PanResponder,
   Image,
   ScrollView
 } from "react-native";
@@ -23,6 +24,70 @@ export default class BannerView extends Component {
       autoScroll: this.props.autoScroll ? this.props.autoScroll : true,
       data: this.props.data ? this.props.data : banner //banner图片数组
     };
+  }
+
+  componentWillMount() {
+    this._panResponder = PanResponder.create({
+      // 要求成为响应者：
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onPanResponderGrant: (evt, gestureState) => {
+        // 开始手势操作。给用户一些视觉反馈，让他们知道发生了什么事情！
+        // gestureState.{x,y} 现在会被设置为0
+        console.log("lfj panresponder grant");
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        console.log(
+          "lfj panresponder move",
+          gestureState.moveY,
+          gestureState.moveX
+        );
+
+        // 最近一次的移动距离为gestureState.move{X,Y}
+        // 从成为响应者开始时的累计手势移动距离为gestureState.d{x,y}
+        // let margin = gestureState.moveY - this.state.pageY;
+        // let index = Math.floor(margin / 16);
+        // index =
+        //   index > -1
+        //     ? index < rightIndex.length
+        //       ? index
+        //       : rightIndex.length - 1
+        //     : 0;
+        // margin = index * 16 - 17;
+        // this.setState({
+        //   pressed: true,
+        //   currentLetter: rightIndex[index].title,
+        //   currentIndex: index,
+        //   position:
+        //     margin > -17
+        //       ? margin > this.state.height - 33
+        //         ? this.state.height - 33
+        //         : margin
+        //       : -17
+        // });
+        // this.props.onScroll(index);
+      },
+
+      onPanResponderTerminationRequest: (evt, gestureState) => false,
+      onPanResponderRelease: (evt, gestureState) => {
+        this.setState({ pressed: false });
+      },
+      onPanResponderTerminate: (evt, gestureState) => {
+        // 另一个组件已经成为了新的响应者，所以当前手势将被取消。
+        console.log("lfj panresponder terminate");
+      },
+      onShouldBlockNativeResponder: (evt, gestureState) => {
+        // 返回一个布尔值，决定当前组件是否应该阻止原生组件成为JS响应者
+        // 默认返回true。目前暂时只支持android。
+        return true;
+      }
+    });
   }
 
   componentDidMount() {
@@ -50,7 +115,10 @@ export default class BannerView extends Component {
   };
   render() {
     return (
-      <View style={[styles.banner, this.props.style]}>
+      <View
+        // {...this._panResponder.panHandlers}
+        style={[styles.banner, this.props.style]}
+      >
         <ScrollView
           ref={f => (this.scrollView = f)}
           horizontal={true}

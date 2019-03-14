@@ -3,6 +3,7 @@ package com.rndemo;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.hzl.pulltorefresh.RefreshReactPackage;
 import com.networkmodule.security.SzSecurityPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -31,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RefreshReactPackage(),
             new SzSecurityPackage(),
             new SzDevicePackage(),
             new RNViewShotPackage(),

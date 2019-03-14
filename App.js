@@ -78,7 +78,7 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
     },
-    initialRouteName: "我的"
+    initialRouteName: "首页"
   }
 );
 
@@ -125,7 +125,7 @@ const StackContainer = createStackNavigator(
     }
   },
   {
-    initialRouteName: "DistributePage",
+    initialRouteName: "HomeTab",
     defaultNavigationOptions: {
       headerTitleStyle: { flex: 1, textAlign: "center" }
     }
