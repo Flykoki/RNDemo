@@ -3,18 +3,10 @@ import {
   View,
   Text,
   Image,
-  Modal,
-  Alert,
-  FlatList,
   StatusBar,
   Dimensions,
-  ActivityIndicator,
-  TouchableOpacity,
-  TouchableHighlight,
-  TouchableNativeFeedback,
   StyleSheet
 } from "react-native";
-import TextInputWithClearButton from "../component/TextInputWithClearButton";
 
 const screenWidth = Dimensions.get("window").width;
 let _navigation;
@@ -96,7 +88,7 @@ const styles = StyleSheet.create({
   loginDivider: {
     width: 0.8,
     backgroundColor: "#FFFFFF",
-    height: 30,
+    height: 30
   },
   loginText: {
     color: "#FFFFFF",

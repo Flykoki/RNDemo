@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import SettingsList from "../../component/SettingsList";
 import { titleOptions } from "../../component/Titie";
+import AccountHelper from "../../login/AccountHelper";
+import { NavigationActions } from "react-navigation";
 
 export default class SettingsScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -106,10 +108,25 @@ export default class SettingsScreen extends Component {
 
         <SettingsList data={this.state.data} />
 
-        <View style={styles.loginOutStyle}>
+        <TouchableOpacity
+          style={styles.loginOutStyle}
+          onPress={this._loginOut.bind(this)}
+        >
           <Text style={styles.loginOutTextStyle}>退出登录</Text>
-        </View>
+        </TouchableOpacity>
       </View>
+    );
+  }
+
+  _loginOut() {
+    AccountHelper.loginOut();
+    this._loginOutSuccessful();
+  }
+
+  _loginOutSuccessful() {
+    this.props.navigation.reset(
+      [NavigationActions.navigate({ routeName: "DistributePage" })],
+      0
     );
   }
 }

@@ -3,18 +3,14 @@ import {
   View,
   Text,
   Image,
-  Modal,
-  Alert,
-  FlatList,
   StatusBar,
   Dimensions,
-  ActivityIndicator,
   TouchableOpacity,
-  TouchableHighlight,
-  TouchableNativeFeedback,
   StyleSheet
 } from "react-native";
 import TextInputWithClearButton from "../component/TextInputWithClearButton";
+import AccountHelper from "./AccountHelper";
+import { NavigationActions } from "react-navigation";
 
 const screenWidth = Dimensions.get("window").width;
 let _navigation;
@@ -33,9 +29,9 @@ export default class LoginPage extends Component {
           style={styles.backButtonStyle}
         >
           <Image
-          style={{ height: 14.6, width: 8.3 }}
+            style={{ height: 14.6, width: 8.3 }}
             source={require("../../res/img/icon_back.png")}
-            resizeMode={'contain'}
+            resizeMode={"contain"}
           />
         </TouchableOpacity>
       ),
@@ -132,14 +128,21 @@ export default class LoginPage extends Component {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.forgetPwd} onPress={()=>{this._forgetPwd()}}>忘记密码?</Text>
+        <Text
+          style={styles.forgetPwd}
+          onPress={() => {
+            this._forgetPwd();
+          }}
+        >
+          忘记密码?
+        </Text>
       </View>
     );
   }
-  _forgetPwd=()=>{
-      console.warn('忘记密码');
-      _navigation.navigate("HomeTab")
-  }
+  _forgetPwd = () => {
+    console.warn("忘记密码");
+    this._jumpToHomeTab();
+  };
   _validFormData = () => {
     let pwd = this.state.loginPwd;
     let name = this.state.loginName;
@@ -147,9 +150,26 @@ export default class LoginPage extends Component {
       console.warn("密码长度 6-20");
       return;
     }
-
-
+    AccountHelper.login(
+      name,
+      pwd,
+      this._onLoginSuccess.bind(this),
+      this._onLoginFailed.bind(this)
+    );
   };
+
+  _onLoginSuccess() {
+    this._jumpToHomeTab();
+  }
+
+  _onLoginFailed(error) {}
+
+  _jumpToHomeTab() {
+    this.props.navigation.reset(
+      [NavigationActions.navigate({ routeName: "HomeTab" })],
+      0
+    );
+  }
 }
 
 const styles = StyleSheet.create({

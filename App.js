@@ -39,6 +39,7 @@ import StrategyPage from "./src/js/strategy/StrategyPage";
 import TestPage from "./src/js/home/TestPage";
 import LoginPage from "./src/js/login/LoginPage";
 import DistributePage from "./src/js/login/DistributePage";
+import SplashView from "./src/js/splash/SplashView";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -84,6 +85,7 @@ const TabNavigator = createBottomTabNavigator(
 
 const StackContainer = createStackNavigator(
   {
+    SplashView: SplashView,
     LoginPage: LoginPage,
     DistributePage: DistributePage,
     StrategyPage: StrategyPage,
@@ -125,7 +127,7 @@ const StackContainer = createStackNavigator(
     }
   },
   {
-    initialRouteName: "HomeTab",
+    initialRouteName: "SplashView",
     defaultNavigationOptions: {
       headerTitleStyle: { flex: 1, textAlign: "center" }
     }
