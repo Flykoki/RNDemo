@@ -245,110 +245,88 @@ export class MissionsCenterPage extends PureComponent {
           errorInfo: error
         });
       })
-      .finally(
-        console.log("lfj missionCenter fetchData finally", this.refs.pull) &&
-          this.refs.pull &&
-          this.refs.pull.finishRefresh()
-      )
+      .finally(this.refs && this.refs.pull && this.refs.pull.finishRefresh())
       .done();
   }
 
   //显示FlatList
   renderData() {
     return (
-      <PullFlatList
-        ref="pull"
-        isContentScroll={true}
-        topIndicatorHeight={topIndicatorHeight}
-        style={{
-          height: windowHeight,
-          width: width,
-          marginTop: this.topClickViewHight
-        }}
-        onPullRelease={this._onPullRelease}
-        data={this.state.dataArray}
-        onEndReached={this._onEndReached}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={this._renderFooter}
-        refreshing={this.state.isRefreshing}
-        renderItem={this._renderItemView}
-        keyExtractor={this._keyExtractor}
-      />
-      //   <View style={styles.flatListContain}>
-      //     <PullFlatList
-      //       ref="pull"
-      //       isContentScroll={true}
-      //       topIndicatorHeight={topIndicatorHeight}
-      //       style={{
-      //         height: windowHeight,
-      //         width: width,
-      //         marginTop: this.topClickViewHight
-      //       }}
-      //       onPullRelease={this._onPullRelease}
-      //       data={this.state.dataArray}
-      //       onEndReached={this._onEndReached}
-      //       onEndReachedThreshold={0.1}
-      //       ListFooterComponent={this._renderFooter}
-      //       refreshing={this.state.isRefreshing}
-      //       renderItem={this._renderItemView}
-      //       keyExtractor={this._keyExtractor}
-      //     ></PullFlatList>
-      //     {/* <FlatList
-      //       style={{ marginTop: this.topClickViewHight }}
-      //       data={this.state.dataArray}
-      //       renderItem={this._renderItemView.bind(this)}
-      //       ListFooterComponent={this._renderFooter}
-      //       onEndReached={this._onEndReached}
-      //       onEndReachedThreshold={0.1}
-      //       refreshing={this.state.isRefreshing}
-      //       onRefresh={this.handleRefresh} //因为涉及到this.state
-      //       keyExtractor={this._keyExtractor}
-      //     /> */}
-      //     {/* <SortWithFilterView
-      //       titleItemHight={this.topClickViewHight}
-      //       onSortDataSelectedCallback={(item, index) => {
-      //         //排序item点击事件
-      //         this.sortDataIndex = index;
-      //         // this.setState({ a: 1 });
-      //         console.log("lfj onSortDataSelectedCallback,", item, index);
-      //       }}
-      //       leftTitleText={"新建事件正序"}
-      //       sortDataObj={{
-      //         sortData: ["新建事件正序", "新建事件倒序"],
-      //         sortDataIndex: 1
-      //       }}
-      //       navigation={_navigation}
-      //       onFilterResponseCallback={response => {
-      //         this.filterResponse = response;
-      //         console.log("lfj 筛选结果", this.filterResponse);
-      //       }}
-      //       onNormalFilterCallback={filterMaps => {
-      //         this.normalFilterItems = filterMaps;
-      //         console.log("lfj 筛选项", this.normalFilterItems);
-      //       }}
-      //       rightTitleText={"筛选"}
-      //       filterData={[
-      //         {
-      //           type: "normal",
-      //           filterMultiple: true,
-      //           title: "状态",
-      //           items: ["待处理", "处理中", "处理完毕", "已取消"]
-      //         },
-      //         {
-      //           type: "normal",
-      //           title: "参与人",
-      //           filterMultiple: true,
-      //           items: ["我"]
-      //         },
-      //         {
-      //           type: "date",
-      //           title: "创建时间",
-      //           filterMultiple: false,
-      //           items: ["今天", "近3天", "近7天", "近15天"]
-      //         }
-      //       ]}
-      //     /> */}
-      //   </View>
+      <View style={styles.flatListContain}>
+        {/* <PullFlatList
+            ref="pull"
+            isContentScroll={true}
+            topIndicatorHeight={topIndicatorHeight}
+            style={{
+              height: windowHeight,
+              width: width,
+              marginTop: this.topClickViewHight
+            }}
+            onPullRelease={this._onPullRelease}
+            data={this.state.dataArray}
+            onEndReached={this._onEndReached}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={this._renderFooter}
+            refreshing={this.state.isRefreshing}
+            renderItem={this._renderItemView}
+            keyExtractor={this._keyExtractor}
+          ></PullFlatList> */}
+        <FlatList
+          style={{ marginTop: this.topClickViewHight }}
+          data={this.state.dataArray}
+          renderItem={this._renderItemView.bind(this)}
+          ListFooterComponent={this._renderFooter}
+          onEndReached={this._onEndReached}
+          onEndReachedThreshold={0.1}
+          refreshing={this.state.isRefreshing}
+          onRefresh={this.handleRefresh} //因为涉及到this.state
+          keyExtractor={this._keyExtractor}
+        />
+        <SortWithFilterView
+          titleItemHight={this.topClickViewHight}
+          onSortDataSelectedCallback={(item, index) => {
+            //排序item点击事件
+            this.sortDataIndex = index;
+            // this.setState({ a: 1 });
+            console.log("lfj onSortDataSelectedCallback,", item, index);
+          }}
+          leftTitleText={"新建事件正序"}
+          sortDataObj={{
+            sortData: ["新建事件正序", "新建事件倒序"],
+            sortDataIndex: 1
+          }}
+          navigation={_navigation}
+          onFilterResponseCallback={response => {
+            this.filterResponse = response;
+            console.log("lfj 筛选结果", this.filterResponse);
+          }}
+          onNormalFilterCallback={filterMaps => {
+            this.normalFilterItems = filterMaps;
+            console.log("lfj 筛选项", this.normalFilterItems);
+          }}
+          rightTitleText={"筛选"}
+          filterData={[
+            {
+              type: "normal",
+              filterMultiple: true,
+              title: "状态",
+              items: ["待处理", "处理中", "处理完毕", "已取消"]
+            },
+            {
+              type: "normal",
+              title: "参与人",
+              filterMultiple: true,
+              items: ["我"]
+            },
+            {
+              type: "date",
+              title: "创建时间",
+              filterMultiple: false,
+              items: ["今天", "近3天", "近7天", "近15天"]
+            }
+          ]}
+        />
+      </View>
     );
   }
   //下拉释放回调
