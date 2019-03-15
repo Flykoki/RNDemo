@@ -49,13 +49,13 @@ export default class AccountHelper extends Component {
           ? EMPLOYEE_LOGIN_API
           : DISTRIBUTOR_LOGIN_API,
       success: response => {
-        console.warn("login success = ", response);
-        response.accountType = accountType;
+        console.log("login success = ", response);
+        response.localType = accountType;
         AccountHelper.refreshAccountInfo(response);
         success();
       },
       error: err => {
-        console.warn("login error = ", err);
+        console.log("login error = ", err);
         error({ msg: "登录失败" });
       }
     });
@@ -67,6 +67,25 @@ export default class AccountHelper extends Component {
       customCid: LOGIN_CID,
       params: { distributorCode: distributorCode },
       api: DISTRIBUTOR_USER_INFO,
+      success: response => {
+        if (success) {
+          success(response);
+        }
+      },
+      error: err => {
+        if (error) {
+          error(err);
+        }
+      }
+    });
+  }
+
+  static getEmployeeInfo(success, error) {
+    FetchUtils.fetch({
+      url: LOGIN_BASE_URL,
+      customCid: LOGIN_CID,
+      params: {},
+      api: EMPLOYEE_USER_INFO,
       success: response => {
         if (success) {
           success(response);

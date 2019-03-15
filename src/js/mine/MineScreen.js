@@ -161,7 +161,7 @@ export class MineScreen extends Component {
       account = "";
       info = {};
       if (accountInfo) {
-        isDistributor = accountInfo.accountType === ACCOUNT_TYPE_DISTRIBUTOR;
+        isDistributor = accountInfo.localType === ACCOUNT_TYPE_DISTRIBUTOR;
         if (isDistributor) {
           this._processDistributorUserInfo(accountInfo.accountInfo);
           return;
