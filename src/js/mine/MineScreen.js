@@ -1,14 +1,29 @@
 import React, { Component } from "react";
 import { View, Text, StatusBar, StyleSheet } from "react-native";
+import { NavigationActions } from "react-navigation";
 import SettingsList from "../component/SettingsList";
+import { RootView } from "../component/CommonView";
 import PersonalPanel from "./PersonalPanel";
 import ComponyInfoPanel from "./ComponyInfoPanel";
+import AccountHelper, {
+  ACCOUNT_TYPE_DISTRIBUTOR,
+  ACCOUNT_TYPE_EMPLOYEE
+} from "../login/AccountHelper";
+
+const BUSINESS_OPEN = "3";
+const BUSINESS_PAUSE = "5";
+const FOUR_S = 1; //: 自由贷分销（4S金融）；
+const CAR = 2; //：全款购车，
+const FINACE = 3; //：金融分销，
+const DISTRIBUTOR = 4; //：供应商,
+const BW = 5; //: 宝沃营销
 
 export class MineScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isCompany: true,
+      status: "loading",
+      isDistributor: false,
       listData: [
         { key: "1", type: "margin", margin: 10 },
         {
@@ -87,12 +102,14 @@ export class MineScreen extends Component {
       ]
     };
   }
+
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
       StatusBar.setTranslucent(false);
       StatusBar.setBarStyle("light-content");
       StatusBar.setBackgroundColor("#F1314B");
     });
+    this._loadData();
   }
 
   componentWillUnmount = () => {
@@ -101,32 +118,139 @@ export class MineScreen extends Component {
 
   render() {
     return (
+      <RootView
+        status={this.state.status}
+        custom={this._renderCustomView()}
+        failed={this.state.failed}
+        customStatusBar={true}
+      />
+    );
+  }
+
+  _renderCustomView() {
+    return (
       <View style={styles.container}>
         <View style={styles.panelContainer}>
           <Text style={styles.title}>我的</Text>
           <PersonalPanel
-            style={{ marginBottom: this.state.isCompany ? 46 : 21 }}
-            onPress={() => {
-              this.props.navigation.navigate("PersonalInfo");
-            }}
-            name="懒懒岚"
-            phoneNumber="18888888888"
+            style={{ marginBottom: this.state.isDistributor ? 46 : 21 }}
+            onPress={this._onPersonalPanelPressed.bind(this)}
+            name={this.state.name}
+            phoneNumber={this.state.account}
           />
         </View>
 
-        {this.state.isCompany && (
+        {this.state.isDistributor && (
           <ComponyInfoPanel
             style={styles.companyPanelStyle}
-            info={{ company: "神州买买车分销商有限公司", business: ["4s"] }}
+            info={this.state.info}
           />
         )}
 
         <SettingsList
-          styles={{ marginTop: this.state.isCompany ? 55 : 0 }}
+          styles={{ marginTop: this.state.isDistributor ? 55 : 0 }}
           data={this.state.listData}
         />
       </View>
     );
+  }
+
+  _loadData() {
+    AccountHelper.getAccountInfo().then(accountInfo => {
+      name = null;
+      account = "";
+      info = {};
+      if (accountInfo) {
+        isDistributor = accountInfo.localType === ACCOUNT_TYPE_DISTRIBUTOR;
+        if (isDistributor) {
+          this._processDistributorUserInfo(accountInfo.accountInfo);
+          return;
+        } else {
+          name = accountInfo.empName;
+          account = accountInfo.account;
+        }
+      }
+      this.setState({
+        status: "custom",
+        isDistributor: false,
+        name: name,
+        account: account
+      });
+    });
+  }
+
+  _onPersonalPanelPressed() {
+    if (this.state.name) {
+      this.props.navigation.navigate("PersonalInfo");
+    } else {
+      this.props.navigation.reset(
+        [NavigationActions.navigate({ routeName: "DistributePage" })],
+        0
+      );
+    }
+  }
+
+  _processDistributorUserInfo(accountInfo) {
+    AccountHelper.getDistributorInfo(
+      accountInfo.distributorCode,
+      userInfo => {
+        console.log("_processDistributorUserInfo", userInfo);
+        name = accountInfo.contacts;
+        account = accountInfo.account;
+        info = this._processDistributor(userInfo);
+        this.setState({
+          status: "custom",
+          isDistributor: true,
+          name: name,
+          account: account,
+          info: info
+        });
+      },
+      err => {
+        this.setState({
+          status: "loadingFailed",
+          failed: { tips: err, onPress: this._loadData }
+        });
+      }
+    );
+  }
+
+  _processDistributor(accountInfo) {
+    businessList = accountInfo.businessInfos;
+    business = [];
+    company = "";
+    for (index in businessList) {
+      businessInfo = businessList[index];
+      if (
+        businessInfo.businessStatus === BUSINESS_OPEN ||
+        businessInfo.businessStatus === BUSINESS_PAUSE
+      ) {
+        business.push(this._getNameByBusinessType(businessInfo.businessType));
+      }
+    }
+    if (accountInfo.distributorType == 0) {
+      company = accountInfo.distributorName;
+    } else {
+      company = accountInfo.principalName;
+    }
+    return { company: company, business: business };
+  }
+
+  _getNameByBusinessType(type) {
+    switch (type) {
+      case FOUR_S:
+        return "4s";
+      case CAR:
+        return "car";
+      case FINACE:
+        return "finance";
+      case DISTRIBUTOR:
+        return "distributor";
+      case BW:
+        return "bw";
+      default:
+        return "";
+    }
   }
 }
 

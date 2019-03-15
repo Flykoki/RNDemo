@@ -88,10 +88,12 @@ export class LoadFailedView extends Component {
 
 export class RootView extends Component {
   render() {
-    const { status, failed, custom } = this.props;
+    const { status, failed, custom, customStatusBar } = this.props;
     return (
       <View style={[{ flex: 1 }, this.props.style]}>
-        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        {!customStatusBar && (
+          <StatusBar barStyle="dark-content" backgroundColor="white" />
+        )}
         {status === "loading" && <LoadingView style={styles.container} />}
 
         {status === "loadingFailed" && (
@@ -109,7 +111,8 @@ export class RootView extends Component {
 }
 
 RootView.propTypes = {
-  status: PropTypes.oneOf(["loading", "loadingFailed", "custom"])
+  status: PropTypes.oneOf(["loading", "loadingFailed", "custom"]),
+  customStatusBar: PropTypes.bool
 };
 
 const styles = StyleSheet.create({

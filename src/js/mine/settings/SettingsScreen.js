@@ -119,8 +119,11 @@ export default class SettingsScreen extends Component {
   }
 
   _loginOut() {
-    AccountHelper.loginOut();
-    this._loginOutSuccessful();
+    AccountHelper.loginOut(result => {
+      if (result) {
+        this._loginOutSuccessful();
+      }
+    });
   }
 
   _loginOutSuccessful() {

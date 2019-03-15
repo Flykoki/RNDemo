@@ -7,6 +7,10 @@ import {
   Dimensions,
   StyleSheet
 } from "react-native";
+import {
+  ACCOUNT_TYPE_DISTRIBUTOR,
+  ACCOUNT_TYPE_EMPLOYEE
+} from "./AccountHelper";
 
 const screenWidth = Dimensions.get("window").width;
 let _navigation;
@@ -42,7 +46,7 @@ export default class DistributePage extends Component {
           <Text
             style={styles.loginText}
             onPress={() => {
-              this._goLogin(0);
+              this._goLogin(ACCOUNT_TYPE_EMPLOYEE);
             }}
           >
             员工入口
@@ -51,7 +55,7 @@ export default class DistributePage extends Component {
           <Text
             style={styles.loginText}
             onPress={() => {
-              this._goLogin(1);
+              this._goLogin(ACCOUNT_TYPE_DISTRIBUTOR);
             }}
           >
             渠道账号入口
@@ -64,11 +68,17 @@ export default class DistributePage extends Component {
   _goLogin = type => {
     console.log('lfj goLogin',type,_navigation)
     switch (type) {
-      case 0: //员工
-        _navigation.navigate("LoginPage", { title: "员工入口" });
+      case ACCOUNT_TYPE_EMPLOYEE: //员工
+        _navigation.navigate("LoginPage", {
+          title: "员工入口",
+          accountType: type
+        });
         break;
-      case 1: // 渠道商
-        _navigation.navigate("LoginPage", { title: "渠道账号入口" });
+      case ACCOUNT_TYPE_DISTRIBUTOR: // 渠道商
+        _navigation.navigate("LoginPage", {
+          title: "渠道账号入口",
+          accountType: type
+        });
         break;
       default:
         break;
