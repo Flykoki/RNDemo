@@ -345,6 +345,7 @@ export default class SearchView extends Component {
   };
 
   _renderSearchResultItem = ({ item }) => {
+    console.log("lfj searchView inner render item", item);
     return this.props.renderItem ? (
       this.props.renderItem
     ) : (
@@ -354,7 +355,7 @@ export default class SearchView extends Component {
         }}
         style={styles.searchResultItemContainer}
       >
-        <Text style={{ padding: 10 }}>{item.object}</Text>
+        <Text style={{ padding: 10 }}>{item.value}</Text>
       </TouchableOpacity>
     );
   };
