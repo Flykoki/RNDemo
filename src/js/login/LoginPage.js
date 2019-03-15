@@ -9,7 +9,10 @@ import {
   StyleSheet
 } from "react-native";
 import TextInputWithClearButton from "../component/TextInputWithClearButton";
-import AccountHelper from "./AccountHelper";
+import AccountHelper, {
+  ACCOUNT_TYPE_DISTRIBUTOR,
+  ACCOUNT_TYPE_EMPLOYEE
+} from "./AccountHelper";
 import { NavigationActions } from "react-navigation";
 
 const screenWidth = Dimensions.get("window").width;
@@ -139,10 +142,12 @@ export default class LoginPage extends Component {
       </View>
     );
   }
+
   _forgetPwd = () => {
     console.warn("忘记密码");
     this._jumpToHomeTab();
   };
+
   _validFormData = () => {
     let pwd = this.state.loginPwd;
     let name = this.state.loginName;
@@ -150,12 +155,25 @@ export default class LoginPage extends Component {
       console.warn("密码长度 6-20");
       return;
     }
-    AccountHelper.login(
-      name,
-      pwd,
-      this._onLoginSuccess.bind(this),
-      this._onLoginFailed.bind(this)
-    );
+    accountType = this.props.navigation.getParam("accountType");
+    switch (accountType) {
+      case ACCOUNT_TYPE_DISTRIBUTOR:
+        AccountHelper.distributorLogin(
+          name,
+          pwd,
+          this._onLoginSuccess.bind(this),
+          this._onLoginFailed.bind(this)
+        );
+        break;
+      default:
+        AccountHelper.employeeLogin(
+          name,
+          pwd,
+          this._onLoginSuccess.bind(this),
+          this._onLoginFailed.bind(this)
+        );
+        break;
+    }
   };
 
   _onLoginSuccess() {
