@@ -44,6 +44,7 @@ export default class Pullable extends PullRoot {
 
     //因为返回的moveHeight单位是px，所以要将this.topIndicatorHeight转化为px进行计算
     let topHeight = index.dip2px(this.topIndicatorHeight);
+
     if (moveHeight > 0 && moveHeight < topHeight) {
       //此时是下拉没有到位的状态
       this.pullState = "pulling";
@@ -72,7 +73,9 @@ export default class Pullable extends PullRoot {
     //进行状态和下拉距离的回调
     this.props.onPullStateChangeHeight
       ? this.props.onPullStateChangeHeight(this.pullState, moveHeight)
-      : this._onPullStateChangeHeight(this.pullState, moveHeight);
+      : this._onPullStateChangeHeight
+      ? this._onPullStateChangeHeight(this.pullState, moveHeight)
+      : this.defaultTopSetting();
   };
 
   finishRefresh = () => {

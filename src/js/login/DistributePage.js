@@ -62,6 +62,7 @@ export default class DistributePage extends Component {
   }
 
   _goLogin = type => {
+    console.log('lfj goLogin',type,_navigation)
     switch (type) {
       case 0: //员工
         _navigation.navigate("LoginPage", { title: "员工入口" });

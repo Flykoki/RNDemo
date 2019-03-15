@@ -3,15 +3,11 @@ import {
   View,
   Text,
   Image,
-  Modal,
-  Alert,
   FlatList,
   StatusBar,
   Dimensions,
   ActivityIndicator,
   TouchableOpacity,
-  TouchableHighlight,
-  TouchableNativeFeedback,
   StyleSheet
 } from "react-native";
 import { fetchRequest } from "../utils/FetchUtil";
@@ -22,6 +18,7 @@ import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
 import { FetchUtils } from "sz-network-module";
 import { RootView, LoadingView, LoadFailedView } from "../component/CommonView";
+import AccountHelper from "../login/AccountHelper";
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -66,16 +63,19 @@ export class MissionsCenterPage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      page: 0,
+      page: 1,
+      pageSize: 10,
       recentlyDateFilterPress: false, //最近创建日期筛选图标样式
       recentlyDateFilterItems: new Map(), //最近创建日期筛选内容
       normalFilterPress: false, //筛选图标样式
       pageCount: 0,
       isLoading: true,
+      isLastPage: false,
       updatePanelState: 0,
       searchResponseData: [],
       selectedItem: {},
       status: "loading",
+      errorMsg: "加载失败",
       //网络请求状态
       error: false,
       errorInfo: "",
@@ -104,195 +104,251 @@ export class MissionsCenterPage extends PureComponent {
   };
 
   render() {
-    //第一次加载等待的view
-    if (this.state.isLoading && !this.state.error) {
-      return this.renderLoadingView();
-    } else if (this.state.error) {
-      //请求失败view
-      return this.renderErrorView();
-    }
+    // //第一次加载等待的view
+    // if (this.state.isLoading && !this.state.error) {
+    //   return this.renderLoadingView();
+    // } else if (this.state.error) {
+    //   //请求失败view
+    //   return this.renderErrorView();
+    // }
 
     //加载数据
-    return this.renderData();
+    return (
+      <RootView
+        status={this.state.status}
+        failed={{
+          tips: this.state.errorMsg,
+          onPress: () => {
+            this.fetchData();
+          },
+          btnText: "重新加载"
+        }}
+        custom={this.renderData()}
+      />
+    );
   }
   //=========================== 自定义方法 =========================
   //获取数据
   fetchData() {
-    // url = "http://10.104.113.244:8888/app/mock/45/action/task/taskGroupList";
-
-    FetchUtils.fetch({
-      params: {
-        execDeptIds: [323],
-        pageNum: 0,
-        pageSize: 20,
-        accountId:421415,
-        sortTime: "0",
-        taskStatusList: [1, -1, -1]
-      },
-      api: "action/vih/warehousingTaskGroupList",
-      success: response => {
-        console.warn("missionCenter success = ", response);
-      },
-      error: err => {
-        console.warn("missionCenter error = ", err);
-      }
-    });
-
-    // url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
-    // let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
-
-    // fetchRequest(url, "GET")
-    //   .then(responseData => {
-    //     let data = responseData.data; //获取json 数据并存在data数组中
-    //     let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
-
-    //     data.datas.map(function(item) {
-    //       if (imageUrlIndex == 499) {
-    //         imageUrlIndex = 0;
+    // AccountHelper.getAccountInfo().then(data => {
+    //   FetchUtils.fetch({
+    //     url: "http://ampmapiproxytest.ucarinc.com/",
+    //     customCid: "691100",
+    //     params: {
+    //       accountId: data.accountId,
+    //       execDeptIds: data.roleList,
+    //       pageSize: this.state.pageSize,
+    //       pageNum: this.state.page
+    //     },
+    //     api: "/action/task/searchTaskGroup",
+    //     success: response => {
+    //       console.log("missionCenter success = ", response);
+    //       let foot = 0;
+    //       let lastPage = false;
+    //       if (response.total < this.state.pageNum) {
+    //         // if (this.state.page >= data.pageCount) {
+    //         lastPage = true;
+    //         foot = 1; //listView底部显示没有更多数据了
     //       }
+    //       console.log("lfj setState response");
+    //       this.setState({
+    //         //复制数据源
+    //         //  dataArray:this.state.dataArray.concat( responseData.results),
+    //         dataArray: response.list,
+    //         isLoading: false,
+    //         showFoot: foot,
+    //         isLastPage: lastPage,
+    //         showHeader: 0,
+    //         isRefreshing: false,
+    //         status: "custom"
+    //       });
+    //     },
+    //     error: err => {
+    //       console.log("missionCenter error = ", err);
+    //       this.setState({
+    //         errorMsg: err.msg,
+    //         status: "loadingFailed",
+    //         isRefreshing: false
+    //       });
+    //     },
+    //     final: () => this.pull && this.pull.finishRefresh()
+    //   });
+    // });
 
-    //       let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
+    let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
 
-    //       item.key = imageUrls[imageUrlIndex];
-    //       (item.taskGroupName = "新车分期销售"),
-    //         (item.taskGroupCode = "ASDLK"),
-    //         (item.createTime = "11/11 09:22"),
-    //         (item.sourceCode = "京P D2232"),
-    //         (item.status = missionStatus[random]),
-    //         (item.frameNo = "LAKSDJF23284RFJAL2323"),
-    //         (item.modeName = "宝沃BXi7"),
-    //         (item.vehicleTypeName = "新"),
-    //         (item.exteriorColor = "银色"),
-    //         (item.taskList = [
-    //           {
-    //             modifyTime: "11/12 12:22",
-    //             taskName: "车辆出库",
-    //             taskCode: "CK239",
-    //             taskStatus: "(待出库)"
-    //           },
-    //           {
-    //             modifyTime: "11/12 12:22",
-    //             taskName: "车辆出库",
-    //             taskCode: "CK239",
-    //             taskStatus: "(待出库)"
-    //           }
-    //         ]),
-    //         imageUrlIndex++;
-    //       dataBlob.push(item);
-    //     });
-    //     let foot = 0;
-    //     if (this.state.page >= 5) {
-    //       // if (this.state.page >= data.pageCount) {
-    //       foot = 1; //listView底部显示没有更多数据了
-    //     }
-    //     console.log("lfj setState response");
-    //     this.setState({
-    //       //复制数据源
-    //       //  dataArray:this.state.dataArray.concat( responseData.results),
-    //       dataArray: this.state.dataArray.concat(dataBlob),
-    //       isLoading: false,
-    //       showFoot: foot,
-    //       showHeader: 0,
-    //       isRefreshing: false,
-    //       pageCount: data.pageCount,
-    //       status: "custom"
-    //     });
-    //     data = null; //重置为空
-    //     dataBlob = null;
-    //   })
-    //   .catch(error => {
-    //     console.log("lfj setState response error");
-    //     this.setState({
-    //       status: "loadingFailed",
-    //       error: true,
-    //       errorInfo: error
-    //     });
-    //   })
-    //   .finally(
-    //     console.log("lfj fetchData finally", this.pull) &&
-    //       this.pull &&
-    //       this.pull.finishRefresh()
-    //   )
-    //   .done();
+    fetchRequest(url, "GET")
+      .then(responseData => {
+        let data = responseData.data; //获取json 数据并存在data数组中
+        let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
+
+        data.datas.map(function(item) {
+          if (imageUrlIndex == 499) {
+            imageUrlIndex = 0;
+          }
+
+          let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+
+          item.key = imageUrls[imageUrlIndex];
+          (item.taskGroupName = "新车分期销售"),
+            (item.taskGroupCode = "ASDLK"),
+            (item.createTime = "11/11 09:22"),
+            (item.sourceCode = "京P D2232"),
+            (item.status = missionStatus[random]),
+            (item.frameNo = "LAKSDJF23284RFJAL2323"),
+            (item.modeName = "宝沃BXi7"),
+            (item.vehicleTypeName = "新"),
+            (item.exteriorColor = "银色"),
+            (item.taskList = [
+              {
+                modifyTime: "11/12 12:22",
+                taskName: "车辆出库",
+                taskCode: "CK239",
+                taskStatus: "(待出库)"
+              },
+              {
+                modifyTime: "11/12 12:22",
+                taskName: "车辆出库",
+                taskCode: "CK239",
+                taskStatus: "(待出库)"
+              }
+            ]),
+            imageUrlIndex++;
+          dataBlob.push(item);
+        });
+        let foot = 0;
+        if (this.state.page >= 5) {
+          // if (this.state.page >= data.pageCount) {
+          foot = 1; //listView底部显示没有更多数据了
+        }
+        console.log("lfj setState response");
+        this.setState({
+          //复制数据源
+          //  dataArray:this.state.dataArray.concat( responseData.results),
+          dataArray: this.state.dataArray.concat(dataBlob),
+          isLoading: false,
+          showFoot: foot,
+          showHeader: 0,
+          isRefreshing: false,
+          pageCount: data.pageCount,
+          status: "custom"
+        });
+        data = null; //重置为空
+        dataBlob = null;
+      })
+      .catch(error => {
+        console.log("lfj setState response error");
+        this.setState({
+          status: "loadingFailed",
+          error: true,
+          errorInfo: error
+        });
+      })
+      .finally(
+        console.log("lfj missionCenter fetchData finally", this.refs.pull) &&
+          this.refs.pull &&
+          this.refs.pull.finishRefresh()
+      )
+      .done();
   }
 
   //显示FlatList
   renderData() {
     return (
-      <View style={styles.flatListContain}>
-        {/* <PullFlatList
-          ref={c => (this.pull = c)}
-          isContentScroll={true}
-          onPullStateChangeHeight={this._onPullStateChangeHeight}
-          topIndicatorRender={this._topIndicatorRender}
-          topIndicatorHeight={topIndicatorHeight}
-          style={{ flex: 1, width: width }}
-          // style={{ marginTop: this.topClickViewHight }}
-          onPullRelease={this._onPullRelease}
-          data={this.state.dataArray}
-          onEndReached={this._onEndReached}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={this._renderFooter}
-          refreshing={this.state.isRefreshing}
-          renderItem={this._renderItemView}
-          keyExtractor={this._keyExtractor}
-        /> */}
-        <FlatList
-          style={{ marginTop: this.topClickViewHight }}
-          data={this.state.dataArray}
-          renderItem={this._renderItemView.bind(this)}
-          ListFooterComponent={this._renderFooter}
-          onEndReached={this._onEndReached}
-          onEndReachedThreshold={0.1}
-          refreshing={this.state.isRefreshing}
-          onRefresh={this.handleRefresh} //因为涉及到this.state
-          keyExtractor={this._keyExtractor}
-        />
-        <SortWithFilterView
-          titleItemHight={this.topClickViewHight}
-          onSortDataSelectedCallback={(item, index) => {
-            //排序item点击事件
-            this.sortDataIndex = index;
-            // this.setState({ a: 1 });
-            console.log("lfj onSortDataSelectedCallback,", item, index);
-          }}
-          leftTitleText={"新建事件正序"}
-          sortDataObj={{
-            sortData: ["新建事件正序", "新建事件倒序"],
-            sortDataIndex: 1
-          }}
-          navigation={_navigation}
-          onFilterResponseCallback={response => {
-            this.filterResponse = response;
-            console.log("lfj 筛选结果", this.filterResponse);
-          }}
-          onNormalFilterCallback={filterMaps => {
-            this.normalFilterItems = filterMaps;
-            console.log("lfj 筛选项", this.normalFilterItems);
-          }}
-          rightTitleText={"筛选"}
-          filterData={[
-            {
-              type: "normal",
-              filterMultiple: true,
-              title: "状态",
-              items: ["待处理", "处理中", "处理完毕", "已取消"]
-            },
-            {
-              type: "normal",
-              title: "参与人",
-              filterMultiple: true,
-              items: ["我"]
-            },
-            {
-              type: "date",
-              title: "创建时间",
-              filterMultiple: false,
-              items: ["今天", "近3天", "近7天", "近15天"]
-            }
-          ]}
-        />
-      </View>
+      <PullFlatList
+        ref="pull"
+        isContentScroll={true}
+        topIndicatorHeight={topIndicatorHeight}
+        style={{
+          height: windowHeight,
+          width: width,
+          marginTop: this.topClickViewHight
+        }}
+        onPullRelease={this._onPullRelease}
+        data={this.state.dataArray}
+        onEndReached={this._onEndReached}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={this._renderFooter}
+        refreshing={this.state.isRefreshing}
+        renderItem={this._renderItemView}
+        keyExtractor={this._keyExtractor}
+      />
+      //   <View style={styles.flatListContain}>
+      //     <PullFlatList
+      //       ref="pull"
+      //       isContentScroll={true}
+      //       topIndicatorHeight={topIndicatorHeight}
+      //       style={{
+      //         height: windowHeight,
+      //         width: width,
+      //         marginTop: this.topClickViewHight
+      //       }}
+      //       onPullRelease={this._onPullRelease}
+      //       data={this.state.dataArray}
+      //       onEndReached={this._onEndReached}
+      //       onEndReachedThreshold={0.1}
+      //       ListFooterComponent={this._renderFooter}
+      //       refreshing={this.state.isRefreshing}
+      //       renderItem={this._renderItemView}
+      //       keyExtractor={this._keyExtractor}
+      //     ></PullFlatList>
+      //     {/* <FlatList
+      //       style={{ marginTop: this.topClickViewHight }}
+      //       data={this.state.dataArray}
+      //       renderItem={this._renderItemView.bind(this)}
+      //       ListFooterComponent={this._renderFooter}
+      //       onEndReached={this._onEndReached}
+      //       onEndReachedThreshold={0.1}
+      //       refreshing={this.state.isRefreshing}
+      //       onRefresh={this.handleRefresh} //因为涉及到this.state
+      //       keyExtractor={this._keyExtractor}
+      //     /> */}
+      //     {/* <SortWithFilterView
+      //       titleItemHight={this.topClickViewHight}
+      //       onSortDataSelectedCallback={(item, index) => {
+      //         //排序item点击事件
+      //         this.sortDataIndex = index;
+      //         // this.setState({ a: 1 });
+      //         console.log("lfj onSortDataSelectedCallback,", item, index);
+      //       }}
+      //       leftTitleText={"新建事件正序"}
+      //       sortDataObj={{
+      //         sortData: ["新建事件正序", "新建事件倒序"],
+      //         sortDataIndex: 1
+      //       }}
+      //       navigation={_navigation}
+      //       onFilterResponseCallback={response => {
+      //         this.filterResponse = response;
+      //         console.log("lfj 筛选结果", this.filterResponse);
+      //       }}
+      //       onNormalFilterCallback={filterMaps => {
+      //         this.normalFilterItems = filterMaps;
+      //         console.log("lfj 筛选项", this.normalFilterItems);
+      //       }}
+      //       rightTitleText={"筛选"}
+      //       filterData={[
+      //         {
+      //           type: "normal",
+      //           filterMultiple: true,
+      //           title: "状态",
+      //           items: ["待处理", "处理中", "处理完毕", "已取消"]
+      //         },
+      //         {
+      //           type: "normal",
+      //           title: "参与人",
+      //           filterMultiple: true,
+      //           items: ["我"]
+      //         },
+      //         {
+      //           type: "date",
+      //           title: "创建时间",
+      //           filterMultiple: false,
+      //           items: ["今天", "近3天", "近7天", "近15天"]
+      //         }
+      //       ]}
+      //     /> */}
+      //   </View>
     );
   }
   //下拉释放回调
@@ -333,7 +389,7 @@ export class MissionsCenterPage extends PureComponent {
       return;
     }
     //如果当前页大于或等于总页数，那就是到最后一页了，返回
-    if (this.state.page != 0 && this.state.page >= this.state.pageCount) {
+    if (this.state.page != 1 && this.state.isLastPage) {
       return;
     } else {
       this.state.page++;
@@ -342,7 +398,7 @@ export class MissionsCenterPage extends PureComponent {
     //底部显示正在加载更多数据
     this.setState({ showFoot: 2 });
     //获取数据，在componentDidMount()已经请求过数据了
-    if (this.state.page > 0) {
+    if (this.state.page > 1) {
       this.fetchData();
     }
   };
@@ -490,82 +546,6 @@ export class MissionsCenterPage extends PureComponent {
     this._onPullRelease();
   };
 
-  //header在不同的pullstate下的展示
-  _onPullStateChangeHeight = (pullState, moveHeight) => {
-    if (pullState == "pulling") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.show });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.hide });
-
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.show });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.hide });
-    } else if (pullState == "pullok") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.show });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.hide });
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.show });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.hide });
-    } else if (pullState == "pullrelease") {
-      this.txtPulling && this.txtPulling.setNativeProps({ style: styles.hide });
-      this.txtPullok && this.txtPullok.setNativeProps({ style: styles.hide });
-      this.txtPullrelease &&
-        this.txtPullrelease.setNativeProps({ style: styles.show });
-      //设置img
-      this.imgPulling && this.imgPulling.setNativeProps({ style: styles.hide });
-      this.imgPullok && this.imgPullok.setNativeProps({ style: styles.hide });
-      this.imgPullrelease &&
-        this.imgPullrelease.setNativeProps({ style: styles.show });
-    }
-  };
-
-  //header view
-  _topIndicatorRender = () => {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          height: topIndicatorHeight
-        }}
-      >
-        <Image
-          style={styles.hide}
-          ref={c => (this.imgPulling = c)}
-          source={require("../../res/img/icon_arrow_down.png")}
-        />
-        <Text ref={c => (this.txtPulling = c)} style={styles.hide}>
-          下拉可以刷新
-        </Text>
-        <Image
-          style={styles.hide}
-          ref={c => (this.imgPullok = c)}
-          source={require("../../res/img/icon_arrow_up.png")}
-        />
-        <Text ref={c => (this.txtPullok = c)} style={styles.hide}>
-          释放立即刷新
-        </Text>
-        <ActivityIndicator
-          style={styles.hide}
-          ref={c => (this.imgPullrelease = c)}
-          size="small"
-          color="gray"
-          style={{ marginRight: 5 }}
-        />
-        <Text ref={c => (this.txtPullrelease = c)} style={styles.hide}>
-          正在刷新...
-        </Text>
-      </View>
-    );
-  };
   //=========================== 自定义方法 =========================
 }
 
@@ -681,9 +661,6 @@ const styles = StyleSheet.create({
   flatListContain: {
     backgroundColor: "#F8F8F8",
     flex: 1
-    // flexDirection: "row",
-    // justifyContent: "center",
-    // alignItems: "center"
   }
 });
 

@@ -77,7 +77,8 @@ export default class StrategyPage extends PureComponent {
           key: "常见问题",
           icon: require("../../res/img/app_strategy_question.png")
         }
-      ]
+      ],
+      errorMsg: "加载失败"
     };
   }
 
@@ -103,7 +104,7 @@ export default class StrategyPage extends PureComponent {
         style={{ flex: 1, backgroundColor: "#F8F8F8" }}
         status={this.state.status}
         failed={{
-          tips: "加载失败",
+          tips: this.state.errorMsg,
           onPress: () => {
             this.setState({ status: "loading" });
             this._fetchData();
@@ -143,7 +144,8 @@ export default class StrategyPage extends PureComponent {
             this.setState({ refreshEnable: false });
           }
         }}
-      />
+      >
+      </PullFlatList>
     );
   };
   //返回footer
@@ -185,63 +187,56 @@ export default class StrategyPage extends PureComponent {
   _fetchData = () => {
     FetchUtils.fetch({
       url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
-      params: {
-        account: "xuxu.wang01",
-        passwd: "Aa1234"
-      },
-      api: "action/employee/login",
+      customCid: "502109",
+      params: {},
+      api: "action/cmt/queryExhibitionList",
       success: response => {
-        console.log("登陆.js success = ", response);
-        FetchUtils.fetch({
-          url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
-          params: {},
-          api: "action/cmt/queryExhibitionList",
-          success: response => {
-            console.log("资讯攻略 success = ", response);
-            let content = response;
-            let operationBannerDisplayList = content.operationBannerDisplayList; //banner list
-            let operationHotDisplay = content.operationHotDisplayList[0]; //热门活动
-            let operationInfoList = content.operationInfoList; //最新发布
-            let tempData = [];
-            tempData.push({
-              key: "banner",
-              data: operationBannerDisplayList
-                ? operationBannerDisplayList
-                : this.state.bannerDisplayList
-            }); //banner图片
-            tempData.push({ key: "strategy", data: this.state.infos }); //业务入口
-            tempData.push({
-              key: "hot",
-              data: operationHotDisplay
-                ? operationHotDisplay
-                : this.state.hotDisplayList
-            }); //热门活动
-            tempData.push({
-              key: "publish",
-              data: operationInfoList
-                ? operationInfoList
-                : this.state.latestPublishList
-            }); //热门活动
+        console.log("资讯攻略 success = ", response);
+        let content = response;
+        let operationBannerDisplayList = content.operationBannerDisplayList; //banner list
+        let operationHotDisplay = content.operationHotDisplayList[0]; //热门活动
+        let operationInfoList = content.operationInfoList; //最新发布
+        let tempData = [];
+        tempData.push({
+          key: "banner",
+          data: operationBannerDisplayList
+            ? operationBannerDisplayList
+            : this.state.bannerDisplayList
+        }); //banner图片
+        tempData.push({ key: "strategy", data: this.state.infos }); //业务入口
+        tempData.push({
+          key: "hot",
+          data: operationHotDisplay
+            ? operationHotDisplay
+            : this.state.hotDisplayList
+        }); //热门活动
+        tempData.push({
+          key: "publish",
+          data: operationInfoList
+            ? operationInfoList
+            : this.state.latestPublishList
+        }); //热门活动
 
-            this.setState({
-              dataSource: tempData,
-              status: "custom",
-              hotDisplayList: operationHotDisplay,
-              latestPublishList: operationInfoList,
-              bannerDisplayList: operationBannerDisplayList,
-              isRefreshing: false
-            });
-            this.pull && this.pull.finishRefresh();
-          },
-          error: err => {
-            console.log("资讯攻略.js error = ", err);
-            this.setState({ status: "loadingFailed", isRefreshing: false });
-          }
+        this.setState({
+          dataSource: tempData,
+          status: "custom",
+          hotDisplayList: operationHotDisplay,
+          latestPublishList: operationInfoList,
+          bannerDisplayList: operationBannerDisplayList,
+          isRefreshing: false
         });
       },
       error: err => {
-        console.log("登陆.js error = ", err);
-        this.setState({ status: "loadingFailed", isRefreshing: false });
+        console.log("资讯攻略.js error = ", err);
+        this.setState({
+          errorMsg: err.msg,
+          status: "loadingFailed",
+          isRefreshing: false
+        });
+      },
+      final: () => {
+        console.log("资讯攻略 final");
+        this.pull && this.pull.finishRefresh();
       }
     });
   };
