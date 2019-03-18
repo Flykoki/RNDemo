@@ -40,6 +40,7 @@ import TestPage from "./src/js/home/TestPage";
 import LoginPage from "./src/js/login/LoginPage";
 import DistributePage from "./src/js/login/DistributePage";
 import SplashView from "./src/js/splash/SplashView";
+import BusinessInfoScreen from "./src/js/mine/business/BusinessInfoScreen";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -113,6 +114,7 @@ const StackContainer = createStackNavigator(
     InsuranceDetailScreen: InsuranceDetailScreen,
     InvoiceInfoScreen: InvoiceInfoScreen,
     CalenderScreen: CalenderScreen,
+    BusinessInfoScreen: BusinessInfoScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {

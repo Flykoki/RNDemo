@@ -144,6 +144,12 @@ export class MineScreen extends Component {
           <ComponyInfoPanel
             style={styles.companyPanelStyle}
             info={this.state.info}
+            onPress={() => {
+              this.props.navigation.navigate(
+                "BusinessInfoScreen",
+                (params = { distributorInfo: info })
+              );
+            }}
           />
         )}
 
@@ -207,6 +213,7 @@ export class MineScreen extends Component {
         });
       },
       err => {
+        console.log("_processDistributorUserInfo =", err);
         this.setState({
           status: "loadingFailed",
           failed: { tips: err, onPress: this._loadData }
@@ -215,8 +222,8 @@ export class MineScreen extends Component {
     );
   }
 
-  _processDistributor(accountInfo) {
-    businessList = accountInfo.businessInfos;
+  _processDistributor(userInfo) {
+    businessList = userInfo.businessInfos;
     business = [];
     company = "";
     for (index in businessList) {
@@ -228,12 +235,12 @@ export class MineScreen extends Component {
         business.push(this._getNameByBusinessType(businessInfo.businessType));
       }
     }
-    if (accountInfo.distributorType == 0) {
-      company = accountInfo.distributorName;
+    if (userInfo.distributorType == 0) {
+      company = userInfo.distributorName;
     } else {
-      company = accountInfo.principalName;
+      company = userInfo.principalName;
     }
-    return { company: company, business: business };
+    return { company: company, business: business, userInfo: userInfo };
   }
 
   _getNameByBusinessType(type) {
