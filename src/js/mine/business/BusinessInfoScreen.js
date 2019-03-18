@@ -100,12 +100,8 @@ class ItemView extends Component {
   render() {
     return (
       <View style={styles.itemContainer}>
-        <Text style={styles.leftText} color="#666666">
-          {this.props.name}
-        </Text>
-        <Text style={styles.rightText} color="#333333">
-          {this.props.value}
-        </Text>
+        <Text style={styles.leftText}>{this.props.name}</Text>
+        <Text style={styles.rightText}>{this.props.value}</Text>
       </View>
     );
   }
@@ -130,11 +126,13 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   leftText: {
-    fontSize: 14
+    fontSize: 14,
+    color: "#666666"
   },
   rightText: {
     fontSize: 14,
-    textAlign: "right"
+    textAlign: "right",
+    color: "#333333"
   },
   divider: {
     height: 0.5,

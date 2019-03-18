@@ -84,7 +84,12 @@ export default class InstallmentSalesOfNewCars extends Component {
         }
       ]
     };
+  }
+
+  componentDidMount() {
     this._initData();
+    taskGroupId = this.props.navigation.getParam("data");
+    console.log("taskGroupId = ", taskGroupId);
   }
 
   _initData() {
