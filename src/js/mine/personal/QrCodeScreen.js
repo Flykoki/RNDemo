@@ -142,70 +142,39 @@ export default class QrCodeScreen extends Component {
   }
 
   render() {
-    const { onCloseIconPressed, menus, onSelect, theme } = this.props;
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          backgroundColor: "transparent",
-          alignItems: "center"
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            width: 320,
-            flexDirection: "column",
-            backgroundColor: "white",
-            alignItems: "center"
-          }}
-          ref={this.mainViewRef}
-        >
-          <Text style={{ marginTop: 30, fontSize: 25, marginBottom: 15 }}>
-            神州优车
-          </Text>
-          <View
-            style={{ height: 1, width: "90%", backgroundColor: "#E3E3E3" }}
-          />
-          <Text style={{ marginTop: 10, fontSize: 15 }}>神州优车</Text>
-          <Text style={{ marginTop: 10, fontSize: 15, marginBottom: 10 }}>
-            神州优车
-          </Text>
-          <QRCode
-            value="Just some string value" // 生成二维码的value
-            size={260} // 二维码大小
-            logo={require("../../../res/img/app_icon.png")} // 二维码中间加载显示的logo
-            logoSize={60} // 二维码logo大小
-            logoMargin={5}
-            logoBackgroundColor="transparent" // 二维码logo背景色
-            getRef={c => (this.svg = c)}
-            backgroundColor="white"
-          />
+      <View style={[styles.container, this.props.style]} ref={this.mainViewRef}>
+        <Text style={styles.company}>{this.props.info.company}</Text>
+        <View style={styles.divider} />
+        <Text style={styles.name}>{this.props.info.name}</Text>
+        <Text style={styles.invitationCode}>
+          {this.props.info.invitationCode
+            ? this.props.info.invitationCode
+            : "http://www.borgward.com.cn/"}
+        </Text>
+        <QRCode
+          value={
+            this.props.info.invitationCode
+              ? this.props.info.invitationCode
+              : "http://www.borgward.com.cn/"
+          } // 生成二维码的value
+          size={220} // 二维码大小
+          logo={require("../../../res/img/app_icon.png")} // 二维码中间加载显示的logo
+          logoSize={60} // 二维码logo大小
+          logoMargin={5}
+          logoBackgroundColor="transparent" // 二维码logo背景色
+          getRef={c => (this.svg = c)}
+          backgroundColor="white"
+        />
 
-          <Text style={{ marginTop: 10 }}>
-            使用车主APP扫一扫我的二维码下订单
-          </Text>
-          <TouchableOpacity
-            style={{ marginTop: 10 }}
-            onPress={() => {
-              this._shareScreenShot();
-            }}
-          >
-            <Text style={{ color: "#007ACC" }}>保存到相册</Text>
-          </TouchableOpacity>
-        </View>
-
+        <Text style={styles.tips}>使用车主APP扫一扫我的二维码下订单</Text>
         <TouchableOpacity
-          style={{ marginTop: 50 }}
+          style={styles.saveContainer}
           onPress={() => {
-            onCloseIconPressed();
+            this._shareScreenShot();
           }}
         >
-          <Image
-            style={{ width: 60, height: 60 }}
-            source={require("../../../res/img/close.png")}
-          />
+          <Text style={styles.saveText}>保存到相册</Text>
         </TouchableOpacity>
       </View>
     );
@@ -213,35 +182,21 @@ export default class QrCodeScreen extends Component {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    alignItems: "flex-end"
-  },
-  arrow: {
-    //适配iPhoneX
-    marginTop: 50 + (DeviceInfo.isIphoneX_deprecated ? 24 : 0),
-    width: 16,
-    height: 6,
-    marginRight: 18,
-    resizeMode: "contain"
-  },
-  content: {
+    flexDirection: "column",
     backgroundColor: "white",
-    borderRadius: 3,
-    paddingTop: 3,
-    paddingBottom: 3,
-    marginRight: 3
+    alignItems: "center",
+    borderRadius: 8
   },
-  text: {
-    fontSize: 16,
-    color: "black",
-    fontWeight: "400",
-    paddingRight: 15
+  company: { marginTop: 21, fontSize: 18, marginBottom: 8, color: "#333333" },
+  divider: { height: 1, width: "90%", backgroundColor: "#E2E2E2" },
+  name: { marginTop: 15, fontSize: 15, color: "#333333" },
+  invitationCode: {
+    marginTop: 5,
+    fontSize: 15,
+    marginBottom: 10,
+    color: "#7E7E7E"
   },
-  icon: {
-    width: 16,
-    height: 16,
-    margin: 10,
-    marginLeft: 15
-  }
+  tips: { marginTop: 20, color: "#7E7E7E", fontSize: 12 },
+  saveContainer: { marginTop: 10 },
+  saveText: { color: "#4A90E2", fontSize: 12 }
 });

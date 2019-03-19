@@ -366,6 +366,15 @@ export default class CalenderScreen extends Component {
     );
   }
 
+  _getItemLayout = (data, index) => {
+    console.log("calender screen ", "data", data, "index", index);
+    return {
+      length: dayItemWidth * 5,
+      offset: dayItemWidth * 5 * index,
+      index
+    };
+  };
+
   render() {
     console.log("start render calender screen");
     return (
@@ -381,6 +390,7 @@ export default class CalenderScreen extends Component {
             item + index;
           }}
           stickySectionHeadersEnabled={true}
+          getItemLayout={this._getItemLayout}
         />
 
         <View style={styles.buttonPanel}>

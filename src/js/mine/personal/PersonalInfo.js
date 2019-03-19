@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { StyleSheet, View, StatusBar, Clipboard } from "react-native";
 import { NavigationActions } from "react-navigation";
 import SettingsList from "../../component/SettingsList";
-import CommonDialog from "../../component/CommonDialog";
-import QrCodeScreen from "./QrCodeScreen";
 import { titleOptions } from "../../component/Titie";
 import { RootView } from "../../component/CommonView";
 import AccountHelper, {
@@ -69,6 +67,11 @@ export default class PersonalInfoScreen extends Component {
         console.log("getEmployeeInfo content = ", content);
         this.setState({
           data: this._initEmployeeData(content),
+          userInfo: {
+            name: content.empName,
+            invitationCode: content.invitationCode,
+            company: "神州优车集团"
+          },
           status: "custom"
         });
       },
@@ -82,19 +85,19 @@ export default class PersonalInfoScreen extends Component {
   _getDistributorInfo(accountInfo) {
     this.setState({
       data: this._initDealerData(accountInfo),
+      userInfo: {
+        name: accountInfo.contacts,
+        invitationCode: accountInfo.marketingInvitationCode,
+        company: "神州渠道商"
+      },
       status: "custom"
     });
   }
 
   _funcustomConfirm() {
-    var options = {
-      animationType: "none",
-      title: "自定义组件",
-      thide: true,
-      clickScreen: true,
-      innersHeight: 600
-    };
-    this.refs.dcustomConfirm.show(options);
+    this.props.navigation.navigate("QrCodeInfoScreen", {
+      userInfo: this.state.userInfo
+    });
   }
 
   _customView() {
@@ -116,18 +119,6 @@ export default class PersonalInfoScreen extends Component {
             btnText: "重新加载"
           }}
           custom={this._customView()}
-        />
-
-        <CommonDialog
-          ref="dcustomConfirm"
-          backgroundColor="transparent"
-          components={
-            <QrCodeScreen
-              onCloseIconPressed={() => {
-                this.refs.dcustomConfirm.hide();
-              }}
-            />
-          }
         />
       </View>
     );

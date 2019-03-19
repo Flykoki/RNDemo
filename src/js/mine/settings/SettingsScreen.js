@@ -101,6 +101,17 @@ export default class SettingsScreen extends Component {
     };
   }
 
+  componentDidMount() {
+    this._navListener = this.props.navigation.addListener("didFocus", () => {
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("#FFFFFF");
+    });
+  }
+
+  componentWillUnmount = () => {
+    this._navListener.remove();
+  };
+
   render() {
     return (
       <View style={styles.container}>

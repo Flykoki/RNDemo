@@ -118,6 +118,24 @@ export class MissionsCenterPage extends PureComponent {
     console.log("lfj mission center render");
     //加载数据
     return (
+      <RootView
+        status={this.state.status}
+        failed={{
+          tips: this.state.errorMsg,
+          onPress: () => {
+            this.fetchData();
+          },
+          btnText: "重新加载"
+        }}
+        custom={this.renderData()}
+      />
+    );
+  }
+  //=========================== 自定义方法 =========================
+
+  //显示FlatList
+  renderData() {
+    return (
       <View style={styles.flatListContain}>
         <SortWithFilterView
           titleItemHight={this.topClickViewHight}
@@ -344,7 +362,7 @@ export class MissionsCenterPage extends PureComponent {
     // if (this.state.page > 1) {
     if (this.state.page > 1) {
       // if (this.state.page > 1 && this.isCanLoadMore) {
-      this.fetchData();
+      this.fetchData([]);
       this.isCanLoadMore = false; // 加载更多时，不让再次的加载更多
     }
   };
