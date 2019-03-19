@@ -10,6 +10,8 @@ import {
 import { titleOptions } from "../component/Titie";
 import VehicleInofPanel from "./VehicleInofPanel";
 import { RootView } from "../component/CommonView";
+import AccountHelper from "../login/AccountHelper";
+import { FetchUtils } from "sz-network-module";
 
 export default class InstallmentSalesOfNewCars extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -19,83 +21,82 @@ export default class InstallmentSalesOfNewCars extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "loading",
-      taskInfo: {
-        taskNo: "DKJF3288",
-        fromNo: "ALJSD8FJOA323232323"
-      },
-      carInfo: {
-        plateNo: "京P E2342",
-        frameNo: "ASDFUAOJSDKBF872983IUR",
-        model: {
-          series: "哈弗 H5",
-          type: "新",
-          color: "银灰"
-        }
-      },
-      data: [
-        {
-          key: "1",
-          status: "waiting",
-          taskNo: "1",
-          taskName: "车辆入库 K2323",
-          taskTime: "创建时间: 11/11 09:22",
-          current: "待入库"
-        },
-        {
-          key: "2",
-          status: "done",
-          taskNo: "2",
-          taskName: "新车发票 K2323",
-          taskTime: "创建时间: 11/11 09:22",
-          current: "已开票"
-        },
-        {
-          key: "3",
-          status: "done",
-          taskNo: "3",
-          taskName: "车辆保险 K2323",
-          taskTime: "创建时间: 11/11 09:22",
-          current: "已投保"
-        },
-        {
-          key: "4",
-          status: "done",
-          taskNo: "4",
-          taskName: "绑定GPS K2323",
-          taskTime: "创建时间: 11/11 09:22",
-          current: "已绑定"
-        },
-        {
-          key: "5",
-          status: "cancel",
-          taskNo: "5",
-          taskName: "车辆过户 K2323",
-          taskTime: "创建时间: 11/11 09:22",
-          current: "已取消"
-        },
-        {
-          key: "6",
-          status: "waiting",
-          taskNo: "6",
-          taskName: "车辆出库 K2323",
-          taskTime: "创建时间: 11/11 09:22",
-          current: ""
-        }
-      ]
+      status: "loading"
     };
   }
 
   componentDidMount() {
     this._initData();
-    taskGroupId = this.props.navigation.getParam("data");
-    console.log("taskGroupId = ", taskGroupId);
   }
 
   _initData() {
-    setTimeout(() => {
-      this.setState({ status: "custom" });
-    }, 500);
+    taskGroup = this.props.navigation.getParam("data");
+    console.log("InstallmentSalesOfNewCars taskGroupId = ", taskGroup);
+    taskGroupId = taskGroup ? taskGroup.taskGroupId : 1;
+    AccountHelper.getAccountInfo().then(accountInfo => {
+      FetchUtils.fetch({
+        api: "action/task/taskGroupDetail",
+        params: {
+          taskGroupId: taskGroupId,
+          accountId: accountInfo.accountId,
+          execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
+        },
+        success: response => {
+          console.log("InstallmentSalesOfNewCars init data", response);
+          this._processResponse(response);
+        },
+        error: err => {
+          console.log("InstallmentSalesOfNewCars init data", err);
+          this.setState({ status: "loadingFailed" });
+        }
+      });
+    });
+  }
+
+  _processResponse(response) {
+    this.setState({
+      status: "custom",
+      carInfo: {
+        plateNo: response.vehicleNo,
+        frameNo: response.frameNo,
+        model: {
+          series: response.modeName,
+          type: response.vehicleTypeName,
+          color: response.exteriorColor
+        }
+      },
+      data: this._parseTaskList(response.taskList),
+      taskInfo: response
+    });
+  }
+
+  _parsetRoleListToDeptIdList(roleList) {
+    deptIdList = [];
+    for (let i in roleList) {
+      deptIdList.push(roleList[i].id);
+    }
+    return deptIdList;
+  }
+
+  _parseTaskList(taskList) {
+    result = [];
+    for (let i in taskList) {
+      taskDetail = taskList[i];
+      taskInfo = this._parseTask(taskDetail);
+      no = parseInt(i) + 1;
+      taskInfo.key = no + "";
+      result.push(taskInfo);
+    }
+    return result;
+  }
+
+  _parseTask(task) {
+    return {
+      taskNo: task.taskCode,
+      taskName: task.taskName,
+      taskTime: task.createTime ? task.createTime : "未创建",
+      status: task.taskStatus
+    };
   }
 
   _customView() {
@@ -103,7 +104,10 @@ export default class InstallmentSalesOfNewCars extends Component {
       <View>
         <TaskInfoPanel
           onPress={() => {
-            this.props.navigation.navigate("IntegratedTaskInfo");
+            this.props.navigation.navigate(
+              "IntegratedTaskInfo",
+              (params = { taskInfo: this.state.taskInfo })
+            );
           }}
           taskInfo={this.state.taskInfo}
         />
@@ -165,9 +169,13 @@ class TaskInfoPanel extends Component {
         onPress={this.props.onPress}
       >
         <Text style={styles.firstLineName}>{"任务集合"}</Text>
-        <Text style={styles.firstLineValue}>{this.props.taskInfo.taskNo}</Text>
+        <Text style={styles.firstLineValue}>
+          {this.props.taskInfo.taskGroupCode}
+        </Text>
         <Text style={styles.secondLineName}>{"来源单号"}</Text>
-        <Text style={styles.secondLineValue}>{this.props.taskInfo.fromNo}</Text>
+        <Text style={styles.secondLineValue}>
+          {this.props.taskInfo.sourceCode}
+        </Text>
         <Image
           style={styles.salesTaskInfoRightArrow}
           source={require("../../res/img/icon_left_arrow_black.png")}
@@ -206,30 +214,55 @@ class CarInfoPanel extends Component {
 }
 
 class TaskItem extends Component {
+  /**(1 待处理、2 处理中、3处理完毕、4已取消) */
   _getLeftColor(status) {
     switch (status) {
-      case "waiting":
-        return "#F12E49";
-      case "done":
-        return "#75C17D";
       default:
-        return "#999999";
+      case 1:
+        this.state = {
+          color: "#F12E49",
+          current: "待处理"
+        };
+        return;
+      case 2:
+        this.state = {
+          color: "#F49C2F",
+          current: "处理中"
+        };
+        return;
+      case 4:
+        this.state = {
+          color: "#999999",
+          current: "已取消"
+        };
+        return;
+      case 3:
+        this.state = {
+          color: "#75C17D",
+          current: "处理完毕"
+        };
+        return;
     }
   }
+
   render() {
     const item = this.props.data;
-    const color = this._getLeftColor(item.status);
+    this._getLeftColor(item.status);
+    console.log("taskItem key = ", item.key);
+
     return (
       <TouchableOpacity
         style={styles.itemContainer}
         onPress={this.props.onPress}
       >
-        <View style={[styles.itemLeftView, { backgroundColor: color }]} />
-        <Text style={styles.itemTaskNo}>{item.taskNo}</Text>
+        <View
+          style={[styles.itemLeftView, { backgroundColor: this.state.color }]}
+        />
+        <Text style={styles.itemTaskNo}>{item.key}</Text>
         <Text style={styles.itemTaskName}>{item.taskName}</Text>
-        <Text style={styles.itemTaskTime}>{item.taskTime}</Text>
-        <Text style={[styles.itemRightText, { color: color }]}>
-          {item.current}
+        <Text style={styles.itemTaskTime}>{"创建时间：" + item.taskTime}</Text>
+        <Text style={[styles.itemRightText, { color: this.state.color }]}>
+          {this.state.current}
         </Text>
       </TouchableOpacity>
     );

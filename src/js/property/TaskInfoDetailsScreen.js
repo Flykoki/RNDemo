@@ -530,29 +530,39 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
   };
 
   _initData() {
+    taskInfo = this.props.navigation.getParam("taskInfo");
+    console.log("IntegratedTaskInfo", "_initData()", taskInfo);
+
     setTimeout(() => {
       this.setState({
         status: "custom",
         data: this._fetchLines({
-          taskNo: "SD283238923472283789320",
+          taskNo: taskInfo.taskGroupCode,
           taskStatus: "处理中",
-          from: "SD283238923472283789320",
-          applyDepartment: "市场部",
-          applyReason: "购买",
-          handoverDepartment: "资产部",
-          taskTarget: "客户",
-          taskPerformance: "完成/4",
-          createTime: "2019/03/04 12:42:11",
-          completeTime: "2019/03/10 13:44:07",
-          operationDepartment: [
-            { key: "1", department: "部门1", current: true },
-            { key: "1", department: "部门1" },
-            { key: "1", department: "部门1" }
-          ],
-          elapsed: 6
+          from: taskInfo.sourceCode,
+          applyDepartment: taskInfo.applyDeptName,
+          applyReason: taskInfo.applyReason,
+          handoverDepartment: taskInfo.deliveryDept,
+          taskTarget: taskInfo.taskObject,
+          taskPerformance: taskInfo.taskProgress,
+          createTime: taskInfo.createTime,
+          completeTime: taskInfo.completeTime,
+          operationDepartment: this._processOperationDept(
+            taskInfo.allExecutiveDepartments
+          ),
+          elapsed: taskInfo.completeDays
         })
       });
     }, 500);
+  }
+
+  _processOperationDept(allExecutiveDepartments) {
+    result = [];
+    for (let i in allExecutiveDepartments) {
+      dept = allExecutiveDepartments[i];
+      result.push({ key: i, department: dept.deptName, status: dept.status });
+    }
+    return result;
   }
 
   _fetchLines(returnData) {
@@ -713,16 +723,26 @@ class TaskFlowPanel extends Component {
     return size;
   }
 
+  /**(1 待处理、2 处理中、3处理完毕、4已取消) */
+  _getColor(status) {
+    switch (status) {
+      case 1:
+        return "#999999";
+      case 2:
+        return "#F12E49";
+      case 3:
+        return "#333333";
+      default:
+        return "#999999";
+    }
+  }
+
   _renderItem({ item, index }) {
+    textColor = this._getColor(item.status);
     return (
       <View style={styles.taskFlowPanelItemTextContainer}>
-        <Text
-          style={[
-            styles.taskFlowPanelItemText,
-            { color: item.current ? "#F12E49" : "#333333" }
-          ]}
-        >
-          {item.department}
+        <Text style={[styles.taskFlowPanelItemText, { color: textColor }]}>
+          {item.department ? item.department : "部门" + index}
         </Text>
         {!(index === length - 1) && (
           <Text style={styles.taskFlowPanelItemArrow}>></Text>
@@ -738,7 +758,7 @@ class TaskFlowPanel extends Component {
         <FlatList
           style={styles.taskFlowPanelList}
           data={this.state.data}
-          renderItem={this._renderItem}
+          renderItem={this._renderItem.bind(this)}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         />
@@ -762,6 +782,11 @@ const styles = StyleSheet.create({
   },
   taskFlowPanelList: { marginTop: 10, height: 20 },
   taskFlowPanelItemTextContainer: { flexDirection: "row" },
-  taskFlowPanelItemArrow: { fontSize: 14, marginLeft: 5, marginRight: 5 },
+  taskFlowPanelItemArrow: {
+    fontSize: 14,
+    marginLeft: 5,
+    marginRight: 5,
+    color: "#999999"
+  },
   taskFlowPanelItemText: { fontSize: 14 }
 });

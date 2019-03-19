@@ -169,8 +169,12 @@ export default class AccountHelper extends Component {
   }
 
   static clearAccountInfo() {
-    AsyncStorage.clear(error => {
-      console.log("clearDynamicKey() result = ", error);
+    AsyncStorage.removeItem(ACCOUNT_KEY, error => {
+      console.log("clearAccountInfo() result = ", error);
+      if (error) {
+      } else {
+        AccountHelper.accountInfo = null;
+      }
     });
   }
 }
