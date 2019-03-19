@@ -11,6 +11,8 @@ import {
   StyleSheet
 } from "react-native";
 
+const PubSub = require("pubsub-js");
+
 export default class FilterView extends Component {
   animationLoading;
   _navigation;
@@ -35,6 +37,10 @@ export default class FilterView extends Component {
         toValue: 360, // 终点值
         easing: Easing.linear // 这里使用匀速曲线，详见RN-api-Easing
       }
+    );
+
+    PubSub.subscribe("stopLoadingAnimated", (key, response) =>
+      this._getFilterResponseStop(response)
     );
   }
   render() {
@@ -109,6 +115,9 @@ export default class FilterView extends Component {
     } else if (item.type === "date") {
       let items = this._initFilterItemDate(item);
       return items;
+    } else if (item.type === "customDate") {
+      let items = this._initFilterCustomDate(item);
+      return items;
     }
     return null;
   };
@@ -128,13 +137,71 @@ export default class FilterView extends Component {
   };
 
   /**
+   * 获取自定义日期
+   */
+  _getCustomDateItemChild = item => {
+    let itemKey = item.key;
+    let tempMap = this.state.normalFilterMap;
+    let lastDate = tempMap.get(itemKey);
+    return (
+      <View style={styles.calenderContainer}>
+        <Text
+          style={lastDate ? styles.calenderSelected : styles.calenderDefault}
+          onPress={() => {
+            console.warn("calender 事件");
+            //先将已选date数据清空
+            tempMap.delete(itemKey);
+            // 启动日历控件选择时间
+            console.log("lfj start calender screen");
+            _navigation &&
+              this.props.navigation.navigate("CalenderScreen", {
+                onConfirm: item => {
+                  let start = this._getDateFormat(item[0] + "");
+                  let end = this._getDateFormat(item[1] + "");
+                  tempMap.set(itemKey, start + "-" + end);
+                  this.setState({ normalFilterMap: tempMap });
+                  this.props.onNormalFilterCallback(tempMap);
+                  item.callback && item.callback(tempMap);
+                  //todo 到后台请求数据
+                  this._getFilterResponse(tempMap);
+                }
+              });
+          }}
+        >
+          {lastDate ? lastDate : "自定义日期"}
+        </Text>
+        <Text
+          style={
+            lastDate ? styles.calenderClearEnable : styles.calenderClearDisable
+          }
+          onPress={() => {
+            if (lastDate) {
+              tempMap.delete(itemKey);
+              this.setState({ normalFilterMap: tempMap });
+              this.props.onNormalFilterCallback(tempMap);
+            }
+          }}
+        >
+          清空
+        </Text>
+      </View>
+    );
+  };
+
+  _getDateFormat = date => {
+    let year = date.substring(0, 4) + "/";
+    year += date.substring(4, 6) + "/";
+    return (year += date.substring(6, 8));
+  };
+
+  /**
    * 获取具体  时间筛选选项
    */
   _getDateItemChild = item => {
     let itemArray = item.items;
-    let itemTitle = item.title;
+    let itemKey = item.key;
     let tempMap = this.state.normalFilterMap;
-    let lastDate = tempMap.get(itemTitle);
+    let lastDate = tempMap.get(itemKey);
     return (
       <View style={styles.calenderContainer}>
         <Text
@@ -146,16 +213,19 @@ export default class FilterView extends Component {
           onPress={() => {
             console.warn("calender 事件");
             //先将已选date数据清空
-            tempMap.delete(itemTitle);
+            tempMap.delete(itemKey);
             // 启动日历控件选择时间
-            console.log('lfj start calender screen')
+            console.log("lfj start calender screen");
             _navigation &&
               this.props.navigation.navigate("CalenderScreen", {
                 onConfirm: item => {
                   console.log("lfj item = ", item);
-                  tempMap.set(itemTitle, item[0] + "-" + item[1]);
+                  let start = this._getDateFormat(item[0] + "");
+                  let end = this._getDateFormat(item[1] + "");
+                  tempMap.set(itemKey, start + "-" + end);
                   this.setState({ normalFilterMap: tempMap });
                   this.props.onNormalFilterCallback(tempMap);
+                  item.callback && item.callback(tempMap);
                   //todo 到后台请求数据
                   this._getFilterResponse(tempMap);
                 }
@@ -174,7 +244,7 @@ export default class FilterView extends Component {
           }
           onPress={() => {
             if (lastDate && this._lastDateIsCusDefined(lastDate, itemArray)) {
-              tempMap.delete(itemTitle);
+              tempMap.delete(itemKey);
               this.setState({ normalFilterMap: tempMap });
               this.props.onNormalFilterCallback(tempMap);
             }
@@ -190,21 +260,27 @@ export default class FilterView extends Component {
    * 调用后台接口获取筛选结果
    */
   _getFilterResponse = tempMap => {
-    // console.log("lfj start request ");
+    // this.state.isLoading = true;
+    // this.state.normalFilterMap = tempMap;
     this.setState({ isLoading: true, normalFilterMap: tempMap });
     this._startLoadingAnimated();
-    // todo
-    setTimeout(() => {
-      // console.log("lfj end request");
-      let random = Math.floor((Math.random() * 100) % 100);
-      // console.log("lfj random：", random);
-      this.setState({ isLoading: false, filterResponse: new Array(random) });
-      this._stopLoadingAnimated();
-      this.props.onFilterResponseCallback &&
-        this.props.onFilterResponseCallback(this.state.filterResponse);
-    }, 1000);
+    console.log("lfj start load Animated");
   };
 
+  /**
+   * 启动loading动画
+   */
+  _getFilterResponseStart = tempMap => {
+    this.setState({ isLoading: true, normalFilterMap: tempMap });
+    this._startLoadingAnimated();
+  };
+  /**
+   * 结束loading动画
+   */
+  _getFilterResponseStop = response => {
+    this.setState({ isLoading: false, filterResponse: response });
+    this._stopLoadingAnimated();
+  };
   /**
    * 获取日历时间
    */
@@ -233,6 +309,7 @@ export default class FilterView extends Component {
    */
   _getNormalItemChild = item => {
     let itemArray = item.items;
+    let itemKey = item.key;
     let multiple = item.filterMultiple;
     let type = item.type;
     let itemTitle = item.title;
@@ -242,34 +319,35 @@ export default class FilterView extends Component {
         <TouchableOpacity
           style={
             multiple
-              ? this.state.normalFilterMap.has(itemTitle + detail)
+              ? this.state.normalFilterMap.has(itemKey + "-" + detail)
                 ? styles.normalItemSelected
                 : styles.normalItemDefault
-              : this.state.normalFilterMap.has(itemTitle) &&
-                this.state.normalFilterMap.get(itemTitle) === detail
+              : this.state.normalFilterMap.has(itemKey) &&
+                this.state.normalFilterMap.get(itemKey) === detail
               ? styles.normalItemSelected
               : styles.normalItemDefault
           }
           onPress={() => {
             let tempMap = this.state.normalFilterMap;
             if (multiple) {
-              if (tempMap.has(itemTitle + detail)) {
-                tempMap.delete(itemTitle + detail);
+              if (tempMap.has(itemKey + "-" + detail)) {
+                tempMap.delete(itemKey + "-" + detail);
               } else {
-                tempMap.set(itemTitle + detail, detail);
+                tempMap.set(itemKey + "-" + detail, detail);
               }
             } else {
               //日期只能单选，以title 作为 map的 key
-              if (tempMap.has(itemTitle) && tempMap.get(itemTitle) === detail) {
-                tempMap.delete(itemTitle);
+              if (tempMap.has(itemKey) && tempMap.get(itemKey) === detail) {
+                tempMap.delete(itemKey);
               } else {
-                tempMap.set(itemTitle, detail);
+                tempMap.set(itemKey, detail);
               }
             }
             // console.log("lfj map size", tempMap.size);
             // this.setState({ normalFilterMap: tempMap });
             this.props.onNormalFilterCallback &&
               this.props.onNormalFilterCallback(tempMap);
+            item.callback && item.callback(tempMap);
 
             //todo 到后台请求数据
             this._getFilterResponse(tempMap);
@@ -278,11 +356,11 @@ export default class FilterView extends Component {
           <Text
             style={
               multiple
-                ? this.state.normalFilterMap.has(itemTitle + detail)
+                ? this.state.normalFilterMap.has(itemKey + "-" + detail)
                   ? styles.normalItemTextSelected
                   : styles.normalItemTextDefault
-                : this.state.normalFilterMap.has(itemTitle) &&
-                  this.state.normalFilterMap.get(itemTitle) === detail
+                : this.state.normalFilterMap.has(itemKey) &&
+                  this.state.normalFilterMap.get(itemKey) === detail
                 ? styles.normalItemTextSelected
                 : styles.normalItemTextDefault
             }
@@ -308,6 +386,17 @@ export default class FilterView extends Component {
       </View>
     );
   };
+  /**
+   * 初始化自定义日期filter
+   */
+  _initFilterCustomDate = item => {
+    return (
+      <View style={styles.normalItem}>
+        <Text style={styles.normalItemTitle}>{item.title}</Text>
+        {this._getCustomDateItemChild(item)}
+      </View>
+    );
+  };
 
   /**
    * 获取 divider 布局
@@ -319,12 +408,6 @@ export default class FilterView extends Component {
    * 获取 buttonViews 布局
    */
   _initButtonViews = () => {
-    // console.log(
-    //   "init button:",
-    //   this.state.isLoading,
-    //   this.state.filterResponse,
-    //   this.state.normalFilterMap
-    // );
     return (
       <View style={styles.searchButtonContainer}>
         <TouchableOpacity
@@ -337,18 +420,25 @@ export default class FilterView extends Component {
             });
             this.props.onNormalFilterCallback &&
               this.props.onNormalFilterCallback(temp);
-              // todo
+            // todo
             this._getFilterResponse(temp);
           }}
         >
           <Text style={styles.searchButtonLeftText}>重置</Text>
         </TouchableOpacity>
         <TouchableOpacity
+          ref={"test"}
           style={
-            this.state.isLoading || this.state.filterResponse.length > 0
+            this.state.isLoading ||
+            this.state.normalFilterMap.size > 0 ||
+            this.state.filterResponse.length > 0
               ? styles.searchButtonRightSelected
               : styles.searchButtonRightDefault
           }
+          onPress={() => {
+            this.props.searchButtonRightCallback &&
+              this.props.searchButtonRightCallback();
+          }}
         >
           {this.state.isLoading ? (
             <Animated.Image
@@ -373,7 +463,7 @@ export default class FilterView extends Component {
               {"查看" + this.state.filterResponse.length + "个结果"}
             </Text>
           ) : (
-            <Text style={styles.searchButtonRightText}>查看</Text>
+            <Text style={styles.searchButtonRightText}>暂无数据</Text>
           )}
         </TouchableOpacity>
       </View>

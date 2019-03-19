@@ -86,8 +86,8 @@ export class HomePage extends PureComponent {
           dataBlob.push(item);
         });
         let foot = 0;
-        if (this.state.page >= 5) {
-          // if (this.state.page >= data.pageCount) {
+        // if (this.state.page >= 5) {
+          if (this.state.page >= data.pageCount) {
           foot = 1; //listView底部显示没有更多数据了
         }
         this.setState({

@@ -297,8 +297,8 @@ export default class SearchView extends Component {
    * 获取去重后的最近 n 个搜索历史记录
    */
   _getData = (data, count) => {
-    let obj = {};
     //去重
+    let obj = {};
     data = data.reduce((cur, next) => {
       obj[next.data.key] ? "" : (obj[next.data.key] = true && cur.push(next));
       return cur;

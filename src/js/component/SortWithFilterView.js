@@ -7,10 +7,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Platform,
   Easing,
   FlatList,
   StyleSheet,
-  Dimensions
+  BackHandler
 } from "react-native";
 import FilterView from "./FilterView";
 
@@ -18,7 +19,9 @@ export default class SortWithFilterView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showSortDataPanel: false, //排序面板是否显示
+      showSortDataPanel: this.props.showLeftPanel
+        ? this.props.showLeftPanel
+        : false, //排序面板是否显示
       lastSortDataIndex:
         this.props.sortDataObj.sortDataIndex !== undefined
           ? this.props.sortDataObj.sortDataIndex
@@ -26,11 +29,13 @@ export default class SortWithFilterView extends Component {
       filterResponse: [], //筛选结果
       leftTitleText: this.props.leftTitleText
         ? this.props.leftTitleText
-        : "新建时间正序", //左侧点击区域title
+        : "新建时间倒序", //左侧点击区域title
       rightTitleText: this.props.rightTitleText
         ? this.props.rightTitleText
         : "筛选",
-      normalFilterPress: false, //筛选title点击状态
+      normalFilterPress: this.props.showRightPanel
+        ? this.props.showRightPanel
+        : false, //筛选title点击状态
       normalFilterItems: this.props.normalFilterItems
         ? this.props.normalFilterItems
         : new Map() //筛选内容
@@ -40,9 +45,22 @@ export default class SortWithFilterView extends Component {
       ? this.props.titleItemHight
       : 46;
     this.onSortDataSelectedCallback = this.props.onSortDataSelectedCallback;
+
+    PubSub.subscribe("queryFilterFinally", this._onBackHandler.bind(this));
   }
+
+  componentDidMount() {
+    if (Platform.OS === "android") {
+      BackHandler.addEventListener("hardwareBackPress", this._onBackHandler);
+    }
+  }
+  componentWillUnmount = () => {
+    if (Platform.OS === "android") {
+      BackHandler.removeEventListener("hardwareBackPress", this._onBackHandler);
+    }
+  };
   render() {
-    console.log("lfj sortView render");
+    console.log("lfj sorwithfilter view render");
     return (
       <TouchableOpacity
         activeOpacity={1}
@@ -75,6 +93,10 @@ export default class SortWithFilterView extends Component {
                   showSortDataPanel: showPanel,
                   normalFilterPress: false
                 });
+                this.props.showLeftPanelCallback &&
+                  this.props.showLeftPanelCallback(showPanel);
+                this.props.showRightPanelCallback &&
+                  this.props.showRightPanelCallback(false);
                 this._showSortPanel(showPanel);
               }}
               style={styles.filter}
@@ -107,12 +129,17 @@ export default class SortWithFilterView extends Component {
             </TouchableOpacity>
             <View style={styles.filterDivider} />
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                let showPanel = !this.state.normalFilterPress;
                 this.setState({
-                  normalFilterPress: !this.state.normalFilterPress,
+                  normalFilterPress: showPanel,
                   showSortDataPanel: false
-                })
-              }
+                });
+                this.props.showRightPanelCallback &&
+                  this.props.showRightPanelCallback(showPanel);
+                this.props.showLeftPanelCallback &&
+                  this.props.showLeftPanelCallback(false);
+              }}
               style={styles.filter}
             >
               <Text
@@ -155,25 +182,38 @@ export default class SortWithFilterView extends Component {
     );
   }
 
+  _onBackHandler = () => {
+    if (this.state.showSortDataPanel || this.state.normalFilterPress) {
+      this.setState({
+        showSortDataPanel: false,
+        normalFilterPress: false
+      });
+      return true;
+    }
+    return false;
+  };
+
   /**
    * 显示筛选面板
    */
   _showFilterPanel = filterData => {
-    console.log("lfj showFilterPanel props", this.props);
     return (
       <TouchableOpacity activeOpacity={1}>
         <FilterView
+          {...this.props}
+          response={this.props.response ? this.props.response : []}
           style={this.props.filterViewStyle}
           data={this.props.filterData}
           navigation={this.props.navigation}
           onFilterResponseCallback={response => {
-            this.setState({ filterResponse: response });
+            this.state.filterResponse = response;
             this.props.onFilterResponseCallback &&
               this.props.onFilterResponseCallback(response);
           }}
+          searchButtonRightCallback={() => this._onBackHandler()}
           onNormalFilterCallback={filterMaps => {
             console.log("lfj filter  onFilterResponseCallback", filterMaps);
-            this.setState({ normalFilterItems: filterMaps });
+            this.state.normalFilterItems = filterMaps;
             this.props.onNormalFilterCallback &&
               this.props.onNormalFilterCallback(filterMaps);
           }}
@@ -215,7 +255,6 @@ export default class SortWithFilterView extends Component {
    * 排序面板item
    */
   _renderItemSortView = ({ item, index }) => {
-    console.log("lfj state index", this.state.lastSortDataIndex, index);
     return (
       <TouchableOpacity
         style={styles.sortItemContainer}
@@ -262,7 +301,7 @@ SortWithFilterView.propTypes = {
   filterData: PropTypes.array, // 所有的filter集合[{},{}]
   items: PropTypes.array, // 具体的筛选项，filterData[0].items =>[]
   rightTitleText: PropTypes.string, //右侧filter的标题
-  type: PropTypes.oneOf(["date", "normal"]), //filter 类型 ：日期和普通
+  type: PropTypes.oneOf(["date", "normal", "customDate"]), //filter 类型 ：日期，普通，自定义日期
   filterMultiple: PropTypes.bool, // 是否支持多选
   normalFilterMap: PropTypes.object, // 已选中普通filter map
   onNormalFilterCallback: PropTypes.func, // 普通筛选item点击事件回调
@@ -283,9 +322,9 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   container: {
-    position: "absolute",
-    top: 0,
-    left: 0,
+    // position: "absolute",
+    // top: 0,
+    // left: 0,
     height: "100%",
     width: "100%",
     backgroundColor: "rgba(0,0,0,0.3)"

@@ -49,7 +49,7 @@ export default class MissionItemView extends Component {
               {missionItem.sourceCode}
             </Text>
             <Text style={this._getMissionStatusStyle(missionItem.status)}>
-              {missionItem.status}
+              {this._getMissionStatusLabel(missionItem.status)}
             </Text>
           </View>
           <View style={styles.sourceNumber}>
@@ -122,7 +122,7 @@ export default class MissionItemView extends Component {
           <Image
             resizeMode={"contain"}
             style={styles.concurrentMissionItemLeftImg}
-            source={require("../../res/img/icon_app_guide.png")}
+            source={require("../../res/img/icon_app_date.png")}
           />
           <Text style={styles.concurrentMissionItemUpdateTime}>
             {item.modifyTime}
@@ -164,23 +164,44 @@ export default class MissionItemView extends Component {
     console.log("lfj mission item click");
   };
 
+
+
   /**
    * 根据任务集合状态获取style
    */
   _getMissionStatusStyle = missionStatus => {
     switch (missionStatus) {
-      case "待处理":
+      case 1:
         return styles.missionStatusStandby;
         break;
-      case "处理中":
+      case 2:
         return styles.missionStatusProcessing;
         break;
-      case "处理完毕":
+      case 3:
         return styles.missionStatusProcessed;
         break;
-      case "已取消":
+      case 4:
       default:
         return styles.missionStatusCancel;
+    }
+  };
+  /**
+   * 根据任务集合状态获取label
+   */
+  _getMissionStatusLabel = missionStatus => {
+    switch (missionStatus) {
+      case 1:
+        return "待处理";
+        break;
+      case 2:
+        return "处理中";
+        break;
+      case 3:
+        return "处理完毕";
+        break;
+      case 4:
+      default:
+        return "已取消";
     }
   };
 }

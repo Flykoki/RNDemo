@@ -130,7 +130,7 @@ export default class AccountHelper extends Component {
         resolve(AccountHelper.accountInfo);
       } else {
         AccountHelper.getSavedAccountInfo().then(accountInfo => {
-          console.log("getAccountInfo from saved = ", accountInfo);
+          // console.log("getAccountInfo from saved = ", accountInfo);
           AccountHelper.accountInfo = accountInfo;
           resolve(accountInfo);
         });
