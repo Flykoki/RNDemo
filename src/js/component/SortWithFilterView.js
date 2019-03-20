@@ -60,7 +60,6 @@ export default class SortWithFilterView extends Component {
     }
   };
   render() {
-    console.log("lfj sorwithfilter view render");
     return (
       <TouchableOpacity
         activeOpacity={1}

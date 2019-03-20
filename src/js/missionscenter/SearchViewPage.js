@@ -9,6 +9,9 @@ import {
 } from "react-native";
 
 import SearchView from "../component/SearchView";
+import AccountHelper from "../login/AccountHelper";
+import MissionCenterSearchHelper from "./MissionCenterSearchHelper";
+import MissionItemView from "../component/MissionItemView";
 
 export default class SearchViewPage extends Component {
   _navigation;
@@ -26,19 +29,26 @@ export default class SearchViewPage extends Component {
     super(props);
     this.state = {
       sortDataIndex: 0,
-      updatePanelState: 0,
-      searchResponseData: [],
-      selectedItem: {}
+      page: 1,
+      pageSize: 10,
+      text: "",
+      accountInfo: {}
     };
     this.searchView = React.createRef();
   }
 
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setTranslucent(false);//关闭沉浸式
+      StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
+
+    AccountHelper.accountInfo
+      ? (this.state.accountInfo = AccountHelper.accountInfo)
+      : AccountHelper.getAccountInfo().then(data => {
+          this.state.accountInfo = data;
+        });
   }
 
   componentWillUnmount = () => {
@@ -54,59 +64,62 @@ export default class SearchViewPage extends Component {
           onCancelCallback={() => {
             _navigation.goBack();
           }}
-          onChangeText={text => {
-            this.props.onChangeText
-              ? this.props.onChangeText()
-              : this._onChangeText(text);
-          }}
-          onHistoryItemCallback={item => {
-            console.warn("lfj test page get history item", item);
-            this.setState({ updatePanelState: 2 });
-          }}
           searchType={0}
-          searchResponseData={this.state.searchResponseData}
-          selectedItem={this.state.selectedItem}
-          renderItem={this._renderItem}
-          updatePanelState={this.state.updatePanelState}
+          renderItem={(item, onItemClick) =>
+            this._renderItem(item, onItemClick)
+          }
+          fetchData={(text, pageSize, page, onSuccess, onError, onFinally) =>
+            this._fetchData(text, pageSize, page, onSuccess, onError, onFinally)
+          }
         />
       </View>
     );
   }
 
-  /**
-   * 搜索框文本变化事件
-   */
-  _onChangeText = text => {
-    if (text) {
-      this.setState({ updatePanelState: 1 });
-      clearTimeout(this.timerId); //如搜索的内容变化在1秒之中，可以清除变化前的fetch请求，继而减少fetch请求。但不能中断fetch请求
-      this.timerId = setTimeout(() => {
-        let random = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
-        let result = [];
-        for (let i = 0; i < random; i++) {
-          result.push({ key: text + i, value: text + i });
-        }
-        console.log("lfj random result", result);
-        this.setState({ updatePanelState: 3, searchResponseData: result });
-      }, 500); //让每次要进行fetch请求时先延迟1秒在进行
-    }
+  _fetchData = (text, pageSize, page, onSuccess, onError, onFinally) => {
+    //请求接口
+    MissionCenterSearchHelper.searchTaskGroup(
+      text,
+      this.state.accountInfo,
+      pageSize,
+      page,
+      onSuccess,
+      onError,
+      onFinally
+    );
+
+    // //Mock数据
+    // let random = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
+    // let result = [];
+    // for (let i = 0; i < random; i++) {
+    //   result.push({ key: text + i, value: text + i });
+    // }
+    // onSuccess(result);
   };
 
   /**
    * 搜索结果flatLsit item view布局
    */
-  _renderItem = ({ item }) => {
+  _renderItem = (item, onItemClick) => {
     return (
-      <TouchableOpacity
-        onPress={() => {
-          // [{type:searchType,data:itemData},{type:searchType,data:itemData}]
-          this.setState({ selectedItem: { data: item } });
-          _navigation.goBack();
+      <MissionItemView
+        onTaskGroupPress={pressItem => {
+          onItemClick([pressItem.frameNo, pressItem.vehicleNo]);
+          pressItem.sourceCode = item.sourceCode;
+          pressItem.taskGroupCode = item.taskGroupCode;
+          _navigation.navigate("InstallmentSalesOfNewCars", {
+            data: pressItem
+          });
         }}
-        style={styles.searchResultItemContainer}
-      >
-        <Text style={{ padding: 10 }}>{item.value}</Text>
-      </TouchableOpacity>
+        onTaskListItemPress={dataItem => {
+          dataItem.sourceCode = item.sourceCode;
+          dataItem.taskGroupCode = item.taskGroupCode;
+          _navigation.navigate("TaskDetailScreen", {
+            data: dataItem
+          });
+        }}
+        missionItem={item}
+      />
     );
   };
 }

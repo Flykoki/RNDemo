@@ -70,8 +70,6 @@ export class MissionsCenterPage extends PureComponent {
     this.state = {
       page: 1,
       pageSize: 10,
-      filterPage: 1,
-      filterPageSize: 10,
       pageCount: 0,
       isLoading: true,
       accountInfo: {}, //用户信息
@@ -102,11 +100,11 @@ export class MissionsCenterPage extends PureComponent {
     });
     AccountHelper.accountInfo
       ? (this.state.accountInfo = AccountHelper.accountInfo) &&
-        this.fetchData([])
+        this.fetchData(this.normalFilterItems)
       : AccountHelper.getAccountInfo().then(data => {
           console.log("lfj getAccountInfo", data);
           this.state.accountInfo = data;
-          this.fetchData([]);
+          this.fetchData(this.normalFilterItems);
         });
   }
 
@@ -115,7 +113,6 @@ export class MissionsCenterPage extends PureComponent {
   };
 
   render() {
-    console.log("lfj mission center render");
     //加载数据
     return (
       <View style={styles.flatListContain}>
@@ -190,7 +187,7 @@ export class MissionsCenterPage extends PureComponent {
           failed={{
             tips: this.state.errorMsg,
             onPress: () => {
-              this.fetchData([]);
+              this.fetchData(this.normalFilterItems);
             },
             btnText: "重新加载"
           }}
@@ -244,6 +241,7 @@ export class MissionsCenterPage extends PureComponent {
 
   //请求后台
   fetchData = filterMaps => {
+    //请求接口
     MissionCenterHelper.queryTaskGroupWithFilter(
       filterMaps,
       this.state.accountInfo,
@@ -253,6 +251,76 @@ export class MissionsCenterPage extends PureComponent {
       this._onQueryTaskGroupWithFilterError.bind(this),
       this._onQueryTaskGroupWithFilterFinally.bind(this)
     );
+
+    //假数据
+    // url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
+    // let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
+    // fetchRequest(url, "GET")
+    //   .then(responseData => {
+    //     let data = responseData.data; //获取json 数据并存在data数组中
+    //     let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
+    //     data.datas.map(function(item) {
+    //       if (imageUrlIndex == 499) {
+    //         imageUrlIndex = 0;
+    //       }
+    //       let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+    //       item.key = imageUrls[imageUrlIndex];
+    //       (item.taskGroupName = "新车分期销售"),
+    //         (item.taskGroupCode = "ASDLK"),
+    //         (item.createTime = "11/11 09:22"),
+    //         (item.sourceCode = "京P D2232"),
+    //         (item.status = missionStatus[random]),
+    //         (item.frameNo = "LAKSDJF23284RFJAL2323"),
+    //         (item.modeName = "宝沃BXi7"),
+    //         (item.vehicleTypeName = "新"),
+    //         (item.exteriorColor = "银色"),
+    //         (item.taskList = [
+    //           {
+    //             modifyTime: "11/12 12:22",
+    //             taskName: "车辆出库",
+    //             taskCode: "CK239",
+    //             taskStatus: "(待出库)"
+    //           },
+    //           {
+    //             modifyTime: "11/12 12:22",
+    //             taskName: "车辆出库",
+    //             taskCode: "CK239",
+    //             taskStatus: "(待出库)"
+    //           }
+    //         ]),
+    //         imageUrlIndex++;
+    //       dataBlob.push(item);
+    //     });
+    //     let foot = 0;
+    //     if (this.state.page >= 5) {
+    //       // if (this.state.page >= data.pageCount) {
+    //       foot = 1; //listView底部显示没有更多数据了
+    //     }
+    //     console.log("lfj setState response");
+    //     this.setState({
+    //       //复制数据源
+    //       //  dataArray:this.state.dataArray.concat( responseData.results),
+    //       dataArray: this.state.dataArray.concat(dataBlob),
+    //       isLoading: false,
+    //       showFoot: foot,
+    //       showHeader: 0,
+    //       isRefreshing: false,
+    //       pageCount: data.pageCount,
+    //       status: "custom"
+    //     });
+    //     data = null; //重置为空
+    //     dataBlob = null;
+    //   })
+    //   .catch(error => {
+    //     console.log("lfj setState response error");
+    //     this.setState({
+    //       status: "loadingFailed",
+    //       error: true,
+    //       errorInfo: error
+    //     });
+    //   })
+    //   .finally(this.refs && this.refs.pull && this.refs.pull.finishRefresh())
+    //   .done();
   };
 
   //请求成功回调
@@ -268,7 +336,7 @@ export class MissionsCenterPage extends PureComponent {
     }
     this.setState({
       //复制数据源
-      dataArray: response.list,
+      dataArray: this.state.dataArray.concat(response.list),
       isLoading: false,
       showFoot: foot,
       isLastPage: lastPage,
@@ -309,11 +377,15 @@ export class MissionsCenterPage extends PureComponent {
     return (
       <MissionItemView
         onTaskGroupPress={pressItem => {
+          pressItem.sourceCode = item.sourceCode;
+          pressItem.taskGroupCode = item.taskGroupCode;
           _navigation.navigate("InstallmentSalesOfNewCars", {
             data: pressItem
           });
         }}
         onTaskListItemPress={dataItem => {
+          dataItem.sourceCode = item.sourceCode;
+          dataItem.taskGroupCode = item.taskGroupCode;
           _navigation.navigate("TaskDetailScreen", {
             data: dataItem
           });

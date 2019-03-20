@@ -33,50 +33,58 @@ export default class MissionItemView extends Component {
           </Text>
         </View>
         {this._getDividerView()}
-        {/* ==================== content ========================== */}
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.content}
-          onPress={() => {
-            this.props.onTaskGroupPress
-              ? this.props.onTaskGroupPress(missionItem)
-              : this._missionContentOnPress(missionItem);
-          }}
-        >
-          <View style={styles.sourceNumber}>
-            <Text style={styles.contentTextKey}>来源单号</Text>
-            <Text style={styles.contentTextValue}>
-              {missionItem.sourceCode}
-            </Text>
-            <Text style={this._getMissionStatusStyle(missionItem.status)}>
-              {this._getMissionStatusLabel(missionItem.status)}
-            </Text>
-          </View>
-          <View style={styles.sourceNumber}>
-            <Text style={styles.contentTextKey}>车架号</Text>
-            <Text style={styles.contentTextValue}>{missionItem.frameNo}</Text>
-          </View>
-          <View style={styles.vehicleModel}>
-            <Text style={styles.contentTextKey}>车型</Text>
-            <VehicleInofPanel
-              style={styles.contentTextValue}
-              vehicle={missionItem.modeName}
-              vehicleType={missionItem.vehicleTypeName}
-              vehicleColor={missionItem.exteriorColor}
-            />
-          </View>
-        </TouchableOpacity>
-
-        {/* ==================== footer ========================== */}
-        {this._showConcurrentMissions(missionItem.status) &&
-          this._getDividerView()}
-        {this._showConcurrentMissions(missionItem.status) &&
-          this._getConcurrentMissionViews(missionItem)}
+        {this._getContentView(missionItem)}
       </View>
     );
   }
 
   //================================== 自定义方法 ========================
+
+  _getContentView = missionItem => {
+    let assetInfos = missionItem.assetInfos;
+    return assetInfos.map((item, index, assetInfos) => {
+      return (
+        <View>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.content}
+            onPress={() => {
+              this.props.onTaskGroupPress
+                ? this.props.onTaskGroupPress(item)
+                : this._missionContentOnPress(item);
+            }}
+          >
+            <View style={styles.sourceNumber}>
+              <Text style={styles.contentTextKey}>车牌号</Text>
+              <Text style={styles.contentTextValue}>
+                {item.vehicleNo}
+              </Text>
+              <Text style={this._getMissionStatusStyle(missionItem.status)}>
+                {this._getMissionStatusLabel(missionItem.status)}
+              </Text>
+            </View>
+            <View style={styles.sourceNumber}>
+              <Text style={styles.contentTextKey}>车架号</Text>
+              <Text style={styles.contentTextValue}>{item.frameNo}</Text>
+            </View>
+            <View style={styles.vehicleModel}>
+              <Text style={styles.contentTextKey}>车型</Text>
+              <VehicleInofPanel
+                style={styles.contentTextValue}
+                vehicle={item.carSeries}
+                vehicleType={item.carTypeName}
+                vehicleColor={item.outColorName}
+              />
+            </View>
+          </TouchableOpacity>
+          {this._showConcurrentMissions(missionItem.status) &&
+            this._getDividerView()}
+          {this._showConcurrentMissions(missionItem.status) &&
+            this._getConcurrentMissionViews(item)}
+        </View>
+      );
+    });
+  };
 
   /**
    * 任务集合内容点击事件
@@ -128,7 +136,7 @@ export default class MissionItemView extends Component {
             {item.modifyTime}
           </Text>
           <Text style={styles.concurrentMissionItemTask}>
-            {item.taskName + item.taskCode + item.taskStatus}
+            {item.taskName + item.taskCode + item.secondStatusName}
           </Text>
           <Image
             resizeMode={"contain"}
@@ -163,8 +171,6 @@ export default class MissionItemView extends Component {
   _missionItemPress = () => {
     console.log("lfj mission item click");
   };
-
-
 
   /**
    * 根据任务集合状态获取style
@@ -207,7 +213,7 @@ export default class MissionItemView extends Component {
 }
 MissionItemView.propTypes = {
   missionItem: PropTypes.object, // 任务集合item
-  onTaskListItemPress: PropTypes.func ,// taskList item 点击事件
+  onTaskListItemPress: PropTypes.func, // taskList item 点击事件
   onTaskGroupPress: PropTypes.func // taskGroup content 点击事件
 };
 const styles = StyleSheet.create({
