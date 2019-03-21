@@ -26,6 +26,7 @@ export default class SearchView extends Component {
       fetchData: this.props.fetchData,
       page: 1,
       pageSize: 10,
+      errorMsg: "",
       isLastPage: false,
       searchResponseData: this.props.searchResponseData
         ? this.props.searchResponseData
@@ -139,10 +140,10 @@ export default class SearchView extends Component {
         foot = 1; //listView底部显示没有更多数据了
       }
 
-    //如果是下拉刷新就清空数据源
-    if (this.state.isRefreshing) {
-      this.state.searchResponseData = [];
-    }
+      //如果是下拉刷新就清空数据源
+      if (this.state.isRefreshing) {
+        this.state.searchResponseData = [];
+      }
 
       this.setState({
         //复制数据源
@@ -162,6 +163,7 @@ export default class SearchView extends Component {
     console.log("lfj searchView _onError", error);
     this.setState({
       panelState: 5,
+      errorMsg: error.msg,
       isRefreshing: false
     });
   };
@@ -349,7 +351,9 @@ export default class SearchView extends Component {
           source={require("../../res/img/icon_load_failed.png")}
         />
         <Text style={styles.searchNoResultText}>
-          {"加载失败，请检查您的网络连接"}
+          {this.state.errorMsg
+            ? this.state.errorMsg
+            : "加载失败，请检查您的网络连接"}
         </Text>
         <TouchableOpacity
           style={styles.loadAgainBg}
@@ -427,7 +431,7 @@ export default class SearchView extends Component {
       page: 1,
       panelState: 2, //显示刷新
       showHeader: 1,
-      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
+      isRefreshing: true //tag,下拉刷新中，加载完全，就设置成flase
     });
     this._onSearchTextChange(this.state.searchText);
   };

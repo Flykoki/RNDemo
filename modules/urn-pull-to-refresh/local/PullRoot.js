@@ -111,7 +111,6 @@ export default class PullRoot extends PureComponent {
       } else if (this.pullState == "pullrelease") {
         this.setState({ pullRelease: true, pullOk: false, pulling: false });
       } else if (this.pullState == "pullDone") {
-          console.log('lfj pullDone')
         this.setState({ pullOk: false, pullRelease: false, pulling: false });
       }
     }

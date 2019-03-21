@@ -45,8 +45,6 @@ export default class SortWithFilterView extends Component {
       ? this.props.titleItemHight
       : 46;
     this.onSortDataSelectedCallback = this.props.onSortDataSelectedCallback;
-
-    PubSub.subscribe("queryFilterFinally", this._onBackHandler.bind(this));
   }
 
   componentDidMount() {
@@ -200,21 +198,14 @@ export default class SortWithFilterView extends Component {
       <TouchableOpacity activeOpacity={1}>
         <FilterView
           {...this.props}
-          response={this.props.response ? this.props.response : []}
           style={this.props.filterViewStyle}
           data={this.props.filterData}
           navigation={this.props.navigation}
-          onFilterResponseCallback={response => {
-            this.state.filterResponse = response;
-            this.props.onFilterResponseCallback &&
-              this.props.onFilterResponseCallback(response);
-          }}
           searchButtonRightCallback={() => this._onBackHandler()}
-          onNormalFilterCallback={filterMaps => {
-            console.log("lfj filter  onFilterResponseCallback", filterMaps);
+          onNormalFilterCallback={(filterMaps, callback) => {
             this.state.normalFilterItems = filterMaps;
             this.props.onNormalFilterCallback &&
-              this.props.onNormalFilterCallback(filterMaps);
+              this.props.onNormalFilterCallback(filterMaps, callback);
           }}
           normalFilterMap={this.state.normalFilterItems}
           filterResponse={this.state.filterResponse}
@@ -265,7 +256,9 @@ export default class SortWithFilterView extends Component {
             leftTitleText: item
           });
           this.props.onSortDataSelectedCallback &&
-            this.props.onSortDataSelectedCallback(item, index);
+            this.props.onSortDataSelectedCallback(item, index, () =>
+              this._onBackHandler()
+            );
         }}
       >
         <Text
@@ -304,7 +297,6 @@ SortWithFilterView.propTypes = {
   filterMultiple: PropTypes.bool, // 是否支持多选
   normalFilterMap: PropTypes.object, // 已选中普通filter map
   onNormalFilterCallback: PropTypes.func, // 普通筛选item点击事件回调
-  onFilterResponseCallback: PropTypes.func, // 后台返回筛选结果回调
   //================= 左侧排序View sort view ===================
   onSortDataSelectedCallback: PropTypes.func, // 排序列表item点击事件回调
   sortDataIndex: PropTypes.number, //排序选中item下标

@@ -51,19 +51,17 @@ export default class Pullable extends PullRoot {
     } else if (moveHeight >= topHeight) {
       //下拉刷新到位
       this.pullState = "pullok";
-    } else {
-      //下拉刷新释放,此时返回的值为-1
-      this.pullState = "pullrelease";
     }
+    
     //此时处于刷新中的状态
     if (state == 3) {
       this.pullState = "pullrelease";
     }
 
     // //此时刷新完成
-    // if (state == 4) {
-    //   this.pullState = "pullDone";
-    // }
+    if (state == 4) {
+      this.pullState = "pullDone";
+    }
     //默认的设置
     this.defaultTopSetting();
     //告诉外界是否要锁住

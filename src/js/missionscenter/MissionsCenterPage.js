@@ -18,12 +18,9 @@ import { PullFlatList } from "urn-pull-to-refresh";
 import FilterView from "../component/FilterView";
 import MissionItemView from "../component/MissionItemView";
 import SortWithFilterView from "../component/SortWithFilterView";
-import { FetchUtils } from "sz-network-module";
 import { RootView, LoadingView, LoadFailedView } from "../component/CommonView";
 import AccountHelper from "../login/AccountHelper";
 import MissionCenterHelper from "./MissionCenterHelper";
-
-const PubSub = require("pubsub-js");
 
 let _navigation;
 let imageUrlIndex = 0;
@@ -89,6 +86,7 @@ export class MissionsCenterPage extends PureComponent {
     this.sortDataIndex = 0; //排序选中item
     this.sortDataLabel = "新建事件倒序"; //排序label，默认倒序
     this.filterResponse = []; //筛选结果
+    this.filterResponseCallback; //筛选结果回调，通知filterView button 接触loading动画展示筛选结果条目
     this.normalFilterItems = new Map(); //筛选内容
     this.topClickViewHight = 46; //头部条件选择高度
   }
@@ -118,14 +116,14 @@ export class MissionsCenterPage extends PureComponent {
       <View style={styles.flatListContain}>
         <SortWithFilterView
           titleItemHight={this.topClickViewHight}
-          onSortDataSelectedCallback={(item, index) => {
+          onSortDataSelectedCallback={(item, index, onBackHandler) => {
             //排序item点击事件
             this.sortDataIndex = index;
             this.sortDataLabel = index == 0 ? "新建事件正序" : "新建事件倒序";
             createTimeSort = index == 0 ? "ASC" : "DESC";
             this.normalFilterItems.set("createTimeSort", createTimeSort);
             this.fetchData(this.normalFilterItems);
-            PubSub.publish("queryFilterFinally", true);
+            onBackHandler(); //关闭面板
             this.setState({ status: "loading" });
           }}
           leftTitleText={this.sortDataLabel}
@@ -134,13 +132,9 @@ export class MissionsCenterPage extends PureComponent {
             sortDataIndex: 1
           }}
           navigation={_navigation}
-          onFilterResponseCallback={response => {
-            this.filterResponse = response;
-            this.fetchData(response);
-          }}
-          filterResponse={this.filterResponse}
-          onNormalFilterCallback={filterMaps => {
+          onNormalFilterCallback={(filterMaps, callback) => {
             this.normalFilterItems = filterMaps;
+            this.filterResponseCallback = callback; //筛选结果通过此函数回调给view
             this.fetchData(filterMaps);
           }}
           rightTitleText={"筛选"}
@@ -206,7 +200,7 @@ export class MissionsCenterPage extends PureComponent {
         isContentScroll={true}
         topIndicatorHeight={topIndicatorHeight}
         style={{
-          flex: 1
+          height: "100%"
         }}
         onPullRelease={this._onPullRelease}
         data={this.state.dataArray}
@@ -216,7 +210,6 @@ export class MissionsCenterPage extends PureComponent {
         ListEmptyComponent={this._renderEmpty}
         refreshing={this.state.isRefreshing}
         renderItem={this._renderItemView}
-        keyExtractor={this._keyExtractor}
       />
       // <FlatList
       //   style={{ height: "100%" }}
@@ -248,81 +241,11 @@ export class MissionsCenterPage extends PureComponent {
       this._onQueryTaskGroupWithFilterError.bind(this),
       this._onQueryTaskGroupWithFilterFinally.bind(this)
     );
-
-    //假数据
-    // url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
-    // let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
-    // fetchRequest(url, "GET")
-    //   .then(responseData => {
-    //     let data = responseData.data; //获取json 数据并存在data数组中
-    //     let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
-    //     data.datas.map(function(item) {
-    //       if (imageUrlIndex == 499) {
-    //         imageUrlIndex = 0;
-    //       }
-    //       let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
-    //       item.key = imageUrls[imageUrlIndex];
-    //       (item.taskGroupName = "新车分期销售"),
-    //         (item.taskGroupCode = "ASDLK"),
-    //         (item.createTime = "11/11 09:22"),
-    //         (item.sourceCode = "京P D2232"),
-    //         (item.status = missionStatus[random]),
-    //         (item.frameNo = "LAKSDJF23284RFJAL2323"),
-    //         (item.modeName = "宝沃BXi7"),
-    //         (item.vehicleTypeName = "新"),
-    //         (item.exteriorColor = "银色"),
-    //         (item.taskList = [
-    //           {
-    //             modifyTime: "11/12 12:22",
-    //             taskName: "车辆出库",
-    //             taskCode: "CK239",
-    //             taskStatus: "(待出库)"
-    //           },
-    //           {
-    //             modifyTime: "11/12 12:22",
-    //             taskName: "车辆出库",
-    //             taskCode: "CK239",
-    //             taskStatus: "(待出库)"
-    //           }
-    //         ]),
-    //         imageUrlIndex++;
-    //       dataBlob.push(item);
-    //     });
-    //     let foot = 0;
-    //     if (this.state.page >= 5) {
-    //       // if (this.state.page >= data.pageCount) {
-    //       foot = 1; //listView底部显示没有更多数据了
-    //     }
-    //     console.log("lfj setState response");
-    //     this.setState({
-    //       //复制数据源
-    //       //  dataArray:this.state.dataArray.concat( responseData.results),
-    //       dataArray: this.state.dataArray.concat(dataBlob),
-    //       isLoading: false,
-    //       showFoot: foot,
-    //       showHeader: 0,
-    //       isRefreshing: false,
-    //       pageCount: data.pageCount,
-    //       status: "custom"
-    //     });
-    //     data = null; //重置为空
-    //     dataBlob = null;
-    //   })
-    //   .catch(error => {
-    //     console.log("lfj setState response error");
-    //     this.setState({
-    //       status: "loadingFailed",
-    //       error: true,
-    //       errorInfo: error
-    //     });
-    //   })
-    //   .finally(this.refs && this.refs.pull && this.refs.pull.finishRefresh())
-    //   .done();
   };
 
   //请求成功回调
   _onQueryTaskGroupWithFilterSuccess = response => {
-    PubSub.publish("stopLoadingAnimated", response.list);
+    this.filterResponseCallback && this.filterResponseCallback(response.list);
     console.log("missionCenter success = ", response);
     let foot = 0;
     let lastPage = false;
@@ -350,7 +273,7 @@ export class MissionsCenterPage extends PureComponent {
   };
   //请求失败回调
   _onQueryTaskGroupWithFilterError = error => {
-    PubSub.publish("stopLoadingAnimated", []);
+    this.filterResponseCallback && this.filterResponseCallback([]);
     this.setState({
       errorMsg: error.msg,
       status: "loadingFailed",
@@ -361,7 +284,6 @@ export class MissionsCenterPage extends PureComponent {
   //请求finally回调
   _onQueryTaskGroupWithFilterFinally = () => {
     this.pull && this.pull.finishRefresh();
-    // PubSub.publish("queryFilterFinally", true);
   };
 
   //下拉释放回调
@@ -370,10 +292,6 @@ export class MissionsCenterPage extends PureComponent {
   };
   //key
   _keyExtractor = (item, index) => item.key;
-  //item点击事件
-  _onPress = ({ item }) => {
-    const ret = _navigation.navigate("PolicyList");
-  };
 
   //返回itemView
   _renderItemView({ item }) {
@@ -384,7 +302,8 @@ export class MissionsCenterPage extends PureComponent {
           pressItem.taskGroupId = item.taskGroupId;
           pressItem.taskGroupCode = item.taskGroupCode;
           _navigation.navigate("InstallmentSalesOfNewCars", {
-            data: pressItem
+            data: pressItem,
+            title: item.taskGroupName
           });
         }}
         onTaskListItemPress={dataItem => {
@@ -412,15 +331,10 @@ export class MissionsCenterPage extends PureComponent {
     } else {
       this.state.page++;
     }
-    // else if (this.isCanLoadMore) {
-    //   this.state.page++;
-    // }
     //底部显示正在加载更多数据
     this.setState({ showFoot: 2 });
     //获取数据，在componentDidMount()已经请求过数据了
-    // if (this.state.page > 1) {
     if (this.state.page > 1) {
-      // if (this.state.page > 1 && this.isCanLoadMore) {
       this.fetchData(this.normalFilterItems);
       this.isCanLoadMore = false; // 加载更多时，不让再次的加载更多
     }

@@ -11,8 +11,6 @@ import {
   StyleSheet
 } from "react-native";
 
-const PubSub = require("pubsub-js");
-
 export default class FilterView extends Component {
   animationLoading;
   _navigation;
@@ -23,9 +21,7 @@ export default class FilterView extends Component {
       rotateVal: new Animated.Value(0),
       searchButtonOnPress: false,
       isLoading: false,
-      filterResponse: this.props.filterResponse
-        ? this.props.filterResponse
-        : [], //后台返回的筛选结果
+      filterResponse: [], //后台返回的筛选结果
       normalFilterMap: this.props.normalFilterMap
         ? this.props.normalFilterMap
         : new Map()
@@ -37,10 +33,6 @@ export default class FilterView extends Component {
         toValue: 360, // 终点值
         easing: Easing.linear // 这里使用匀速曲线，详见RN-api-Easing
       }
-    );
-
-    PubSub.subscribe("stopLoadingAnimated", (key, response) =>
-      this._getFilterResponseStop(response)
     );
   }
   render() {
@@ -160,8 +152,11 @@ export default class FilterView extends Component {
                   let end = this._getDateFormat(item[1] + "");
                   tempMap.set(itemKey, start + "-" + end);
                   this.setState({ normalFilterMap: tempMap });
-                  this.props.onNormalFilterCallback(tempMap);
-                  item.callback && item.callback(tempMap);
+                  this.props.onNormalFilterCallback(tempMap, result =>
+                    this._getFilterResponseStop(result)
+                  );
+                  item.callback && item.callback(tempMap, result =>
+                    this._getFilterResponseStop(result));
                   //todo 到后台请求数据
                   this._getFilterResponse(tempMap);
                 }
@@ -178,7 +173,13 @@ export default class FilterView extends Component {
             if (lastDate) {
               tempMap.delete(itemKey);
               this.setState({ normalFilterMap: tempMap });
-              this.props.onNormalFilterCallback(tempMap);
+              this.props.onNormalFilterCallback(tempMap, result =>
+                this._getFilterResponseStop(result)
+              );
+              item.callback &&
+                item.callback(tempMap, result =>
+                  this._getFilterResponseStop(result)
+                );
             }
           }}
         >
@@ -224,8 +225,13 @@ export default class FilterView extends Component {
                   let end = this._getDateFormat(item[1] + "");
                   tempMap.set(itemKey, start + "-" + end);
                   this.setState({ normalFilterMap: tempMap });
-                  this.props.onNormalFilterCallback(tempMap);
-                  item.callback && item.callback(tempMap);
+                  this.props.onNormalFilterCallback(tempMap, result =>
+                    this._getFilterResponseStop(result)
+                  );
+                  item.callback &&
+                    item.callback(tempMap, result =>
+                      this._getFilterResponseStop(result)
+                    );
                   //todo 到后台请求数据
                   this._getFilterResponse(tempMap);
                 }
@@ -246,7 +252,13 @@ export default class FilterView extends Component {
             if (lastDate && this._lastDateIsCusDefined(lastDate, itemArray)) {
               tempMap.delete(itemKey);
               this.setState({ normalFilterMap: tempMap });
-              this.props.onNormalFilterCallback(tempMap);
+              this.props.onNormalFilterCallback(tempMap, result =>
+                this._getFilterResponseStop(result)
+              );
+              item.callback &&
+                item.callback(tempMap, result =>
+                  this._getFilterResponseStop(result)
+                );
             }
           }}
         >
@@ -346,8 +358,13 @@ export default class FilterView extends Component {
             // console.log("lfj map size", tempMap.size);
             // this.setState({ normalFilterMap: tempMap });
             this.props.onNormalFilterCallback &&
-              this.props.onNormalFilterCallback(tempMap);
-            item.callback && item.callback(tempMap);
+              this.props.onNormalFilterCallback(tempMap, result =>
+                this._getFilterResponseStop(result)
+              );
+            item.callback &&
+              item.callback(tempMap, result =>
+                this._getFilterResponseStop(result)
+              );
 
             //todo 到后台请求数据
             this._getFilterResponse(tempMap);
@@ -419,7 +436,11 @@ export default class FilterView extends Component {
               filterResponse: []
             });
             this.props.onNormalFilterCallback &&
-              this.props.onNormalFilterCallback(temp);
+              this.props.onNormalFilterCallback(temp, result =>
+                this._getFilterResponseStop(result)
+              );
+              item.callback && item.callback(temp, result =>
+                    this._getFilterResponseStop(result));
             // todo
             this._getFilterResponse(temp);
           }}
@@ -487,8 +508,7 @@ FilterView.propTypes = {
   type: PropTypes.oneOf(["date", "normal"]), //filter 类型 ：日期和普通
   filterMultiple: PropTypes.bool, // 是否多选
   normalFilterMap: PropTypes.object, // 已选中普通filter map
-  onNormalFilterCallback: PropTypes.func, // 普通筛选item点击事件回调
-  onFilterResponseCallback: PropTypes.func // 后台返回筛选结果回调
+  onNormalFilterCallback: PropTypes.func // 普通筛选item点击事件回调
 };
 const styles = StyleSheet.create({
   calenderContainer: {

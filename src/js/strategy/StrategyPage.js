@@ -62,7 +62,7 @@ export default class StrategyPage extends PureComponent {
           icon: require("../../res/img/app_strategy_marketing.png")
         },
         {
-          key: "神州资讯",
+          key: "新闻资讯",
           icon: require("../../res/img/app_strategy_ucar.png")
         },
         {
