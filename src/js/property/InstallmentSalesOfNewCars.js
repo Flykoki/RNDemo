@@ -32,7 +32,8 @@ export default class InstallmentSalesOfNewCars extends Component {
   _initData() {
     taskGroup = this.props.navigation.getParam("data");
     console.log("InstallmentSalesOfNewCars taskGroupId = ", taskGroup);
-    taskGroupId = taskGroup ? taskGroup.taskGroupId : 1;
+    taskGroupId =
+      taskGroup && taskGroup.taskGroupId ? taskGroup.taskGroupId : 1674;
     AccountHelper.getAccountInfo().then(accountInfo => {
       FetchUtils.fetch({
         api: "action/task/taskGroupDetail",
@@ -54,19 +55,21 @@ export default class InstallmentSalesOfNewCars extends Component {
   }
 
   _processResponse(response) {
+    assetInfo = response.assetInfos ? response.assetInfos[0] : {};
     this.setState({
       status: "custom",
       carInfo: {
-        plateNo: response.vehicleNo,
-        frameNo: response.frameNo,
+        plateNo: assetInfo.vehicleNo,
+        frameNo: assetInfo.frameNo,
         model: {
-          series: response.modeName,
-          type: response.vehicleTypeName,
-          color: response.exteriorColor
+          series: assetInfo.modeName,
+          type: assetInfo.vehicleTypeName,
+          color: assetInfo.exteriorColor
         }
       },
-      data: this._parseTaskList(response.taskList),
-      taskInfo: response
+      data: this._parseTaskList(assetInfo.taskList),
+      taskInfo: response,
+      assetInfo: assetInfo
     });
   }
 
@@ -116,9 +119,12 @@ export default class InstallmentSalesOfNewCars extends Component {
         </View>
         <CarInfoPanel
           onPress={() => {
-            this.props.navigation.navigate("CarInfoScreen");
+            this.props.navigation.navigate(
+              "CarInfoScreen",
+              (params = { carInfo: this.state.assetInfo })
+            );
           }}
-          carInfo={this.state.carInfo}
+          carInfo={this.state.assetInfo}
         />
         <FlatList
           data={this.state.data}
@@ -136,7 +142,8 @@ export default class InstallmentSalesOfNewCars extends Component {
         failed={{
           tips: "加载失败",
           onPress: () => {
-            this.setState({ status: "custom" });
+            this.setState({ status: "loading" });
+            this._initData();
           },
           btnText: "重新加载"
         }}
@@ -157,7 +164,7 @@ export default class InstallmentSalesOfNewCars extends Component {
   }
 
   _startTaskDetailScreen(item) {
-    this.props.navigation.navigate("TaskDetailScreen");
+    this.props.navigation.navigate("TaskDetailScreen", { taskDetail: item });
   }
 }
 
@@ -193,15 +200,17 @@ class CarInfoPanel extends Component {
         onPress={this.props.onPress}
       >
         <Text style={styles.firstLineName}>{"车牌号"}</Text>
-        <Text style={styles.firstLineValue}>{this.props.carInfo.plateNo}</Text>
+        <Text style={styles.firstLineValue}>
+          {this.props.carInfo.vehicleNo}
+        </Text>
         <Text style={styles.secondLineName}>{"车架号"}</Text>
         <Text style={styles.secondLineValue}>{this.props.carInfo.frameNo}</Text>
         <Text style={styles.thirdLineName}>{"车型"}</Text>
         <VehicleInofPanel
           style={styles.thirdLineValue}
-          vehicle={this.props.carInfo.model.series}
-          vehicleType={this.props.carInfo.model.type}
-          vehicleColor={this.props.carInfo.model.color}
+          vehicle={this.props.carInfo.modelName}
+          vehicleType={this.props.carInfo.carTypeName}
+          vehicleColor={this.props.carInfo.outColorName}
         />
 
         <Image

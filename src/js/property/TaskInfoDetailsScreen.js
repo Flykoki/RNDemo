@@ -10,6 +10,9 @@ class InfoBaseScreen extends Component {
     this.state = {
       status: "loading"
     };
+  }
+
+  componentDidMount() {
     this._initData();
   }
 
@@ -295,21 +298,22 @@ export class CarInfoScreen extends InfoBaseScreen {
   };
 
   _initData() {
-    setTimeout(() => {
-      this.setState({
-        status: "custom",
-        data: this._fetchData({
-          type: "新车",
-          frameNo: "SD283238923472283789320",
-          plateNo: "闽D 88888",
-          engineNo: "SD283238923472283789320",
-          brand: "宝沃",
-          series: "BX7",
-          model: "SUV",
-          color: "宝蓝"
-        })
-      });
-    }, 500);
+    carInfo = this.props.navigation.getParam("carInfo");
+    console.log("CarInfoScreen carinfo", carInfo);
+
+    this.setState({
+      status: "custom",
+      data: this._fetchData({
+        type: carInfo.carTypeName,
+        frameNo: carInfo.frameNo,
+        plateNo: carInfo.vehicleNo,
+        engineNo: carInfo.engineNo,
+        brand: carInfo.brandName,
+        series: carInfo.carSeries,
+        model: carInfo.modelName,
+        color: carInfo.outColorName
+      })
+    });
   }
 
   _fetchData(carInfo) {

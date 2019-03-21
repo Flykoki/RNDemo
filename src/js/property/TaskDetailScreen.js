@@ -29,6 +29,9 @@ export default class TaskDetailScreen extends Component {
       operation: "开始整备",
       data: demoData(this.props)
     };
+  }
+
+  componentDidMount() {
     this._initData();
   }
 

@@ -197,6 +197,7 @@ export class MissionsCenterPage extends PureComponent {
     );
   }
   //=========================== 自定义方法 =========================
+<<<<<<< HEAD
 
   //显示FlatList
   renderData() {
@@ -360,6 +361,128 @@ export class MissionsCenterPage extends PureComponent {
     this.pull && this.pull.finishRefresh();
     // PubSub.publish("queryFilterFinally", true);
   };
+=======
+  //获取数据
+  fetchData() {
+    // AccountHelper.getAccountInfo().then(data => {
+    //   FetchUtils.fetch({
+    //     url: "http://ampmapiproxytest.ucarinc.com/",
+    //     customCid: "691100",
+    //     params: {
+    //       accountId: data.accountId,
+    //       execDeptIds: data.roleList,
+    //       pageSize: this.state.pageSize,
+    //       pageNum: this.state.page
+    //     },
+    //     api: "/action/task/searchTaskGroup",
+    //     success: response => {
+    //       console.log("missionCenter success = ", response);
+    //       let foot = 0;
+    //       let lastPage = false;
+    //       if (response.total < this.state.pageNum) {
+    //         // if (this.state.page >= data.pageCount) {
+    //         lastPage = true;
+    //         foot = 1; //listView底部显示没有更多数据了
+    //       }
+    //       console.log("lfj setState response");
+    //       this.setState({
+    //         //复制数据源
+    //         //  dataArray:this.state.dataArray.concat( responseData.results),
+    //         dataArray: response.list,
+    //         isLoading: false,
+    //         showFoot: foot,
+    //         isLastPage: lastPage,
+    //         showHeader: 0,
+    //         isRefreshing: false,
+    //         status: "custom"
+    //       });
+    //     },
+    //     error: err => {
+    //       console.log("missionCenter error = ", err);
+    //       this.setState({
+    //         errorMsg: err.msg,
+    //         status: "loadingFailed",
+    //         isRefreshing: false
+    //       });
+    //     },
+    //     final: () => this.pull && this.pull.finishRefresh()
+    //   });
+    // });
+
+    url = "http://www.wanandroid.com/article/list/" + this.state.page + "/json";
+    let missionStatus = ["处理中", "待处理", "处理完毕", "已取消"];
+
+    fetchRequest(url, "GET")
+      .then(responseData => {
+        let data = responseData.data; //获取json 数据并存在data数组中
+        let dataBlob = []; //这是创建该数组，目的放存在key值的数据，就不会报黄灯了
+
+        data.datas.map(function(item) {
+          if (imageUrlIndex == 499) {
+            imageUrlIndex = 0;
+          }
+
+          let random = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+
+          item.key = imageUrls[imageUrlIndex];
+          (item.taskGroupName = "新车分期销售"),
+            (item.taskGroupCode = "ASDLK"),
+            (item.createTime = "11/11 09:22"),
+            (item.sourceCode = "京P D2232"),
+            (item.status = missionStatus[random]),
+            (item.frameNo = "LAKSDJF23284RFJAL2323"),
+            (item.modeName = "宝沃BXi7"),
+            (item.vehicleTypeName = "新"),
+            (item.exteriorColor = "银色"),
+            (item.taskList = [
+              {
+                modifyTime: "11/12 12:22",
+                taskName: "车辆出库",
+                taskCode: "CK239",
+                taskStatus: "(待出库)"
+              },
+              {
+                modifyTime: "11/12 12:22",
+                taskName: "车辆出库",
+                taskCode: "CK239",
+                taskStatus: "(待出库)"
+              }
+            ]),
+            imageUrlIndex++;
+          dataBlob.push(item);
+        });
+        let foot = 0;
+        if (this.state.page >= 5) {
+          // if (this.state.page >= data.pageCount) {
+          foot = 1; //listView底部显示没有更多数据了
+        }
+        console.log("lfj setState response");
+        this.setState({
+          //复制数据源
+          //  dataArray:this.state.dataArray.concat( responseData.results),
+          dataArray: this.state.dataArray.concat(dataBlob),
+          isLoading: false,
+          showFoot: foot,
+          showHeader: 0,
+          isRefreshing: false,
+          pageCount: data.pageCount,
+          status: "custom"
+        });
+        data = null; //重置为空
+        dataBlob = null;
+      })
+      .catch(error => {
+        console.log("lfj setState response error");
+        this.setState({
+          status: "loadingFailed",
+          error: true,
+          errorInfo: error
+        });
+      })
+      .finally(this.refs && this.refs.pull && this.refs.pull.finishRefresh())
+      .done();
+  }
+>>>>>>> modify login & task group
 
   //下拉释放回调
   _onPullRelease = () => {

@@ -4,8 +4,8 @@ import { FetchUtils } from "sz-network-module";
 const ACCOUNT_KEY = "account_key";
 export const ACCOUNT_TYPE_EMPLOYEE = 0;
 export const ACCOUNT_TYPE_DISTRIBUTOR = 1;
-const LOGIN_BASE_URL = "http://mapiproxytest.maimaiche.com/ucarmapiproxy/";
-const LOGIN_CID = "502109";
+const LOGIN_BASE_URL = "http://apiproxytest.ucarinc.com/ucarincapiproxy/";
+const LOGIN_CID = "670100";
 const EMPLOYEE_LOGIN_API = "action/employee/login";
 const DISTRIBUTOR_LOGIN_API = "action/distributor/login";
 const LOGIN_OUT_API = "action/admin/logout";
@@ -56,7 +56,7 @@ export default class AccountHelper extends Component {
       },
       error: err => {
         console.log("login error = ", err);
-        error({ msg: "登录失败" });
+        error({ msg: err.msg ? err.msg : "登录失败" });
       }
     });
   }
@@ -161,9 +161,9 @@ export default class AccountHelper extends Component {
     var jsonStr = JSON.stringify(key);
     AsyncStorage.setItem(ACCOUNT_KEY, jsonStr, error => {
       if (error) {
-        console.warn("saveAccountInfo error", error);
+        console.log("saveAccountInfo error", error);
       } else {
-        console.warn("save account info successful");
+        console.log("save account info successful");
       }
     });
   }

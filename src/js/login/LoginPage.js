@@ -6,7 +6,8 @@ import {
   StatusBar,
   Dimensions,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  ToastAndroid
 } from "react-native";
 import TextInputWithClearButton from "../component/TextInputWithClearButton";
 import AccountHelper, {
@@ -178,9 +179,20 @@ export default class LoginPage extends Component {
 
   _onLoginSuccess() {
     this._jumpToHomeTab();
+    ToastAndroid.showWithGravity(
+      "登录成功",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
   }
 
-  _onLoginFailed(error) {}
+  _onLoginFailed(error) {
+    ToastAndroid.showWithGravity(
+      error.msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  }
 
   _jumpToHomeTab() {
     this.props.navigation.reset(
