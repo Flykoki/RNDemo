@@ -7,7 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   AsyncStorage,
-  ScrollView,
+  ActivityIndicator
+  ,
   Image,
   Easing,
   FlatList,
@@ -484,7 +485,7 @@ export default class SearchView extends Component {
         activeOpacity={1}
         onPress={() => {
           // this.setState({ panelState: 1 });
-          this._onSearchTextChange(value)
+          this._onSearchTextChange(value);
           this.props.onHistoryItemCallback &&
             this.props.onHistoryItemCallback(value);
         }}

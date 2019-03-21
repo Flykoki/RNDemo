@@ -416,7 +416,7 @@ export class MissionsCenterPage extends PureComponent {
     // if (this.state.page > 1) {
     if (this.state.page > 1) {
       // if (this.state.page > 1 && this.isCanLoadMore) {
-      this.fetchData();
+      this.fetchData(this.normalFilterItems);
       this.isCanLoadMore = false; // 加载更多时，不让再次的加载更多
     }
   };
@@ -524,7 +524,7 @@ export class MissionsCenterPage extends PureComponent {
       isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
       dataArray: []
     });
-    this.fetchData();
+    this.fetchData(this.normalFilterItems);
   };
   //加载等待页
   renderLoadingView() {
