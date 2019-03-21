@@ -57,7 +57,7 @@ export default class SearchViewPage extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{flex:1,}}>
         <SearchView
           ref="confirmPassText"
           placeholder={"请输入车架号或车牌号"}

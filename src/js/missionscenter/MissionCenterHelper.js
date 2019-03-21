@@ -29,8 +29,8 @@ export default class MissionCenterHelper extends Component {
       createTimeSort
     } = MissionCenterHelper._iteratorMaps(map);
     FetchUtils.fetch({
-      url: "http://ampmapiproxytest.ucarinc.com/",
-      customCid: "691100",
+      // url: "http://ampmapiproxytest.ucarinc.com/",
+      // customCid: "691100",
       params: {
         accountId: accountInfo.accountId,
         execDeptIds: accountInfo.roleList,

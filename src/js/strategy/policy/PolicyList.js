@@ -262,8 +262,8 @@ export class PolicyList extends PureComponent {
   //获取数据
   fetchData() {
     FetchUtils.fetch({
-      url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
-      customCid: "502109",
+      // url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
+      // customCid: "502109",
       params: { pageIndex: this.state.page, pageSize: this.state.pageSize },
       api: "action/cmt/queryInformationList",
       success: content => {
@@ -277,6 +277,11 @@ export class PolicyList extends PureComponent {
           foot = 1; //listView底部显示没有更多数据了
         }
 
+    //如果是下拉刷新就清空数据源
+    if (this.state.isRefreshing) {
+      this.state.dataArray = [];
+    }
+    
         this.setState({
           //复制数据源
           //  dataArray:this.state.dataArray.concat( responseData.results),

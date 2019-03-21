@@ -334,6 +334,12 @@ export class MissionsCenterPage extends PureComponent {
       lastPage = true;
       foot = 1; //listView底部显示没有更多数据了
     }
+
+    //如果是下拉刷新就清空数据源
+    if (this.state.isRefreshing) {
+      this.state.dataArray = [];
+    }
+
     this.setState({
       //复制数据源
       dataArray: this.state.dataArray.concat(response.list),
@@ -521,8 +527,7 @@ export class MissionsCenterPage extends PureComponent {
     this.setState({
       page: 1,
       showHeader: 1,
-      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
-      dataArray: []
+      isRefreshing: true //tag,下拉刷新中，加载完全，就设置成flase
     });
     this.fetchData(this.normalFilterItems);
   };

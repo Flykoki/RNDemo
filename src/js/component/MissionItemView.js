@@ -56,9 +56,7 @@ export default class MissionItemView extends Component {
           >
             <View style={styles.sourceNumber}>
               <Text style={styles.contentTextKey}>车牌号</Text>
-              <Text style={styles.contentTextValue}>
-                {item.vehicleNo}
-              </Text>
+              <Text style={styles.contentTextValue}>{item.vehicleNo}</Text>
               <Text style={this._getMissionStatusStyle(missionItem.status)}>
                 {this._getMissionStatusLabel(missionItem.status)}
               </Text>
@@ -137,6 +135,7 @@ export default class MissionItemView extends Component {
           </Text>
           <Text style={styles.concurrentMissionItemTask}>
             {item.taskName + item.taskCode + item.secondStatusName}
+            {/* {item.taskName + item.taskCode + "(" + item.secondStatusName + ")"} */}
           </Text>
           <Image
             resizeMode={"contain"}

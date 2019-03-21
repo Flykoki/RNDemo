@@ -7,8 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   AsyncStorage,
-  ActivityIndicator
-  ,
+  ActivityIndicator,
   Image,
   Easing,
   FlatList,
@@ -131,7 +130,6 @@ export default class SearchView extends Component {
   //================================== 自定义方法 =====================================
   //网络请求成功
   _onSuccess = response => {
-    console.log("lfj searchView _onSuccess", response);
     if (response.list.length > 0) {
       let foot = 0;
       let lastPage = false;
@@ -140,6 +138,12 @@ export default class SearchView extends Component {
         lastPage = true;
         foot = 1; //listView底部显示没有更多数据了
       }
+
+    //如果是下拉刷新就清空数据源
+    if (this.state.isRefreshing) {
+      this.state.searchResponseData = [];
+    }
+
       this.setState({
         //复制数据源
         searchResponseData: this.state.searchResponseData.concat(response.list),
@@ -162,9 +166,7 @@ export default class SearchView extends Component {
     });
   };
   //请求finally
-  _onFinally = () => {
-    console.log("lfj searchView _onFinally");
-  };
+  _onFinally = () => {};
   /**
    * 获取历史记录
    */
@@ -231,7 +233,6 @@ export default class SearchView extends Component {
    * 根据当前状态获取panel 显示view
    */
   _getPanelViewFromPanelState = panelState => {
-    console.log("lfj currentState", panelState);
     //当前panel状态{0:"默认",1:"搜索中",2:"未找到结果",3:"搜索结果",4:"历史搜索记录",5:"请求失败"}
     switch (panelState) {
       case 1:
@@ -282,17 +283,18 @@ export default class SearchView extends Component {
    */
   _getSearchWithResult = () => {
     return (
-      <View>
-        <FlatList
-          data={this.state.searchResponseData}
-          ListFooterComponent={this._renderFooter}
-          renderItem={this._renderSearchResultItem}
-          onEndReached={this._onEndReached}
-          onEndReachedThreshold={0.1}
-          refreshing={this.state.isRefreshing}
-          onRefresh={this.handleRefresh} //因为涉及到this.state
-        />
-      </View>
+      // <View style={{ flex: 1 }}>
+      <FlatList
+        style={{ height: "100%" }}
+        data={this.state.searchResponseData}
+        ListFooterComponent={this._renderFooter}
+        renderItem={this._renderSearchResultItem}
+        onEndReached={this._onEndReached}
+        onEndReachedThreshold={0.1}
+        refreshing={this.state.isRefreshing}
+        onRefresh={this.handleRefresh} //因为涉及到this.state
+      />
+      // </View>
     );
   };
   /**
@@ -360,6 +362,7 @@ export default class SearchView extends Component {
   };
   //返回footer
   _renderFooter = () => {
+    console.log("lfj search view render foot", this.state.showFoot);
     if (this.state.showFoot === 1) {
       return (
         <View
@@ -425,7 +428,6 @@ export default class SearchView extends Component {
       panelState: 2, //显示刷新
       showHeader: 1,
       isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
-      searchResponseData: []
     });
     this._onSearchTextChange(this.state.searchText);
   };
@@ -445,6 +447,7 @@ export default class SearchView extends Component {
     //   this.state.page++;
     // }
     //底部显示正在加载更多数据
+    // this.state.showFoot = 2;
     this.setState({ showFoot: 2 });
     //获取数据，在componentDidMount()已经请求过数据了
     if (this.state.page > 1) {
@@ -455,31 +458,11 @@ export default class SearchView extends Component {
   };
 
   /**
-   * 获取去重后的最近 n 个搜索历史记录
-   */
-  _getData = (data, count) => {
-    //去重
-    let obj = {};
-    data = data.reduce((cur, next) => {
-      obj[next.data.key] ? "" : (obj[next.data.key] = true && cur.push(next));
-      return cur;
-    }, []);
-    //
-    data.reverse();
-    //截取前count 个数据
-    data = data.slice(0, count);
-    return data;
-  };
-
-  /**
    * render 历史记录item
    */
   _renderHistoryListItem = ({ item }) => {
     console.log("lfj _renderHistoryListItem", item);
-    return this._renderHistoryListItemView(item.data);
-  };
-
-  _renderHistoryListItemView = value => {
+    let value = item.data;
     return (
       <TouchableOpacity
         activeOpacity={1}
@@ -497,7 +480,9 @@ export default class SearchView extends Component {
       </TouchableOpacity>
     );
   };
-
+  /**
+   * 默认 render 搜索结果item
+   */
   _renderSearchResultItem = ({ item }) => {
     return this.props.renderItem ? (
       this.props.renderItem(item, array => this._onItemClick(array))
@@ -549,6 +534,9 @@ export default class SearchView extends Component {
     }
   };
 
+  /**
+   * 网络请求
+   */
   _startFetchData = text => {
     clearTimeout(this.timerId); //如搜索的内容变化在1秒之中，可以清除变化前的fetch请求，继而减少fetch请求。但不能中断fetch请求
     this.timerId = setTimeout(() => {
@@ -566,7 +554,9 @@ export default class SearchView extends Component {
         : this._getMockData(text);
     }, 1000); //让每次要进行fetch请求时先延迟1秒在进行
   };
-
+  /**
+   * 默认 网络请求 mock数据
+   */
   _getMockData = text => {
     let random = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
     let result = [];
@@ -740,8 +730,9 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   container: {
-    height: "100%",
-    width: "100%",
+    // height: "100%",
+    // width: "100%",
+    flex: 1,
     flexDirection: "column",
     backgroundColor: "#F8F8F8",
     justifyContent: "flex-start"

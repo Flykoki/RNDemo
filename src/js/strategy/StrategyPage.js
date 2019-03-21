@@ -16,7 +16,7 @@ import { FetchUtils } from "sz-network-module";
 
 let _navigation;
 const screenWidth = Dimensions.get("window").width;
-
+let _statusBarHeight;
 export default class StrategyPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     _navigation = navigation;
@@ -85,10 +85,11 @@ export default class StrategyPage extends PureComponent {
   componentDidMount() {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
       console.log("lfj currentHeight", StatusBar.currentHeight);
-      StatusBar.setBarStyle("dark-content");
-      StatusBar.setBackgroundColor("#FFFFFF");
-      // StatusBar.setTranslucent(true); //是否沉浸式
-      // StatusBar.setBackgroundColor("transparent");
+      _statusBarHeight = StatusBar.currentHeight;
+      // StatusBar.setBarStyle("dark-content");
+      // StatusBar.setBackgroundColor("#FFFFFF");
+      StatusBar.setTranslucent(true); //是否沉浸式
+      StatusBar.setBackgroundColor("transparent");
     });
 
     this._fetchData();
@@ -117,35 +118,45 @@ export default class StrategyPage extends PureComponent {
   }
 
   _getCustomView = () => {
+    let showBanner =
+      this.state.bannerDisplayList && this.state.bannerDisplayList.length > 0;
+    console.log("lfj showBanner", showBanner, _statusBarHeight);
     return (
-      <PullFlatList
-        ref={c => (this.pull = c)}
-        isContentScroll={true}
-        refreshable={this.state.refreshEnable}
-        // style={{ flex: 1, width: screenWidth }}
-        onPullRelease={this._onPullRelease}
-        data={this.state.dataSource}
-        topIndicatorHeight={50}
-        refreshing={this.state.isRefreshing}
-        renderItem={({ item, index, separators }) => this._renderItem(item)}
-        onTouchStart={e => {
-          this.pageX = e.nativeEvent.pageX;
-          this.pageY = e.nativeEvent.pageY;
-        }}
-        onTouchMove={e => {
-          if (
-            Math.abs(this.pageY - e.nativeEvent.pageY) >
-            Math.abs(this.pageX - e.nativeEvent.pageX)
-          ) {
-            //下拉
-            this.setState({ refreshEnable: true });
-          } else {
-            //左右
-            this.setState({ refreshEnable: false });
-          }
-        }}
+      <View
+        style={
+          showBanner
+            ? { height: "100%" }
+            : { height: "100%", marginTop: _statusBarHeight }
+        }
       >
-      </PullFlatList>
+        <PullFlatList
+          ref={c => (this.pull = c)}
+          isContentScroll={true}
+          refreshable={this.state.refreshEnable}
+          // style={{ flex: 1, width: screenWidth }}
+          onPullRelease={this._onPullRelease}
+          data={this.state.dataSource}
+          topIndicatorHeight={50}
+          refreshing={this.state.isRefreshing}
+          renderItem={({ item, index, separators }) => this._renderItem(item)}
+          onTouchStart={e => {
+            this.pageX = e.nativeEvent.pageX;
+            this.pageY = e.nativeEvent.pageY;
+          }}
+          onTouchMove={e => {
+            if (
+              Math.abs(this.pageY - e.nativeEvent.pageY) >
+              Math.abs(this.pageX - e.nativeEvent.pageX)
+            ) {
+              //下拉
+              this.setState({ refreshEnable: true });
+            } else {
+              //左右
+              this.setState({ refreshEnable: false });
+            }
+          }}
+        />
+      </View>
     );
   };
   //返回footer
@@ -186,8 +197,8 @@ export default class StrategyPage extends PureComponent {
 
   _fetchData = () => {
     FetchUtils.fetch({
-      url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
-      customCid: "502109",
+      // url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
+      // customCid: "502109",
       params: {},
       api: "action/cmt/queryExhibitionList",
       success: response => {
