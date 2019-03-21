@@ -114,7 +114,20 @@ export class MissionsCenterPage extends PureComponent {
     //加载数据
     return (
       <View style={styles.flatListContain}>
+        <RootView
+          style={{ flex: 1, marginTop: this.topClickViewHight }}
+          status={this.state.status}
+          failed={{
+            tips: this.state.errorMsg,
+            onPress: () => {
+              this.fetchData(this.normalFilterItems);
+            },
+            btnText: "重新加载"
+          }}
+          custom={this.renderData()}
+        />
         <SortWithFilterView
+          style={{ position: "absolute", top: 0, left: 0 }}
           titleItemHight={this.topClickViewHight}
           onSortDataSelectedCallback={(item, index, onBackHandler) => {
             //排序item点击
@@ -174,18 +187,6 @@ export class MissionsCenterPage extends PureComponent {
               filterMultiple: false
             }
           ]}
-        />
-        <RootView
-          style={{ flex: 1 }}
-          status={this.state.status}
-          failed={{
-            tips: this.state.errorMsg,
-            onPress: () => {
-              this.fetchData(this.normalFilterItems);
-            },
-            btnText: "重新加载"
-          }}
-          custom={this.renderData()}
         />
       </View>
     );
@@ -591,6 +592,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8F8",
     flexDirection: "column",
     justifyContent: "flex-start",
-    height: "100%"
+    flex: 1
   }
 });

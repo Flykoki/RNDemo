@@ -15,6 +15,8 @@ import {
   StyleSheet,
   Dimensions
 } from "react-native";
+import { PullFlatList } from "urn-pull-to-refresh";
+const topIndicatorHeight = 30;
 
 export default class SearchView extends Component {
   constructor(props) {
@@ -168,7 +170,9 @@ export default class SearchView extends Component {
     });
   };
   //请求finally
-  _onFinally = () => {};
+  _onFinally = () => {
+    this.pull && this.pull.finishRefresh();
+  };
   /**
    * 获取历史记录
    */
@@ -285,18 +289,35 @@ export default class SearchView extends Component {
    */
   _getSearchWithResult = () => {
     return (
-      // <View style={{ flex: 1 }}>
-      <FlatList
-        style={{ height: "100%" }}
-        data={this.state.searchResponseData}
-        ListFooterComponent={this._renderFooter}
-        renderItem={this._renderSearchResultItem}
-        onEndReached={this._onEndReached}
-        onEndReachedThreshold={0.1}
-        refreshing={this.state.isRefreshing}
-        onRefresh={this.handleRefresh} //因为涉及到this.state
-      />
-      // </View>
+      <View style={{ flex: 1 }}>
+        <PullFlatList
+          ref={c => (this.pull = c)}
+          isContentScroll={true}
+          refreshable={false}
+          topIndicatorHeight={topIndicatorHeight}
+          style={{
+            height: "100%"
+          }}
+          onPullRelease={this.handleRefresh}
+          data={this.state.searchResponseData}
+          onEndReached={this._onEndReached}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={this._renderFooter}
+          refreshing={this.state.isRefreshing}
+          renderItem={this._renderSearchResultItem}
+        />
+      </View>
+
+      // <FlatList
+      //   style={{ height: "100%" }}
+      //   data={this.state.searchResponseData}
+      //   ListFooterComponent={this._renderFooter}
+      //   renderItem={this._renderSearchResultItem}
+      //   onEndReached={this._onEndReached}
+      //   onEndReachedThreshold={0.1}
+      //   refreshing={this.state.isRefreshing}
+      //   onRefresh={this.handleRefresh} //因为涉及到this.state
+      // />
     );
   };
   /**
