@@ -439,8 +439,6 @@ export default class FilterView extends Component {
               this.props.onNormalFilterCallback(temp, result =>
                 this._getFilterResponseStop(result)
               );
-              item.callback && item.callback(temp, result =>
-                    this._getFilterResponseStop(result));
             // todo
             this._getFilterResponse(temp);
           }}

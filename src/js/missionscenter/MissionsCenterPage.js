@@ -26,7 +26,7 @@ let _navigation;
 let imageUrlIndex = 0;
 const width = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-const topIndicatorHeight = 40;
+const topIndicatorHeight = 30;
 export class MissionsCenterPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -117,9 +117,9 @@ export class MissionsCenterPage extends PureComponent {
         <SortWithFilterView
           titleItemHight={this.topClickViewHight}
           onSortDataSelectedCallback={(item, index, onBackHandler) => {
-            //排序item点击事件
+            //排序item点击
             this.sortDataIndex = index;
-            this.sortDataLabel = index == 0 ? "新建事件正序" : "新建事件倒序";
+            this.sortDataLabel = index == 0 ? "新建时间正序" : "新建时间倒序";
             createTimeSort = index == 0 ? "ASC" : "DESC";
             this.normalFilterItems.set("createTimeSort", createTimeSort);
             this.fetchData(this.normalFilterItems);
@@ -128,7 +128,7 @@ export class MissionsCenterPage extends PureComponent {
           }}
           leftTitleText={this.sortDataLabel}
           sortDataObj={{
-            sortData: ["新建事件正序", "新建事件倒序"],
+            sortData: ["新建时间正序", "新建时间倒序"],
             sortDataIndex: 1
           }}
           navigation={_navigation}

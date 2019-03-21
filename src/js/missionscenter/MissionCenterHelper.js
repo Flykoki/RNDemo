@@ -26,6 +26,7 @@ export default class MissionCenterHelper extends Component {
       completeDateEnd,
       cancelDateStart,
       cancelDateEnd,
+      sortBy = "DESC",
       createTimeSort
     } = MissionCenterHelper._iteratorMaps(map);
     FetchUtils.fetch({
@@ -91,6 +92,7 @@ export default class MissionCenterHelper extends Component {
         break;
       case "createTimeSort":
         temp.createTimeSort = value;
+        temp.sortBy = value;
         break;
       case "completeDate":
         let date = value.split("-");
