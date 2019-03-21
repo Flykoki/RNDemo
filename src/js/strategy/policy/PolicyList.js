@@ -114,7 +114,7 @@ export class PolicyList extends PureComponent {
   _handleRefresh = () => {
     this.setState({
       page: 1,
-      isRefreshing: true, //tag,下拉刷新中，加载完全，就设置成flase
+      isRefreshing: true //tag,下拉刷新中，加载完全，就设置成flase
       // status:'loading',
       // dataArray: []
     });
@@ -277,11 +277,11 @@ export class PolicyList extends PureComponent {
           foot = 1; //listView底部显示没有更多数据了
         }
 
-    //如果是下拉刷新就清空数据源
-    if (this.state.isRefreshing) {
-      this.state.dataArray = [];
-    }
-    
+        //如果是下拉刷新就清空数据源
+        if (this.state.isRefreshing) {
+          this.state.dataArray = [];
+        }
+
         this.setState({
           //复制数据源
           //  dataArray:this.state.dataArray.concat( responseData.results),

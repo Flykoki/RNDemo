@@ -22,8 +22,8 @@ export class HomePage extends PureComponent {
     return {
       title: "首页",
       headerTitleStyle: { flex: 1, textAlign: "center" },
-      headerLeft: null,
-      headerRight: null
+      headerLeft: <View />,
+      headerRight: <View />
     };
   };
 

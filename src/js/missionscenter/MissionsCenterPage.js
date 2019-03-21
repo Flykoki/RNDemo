@@ -29,7 +29,7 @@ let _navigation;
 let imageUrlIndex = 0;
 const width = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-const topIndicatorHeight = 25;
+const topIndicatorHeight = 40;
 export class MissionsCenterPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -182,7 +182,7 @@ export class MissionsCenterPage extends PureComponent {
           ]}
         />
         <RootView
-          style={{ height: "100%" }}
+          style={{ flex: 1 }}
           status={this.state.status}
           failed={{
             tips: this.state.errorMsg,
@@ -201,42 +201,39 @@ export class MissionsCenterPage extends PureComponent {
   //显示FlatList
   renderData() {
     return (
-      <FlatList
-        style={{ height: "100%" }}
+      <PullFlatList
+        ref={c => (this.pull = c)}
+        isContentScroll={true}
+        topIndicatorHeight={topIndicatorHeight}
+        style={{
+          flex: 1
+        }}
+        onPullRelease={this._onPullRelease}
         data={this.state.dataArray}
-        renderItem={this._renderItemView.bind(this)}
+        onEndReached={this._onEndReached}
+        onEndReachedThreshold={0.1}
         ListFooterComponent={this._renderFooter}
         ListEmptyComponent={this._renderEmpty}
-        onEndReached={this._onEndReached.bind(this)}
-        onEndReachedThreshold={0.1}
-        // onContentSizeChange={() => {
-        //   this.isCanLoadMore = true; // flatview内部组件布局完成以后会调用这个方法
-        // }}
         refreshing={this.state.isRefreshing}
-        onRefresh={this.handleRefresh} //因为涉及到this.state
+        renderItem={this._renderItemView}
         keyExtractor={this._keyExtractor}
       />
+      // <FlatList
+      //   style={{ height: "100%" }}
+      //   data={this.state.dataArray}
+      //   renderItem={this._renderItemView.bind(this)}
+      //   ListFooterComponent={this._renderFooter}
+      //   ListEmptyComponent={this._renderEmpty}
+      //   onEndReached={this._onEndReached.bind(this)}
+      //   onEndReachedThreshold={0.1}
+      //   // onContentSizeChange={() => {
+      //   //   this.isCanLoadMore = true; // flatview内部组件布局完成以后会调用这个方法
+      //   // }}
+      //   refreshing={this.state.isRefreshing}
+      //   onRefresh={this.handleRefresh} //因为涉及到this.state
+      //   keyExtractor={this._keyExtractor}
+      // />
     );
-    {
-      /* <PullFlatList
-  ref="pull"
-  isContentScroll={true}
-  topIndicatorHeight={topIndicatorHeight}
-  style={{
-    height: windowHeight,
-    width: width,
-    marginTop: this.topClickViewHight
-  }}
-  onPullRelease={this._onPullRelease}
-  data={this.state.dataArray}
-  onEndReached={this._onEndReached}
-  onEndReachedThreshold={0.1}
-  ListFooterComponent={this._renderFooter}
-  refreshing={this.state.isRefreshing}
-  renderItem={this._renderItemView}
-  keyExtractor={this._keyExtractor}
-  />   */
-    }
   }
 
   //请求后台
@@ -384,6 +381,7 @@ export class MissionsCenterPage extends PureComponent {
       <MissionItemView
         onTaskGroupPress={pressItem => {
           pressItem.sourceCode = item.sourceCode;
+          pressItem.taskGroupId = item.taskGroupId;
           pressItem.taskGroupCode = item.taskGroupCode;
           _navigation.navigate("InstallmentSalesOfNewCars", {
             data: pressItem
@@ -391,6 +389,7 @@ export class MissionsCenterPage extends PureComponent {
         }}
         onTaskListItemPress={dataItem => {
           dataItem.sourceCode = item.sourceCode;
+          dataItem.taskGroupId = item.taskGroupId;
           dataItem.taskGroupCode = item.taskGroupCode;
           _navigation.navigate("TaskDetailScreen", {
             data: dataItem
