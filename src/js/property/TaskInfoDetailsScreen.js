@@ -3,6 +3,8 @@ import { View, Clipboard, Text, FlatList, StyleSheet } from "react-native";
 import { titleOptions } from "../component/Titie";
 import { RootView } from "../component/CommonView";
 import SettingsList from "../component/SettingsList";
+import AccountHelper from "../login/AccountHelper";
+import { FetchUtils } from "../../../modules/sz-network-module/src/js/network/Network";
 
 class InfoBaseScreen extends Component {
   constructor(props) {
@@ -25,6 +27,7 @@ class InfoBaseScreen extends Component {
       <RootView
         style={{ backgroundColor: "#F8F8F8", flex: 1 }}
         status={this.state.status}
+        failed={this.state.failed}
         custom={this._cutomView()}
       />
     );
@@ -534,30 +537,52 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
   };
 
   _initData() {
-    taskInfo = this.props.navigation.getParam("taskInfo");
-    console.log("IntegratedTaskInfo", "_initData()", taskInfo);
+    taskGroupId = 1674;
+    // this.props.navigation.getParam("taskGroupId");
 
-    setTimeout(() => {
-      this.setState({
-        status: "custom",
-        data: this._fetchLines({
-          taskNo: taskInfo.taskGroupCode,
-          taskStatus: "处理中",
-          from: taskInfo.sourceCode,
-          applyDepartment: taskInfo.applyDeptName,
-          applyReason: taskInfo.applyReason,
-          handoverDepartment: taskInfo.deliveryDept,
-          taskTarget: taskInfo.taskObject,
-          taskPerformance: taskInfo.taskProgress,
-          createTime: taskInfo.createTime,
-          completeTime: taskInfo.completeTime,
-          operationDepartment: this._processOperationDept(
-            taskInfo.allExecutiveDepartments
-          ),
-          elapsed: taskInfo.completeDays
-        })
+    if (taskGroupId) {
+      AccountHelper.getAccountInfo().then(accountInfo => {
+        FetchUtils.fetch({
+          api: "action/task/taskGroupDetail",
+          params: {
+            taskGroupId: taskGroupId,
+            accountId: accountInfo.accountId,
+            execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
+          },
+          success: response => {
+            console.log("IntegratedTaskInfo init data", response);
+            this._processResponse(response);
+          },
+          error: err => {
+            console.log("IntegratedTaskInfo init data", err);
+            this.setState({
+              status: "loadingFailed",
+              failed: { tips: err.msg }
+            });
+          }
+        });
       });
-    }, 500);
+    } else {
+      this.setState({
+        status: "loadingFailed",
+        failed: { tips: "加载数据为空" }
+      });
+    }
+  }
+
+  _processResponse(response) {
+    this.setState({
+      status: "custom",
+      data: this._fetchLines(response)
+    });
+  }
+
+  _parsetRoleListToDeptIdList(roleList) {
+    deptIdList = [];
+    for (let i in roleList) {
+      deptIdList.push(roleList[i].id);
+    }
+    return deptIdList;
   }
 
   _processOperationDept(allExecutiveDepartments) {
@@ -567,6 +592,21 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       result.push({ key: i, department: dept.deptName, status: dept.status });
     }
     return result;
+  }
+
+  /**(1 待处理、2 处理中、3处理完毕、4已取消) */
+  _getStatus(status) {
+    switch (status) {
+      default:
+      case 1:
+        return "待处理";
+      case 2:
+        return "处理中";
+      case 3:
+        return "处理完毕";
+      case 4:
+        return "已取消";
+    }
   }
 
   _fetchLines(returnData) {
@@ -580,11 +620,11 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
         key: "1",
         name: "任务集合编号",
         type: "item",
-        value: returnData.taskNo,
+        value: returnData.taskGroupCode,
         rightIcon: require("../../res/img/copy.png"),
         type: "item",
         onPress: () => {
-          Clipboard.setString(returnData.taskNo);
+          Clipboard.setString(returnData.taskGroupCode);
         }
       },
       {
@@ -594,7 +634,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "2",
         name: "任务集合状态",
-        value: returnData.taskStatus,
+        value: this._getStatus(returnData.status),
         type: "item"
       },
       {
@@ -604,11 +644,11 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "3",
         name: "来源单号",
-        value: returnData.from,
+        value: returnData.sourceCode,
         rightIcon: require("../../res/img/copy.png"),
         type: "item",
         onPress: () => {
-          Clipboard.setString(returnData.from);
+          Clipboard.setString(returnData.sourceCode);
         }
       },
       {
@@ -618,7 +658,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "4",
         name: "申请部门",
-        value: returnData.applyDepartment,
+        value: returnData.applyDeptName,
         type: "item"
       },
       {
@@ -638,7 +678,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "6",
         name: "交车部门",
-        value: returnData.handoverDepartment,
+        value: returnData.deliveryDept,
         type: "item"
       },
       {
@@ -658,7 +698,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "8",
         name: "任务完成情况（完成/总数）",
-        value: returnData.taskPerformance,
+        value: returnData.taskProgress,
         type: "item"
       },
       {
@@ -668,10 +708,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "9",
         customView: (
-          <TaskFlowPanel
-            title="全部执行部门"
-            data={returnData.operationDepartment}
-          />
+          <TaskFlowPanel title="全部执行部门" data={returnData.deptInfo} />
         ),
         type: "custom"
       },
@@ -702,7 +739,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
       {
         key: "9",
         name: "完成天数",
-        value: returnData.elapsed,
+        value: returnData.completeDays,
         type: "item"
       }
     ];
@@ -727,27 +764,10 @@ class TaskFlowPanel extends Component {
     return size;
   }
 
-  /**(1 待处理、2 处理中、3处理完毕、4已取消) */
-  _getColor(status) {
-    switch (status) {
-      case 1:
-        return "#999999";
-      case 2:
-        return "#F12E49";
-      case 3:
-        return "#333333";
-      default:
-        return "#999999";
-    }
-  }
-
   _renderItem({ item, index }) {
-    textColor = this._getColor(item.status);
     return (
       <View style={styles.taskFlowPanelItemTextContainer}>
-        <Text style={[styles.taskFlowPanelItemText, { color: textColor }]}>
-          {item.department ? item.department : "部门" + index}
-        </Text>
+        <DeptListItem data={item.itemList} />
         {!(index === length - 1) && (
           <Text style={styles.taskFlowPanelItemArrow}>></Text>
         )}
@@ -766,6 +786,66 @@ class TaskFlowPanel extends Component {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         />
+      </View>
+    );
+  }
+}
+
+class DeptListItem extends Component {
+  /**(1 待处理、2 处理中、3处理完毕、4已取消) */
+  _getColor(status) {
+    switch (status) {
+      case 1:
+        return "#999999";
+      case 2:
+        return "#F12E49";
+      case 3:
+        return "#333333";
+      default:
+        return "#999999";
+    }
+  }
+
+  _renderDept(dept) {
+    return (
+      <Text
+        style={[
+          styles.taskFlowPanelItemText,
+          { color: this._getColor(dept.status) }
+        ]}
+      >
+        {dept.deptName}
+      </Text>
+    );
+  }
+
+  _renderItem() {
+    list = this.props.data;
+    if (list) {
+      view = [];
+      list.forEach(dept => {
+        view.push(this._renderDept(dept));
+        view.push(
+          <Text
+            style={[
+              styles.taskFlowPanelItemText,
+              { color: this._getColor(dept.status) }
+            ]}
+          >
+            {","}
+          </Text>
+        );
+      });
+      view.pop();
+      return view;
+    }
+    return null;
+  }
+
+  render() {
+    return (
+      <View style={styles.taskFlowPanelItemTextContainer}>
+        {this._renderItem()}
       </View>
     );
   }

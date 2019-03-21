@@ -10,12 +10,13 @@ import {
 import { titleOptions } from "../component/Titie";
 import VehicleInofPanel from "./VehicleInofPanel";
 import { RootView } from "../component/CommonView";
-import AccountHelper from "../login/AccountHelper";
-import { FetchUtils } from "sz-network-module";
 
 export default class InstallmentSalesOfNewCars extends Component {
   static navigationOptions = ({ navigation }) => {
-    return titleOptions({ navigation, title: "新车分期销售" });
+    return titleOptions({
+      navigation,
+      title: navigation.getParam("title", "")
+    });
   };
 
   constructor(props) {
@@ -32,45 +33,32 @@ export default class InstallmentSalesOfNewCars extends Component {
   _initData() {
     taskGroup = this.props.navigation.getParam("data");
     console.log("InstallmentSalesOfNewCars taskGroupId = ", taskGroup);
-    taskGroupId =
-      taskGroup && taskGroup.taskGroupId ? taskGroup.taskGroupId : 1674;
-    AccountHelper.getAccountInfo().then(accountInfo => {
-      FetchUtils.fetch({
-        api: "action/task/taskGroupDetail",
-        params: {
-          taskGroupId: taskGroupId,
-          accountId: accountInfo.accountId,
-          execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
-        },
-        success: response => {
-          console.log("InstallmentSalesOfNewCars init data", response);
-          this._processResponse(response);
-        },
-        error: err => {
-          console.log("InstallmentSalesOfNewCars init data", err);
-          this.setState({ status: "loadingFailed" });
-        }
-      });
-    });
+    this._processResponse(taskGroup);
   }
 
-  _processResponse(response) {
-    assetInfo = response.assetInfos ? response.assetInfos[0] : {};
-    this.setState({
-      status: "custom",
-      carInfo: {
-        plateNo: assetInfo.vehicleNo,
-        frameNo: assetInfo.frameNo,
-        model: {
-          series: assetInfo.modeName,
-          type: assetInfo.vehicleTypeName,
-          color: assetInfo.exteriorColor
-        }
-      },
-      data: this._parseTaskList(assetInfo.taskList),
-      taskInfo: response,
-      assetInfo: assetInfo
-    });
+  _processResponse(assetInfo) {
+    if (assetInfo) {
+      this.setState({
+        status: "custom",
+        carInfo: {
+          plateNo: assetInfo.vehicleNo,
+          frameNo: assetInfo.frameNo,
+          model: {
+            series: assetInfo.modeName,
+            type: assetInfo.vehicleTypeName,
+            color: assetInfo.exteriorColor
+          }
+        },
+        data: this._parseTaskList(assetInfo),
+        taskInfo: {
+          sourceCode: assetInfo.sourceCode,
+          taskGroupCode: assetInfo.taskGroupCode
+        },
+        assetInfo: assetInfo
+      });
+    } else {
+      this.setState({ status: "loadingFailed" });
+    }
   }
 
   _parsetRoleListToDeptIdList(roleList) {
@@ -81,13 +69,17 @@ export default class InstallmentSalesOfNewCars extends Component {
     return deptIdList;
   }
 
-  _parseTaskList(taskList) {
+  _parseTaskList(assetInfo) {
+    taskList = assetInfo.taskList;
     result = [];
     for (let i in taskList) {
       taskDetail = taskList[i];
       taskInfo = this._parseTask(taskDetail);
       no = parseInt(i) + 1;
       taskInfo.key = no + "";
+      taskInfo.sourceCode = assetInfo.sourceCode;
+      taskInfo.taskGroupId = assetInfo.taskGroupId;
+      taskInfo.taskGroupCode = assetInfo.taskGroupCode;
       result.push(taskInfo);
     }
     return result;
@@ -95,6 +87,8 @@ export default class InstallmentSalesOfNewCars extends Component {
 
   _parseTask(task) {
     return {
+      taskId: task.taskId,
+      taskType: task.taskType,
       taskNo: task.taskCode,
       taskName: task.taskName,
       taskTime: task.createTime ? task.createTime : "未创建",
@@ -109,7 +103,7 @@ export default class InstallmentSalesOfNewCars extends Component {
           onPress={() => {
             this.props.navigation.navigate(
               "IntegratedTaskInfo",
-              (params = { taskInfo: this.state.taskInfo })
+              (params = { taskGroupId: this.state.assetInfo.taskGroupId })
             );
           }}
           taskInfo={this.state.taskInfo}
@@ -140,12 +134,12 @@ export default class InstallmentSalesOfNewCars extends Component {
         style={{ backgroundColor: "#F8F8F8", flex: 1 }}
         status={this.state.status}
         failed={{
-          tips: "加载失败",
-          onPress: () => {
-            this.setState({ status: "loading" });
-            this._initData();
-          },
-          btnText: "重新加载"
+          tips: "加载失败"
+          // onPress: () => {
+          //   this.setState({ status: "loading" });
+          //   this._initData();
+          // },
+          // btnText: "重新加载"
         }}
         custom={this._customView()}
       />
@@ -164,7 +158,7 @@ export default class InstallmentSalesOfNewCars extends Component {
   }
 
   _startTaskDetailScreen(item) {
-    this.props.navigation.navigate("TaskDetailScreen", { taskDetail: item });
+    this.props.navigation.navigate("TaskDetailScreen", { data: item });
   }
 }
 

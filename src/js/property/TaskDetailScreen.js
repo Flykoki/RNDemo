@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { titleOptions } from "../component/Titie";
 import VehicleInfoPanel from "./VehicleInofPanel";
+import AccountHelper from "../login/AccountHelper";
+import { FetchUtils } from "sz-network-module";
 
 export default class TaskDetailScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -23,11 +25,10 @@ export default class TaskDetailScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.props.navigation.setParams({ otherParam: "车辆整备详情" });
     this.state = {
-      status: "loading",
-      operation: "开始整备",
-      data: demoData(this.props)
+      status: "loading"
+      // operation: "开始整备",
+      // data: demoData(this.props)
     };
   }
 
@@ -36,9 +37,114 @@ export default class TaskDetailScreen extends Component {
   }
 
   _initData() {
-    setTimeout(() => {
-      this.setState({ status: "custom" });
-    }, 500);
+    data = this.props.navigation.getParam("data");
+    console.log("TaskDetailScreen data ", data);
+
+    if (data) {
+      this._fetchData(data);
+    } else {
+      this.setState({
+        status: "loadingFailed",
+        failed: { tips: "加载数据失败" }
+      });
+    }
+  }
+
+  _fetchData(data) {
+    this.props.navigation.setParams({ otherParam: data.taskName });
+    AccountHelper.getAccountInfo().then(accountInfo => {
+      FetchUtils.fetch({
+        api: "action/task/taskInfo",
+        params: {
+          taskId: 596,
+          taskType: 4,
+          accountId: accountInfo.accountId,
+          execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
+        },
+        success: response => {
+          console.log("TaskDetailScreen init data", response);
+          this._processTaskListData(response);
+        },
+        error: err => {
+          console.log("TaskDetailScreen init data", err);
+          this.setState({
+            status: "loadingFailed",
+            failed: { tips: err.msg }
+          });
+        }
+      });
+    });
+  }
+
+  _processTaskListData(content) {
+    data = [];
+    baseDetail = content.taskBaseDetail;
+    if (baseDetail) {
+      baseDetail.title = "基础信息";
+      baseDetail.titlePress = () => {
+        this.props.navigation.navigate("TaskBasicInfo", { data: baseDetail });
+      };
+      data.push(baseDetail);
+    }
+
+    vehicleInfo = content.vehicleInfo;
+    if (vehicleInfo) {
+      vehicleInfo.type = "carInfo";
+      vehicleInfo.title = "车辆信息";
+      vehicleInfo.titlePress = () => {
+        this.props.navigation.navigate("CarInfoScreen", { data: vehicleInfo });
+      };
+      data.push(vehicleInfo);
+    }
+
+    invoiceInfo = content.invoiceInfo;
+    if (invoiceInfo) {
+      invoiceInfo.type = "invoiceInfo";
+      invoiceInfo.titlePress = () => {
+        this.props.navigation.navigate("InvoiceInfoScreen", {
+          data: invoiceInfo
+        });
+      };
+      data.push(invoiceInfo);
+
+      invoicePostInfo = content.invoicePostInfo;
+      item = { type: "expressInfo" };
+      if (invoicePostInfo) {
+        item.express = invoicePostInfo;
+      }
+      data.push(item);
+    }
+
+    vinsInfo = content.vinsInfo;
+    if (vinsInfo) {
+      vinsInfo.type = "insuranceInfo";
+      data.push(vinsInfo);
+      insuranceAccessories = content.insuranceAccessories;
+      if (insuranceAccessories) {
+        urls = insuranceAccessories.idCardURL.split(",");
+        attachment = {
+          type: "attachmentInfo",
+          imageUris: urls
+        };
+        data.push(attachment);
+      }
+    }
+
+    taskTracking = content.taskTracking;
+    if (taskTracking) {
+      taskTracking.type = "taskFollower";
+      data.push(taskTracking);
+    }
+
+    this.setState({ status: "custom", data: data });
+  }
+
+  _parsetRoleListToDeptIdList(roleList) {
+    deptIdList = [];
+    for (let i in roleList) {
+      deptIdList.push(roleList[i].id);
+    }
+    return deptIdList;
   }
 
   _customView() {
@@ -65,6 +171,7 @@ export default class TaskDetailScreen extends Component {
       <RootView
         style={styles.container}
         status={this.state.status}
+        failed={this.state.failed}
         custom={this._customView()}
       />
     );
@@ -141,14 +248,14 @@ export class BaseInfoPanel extends Component {
           {"业务线"}
         </Text>
         <Text style={[styles.panelRightText, styles.panelSecondLineTop]}>
-          {this.props.item.business}
+          {this.props.item.businessLine}
         </Text>
         <Text style={[styles.panelLeftText, styles.panelThirdLineTop]}>
           {"来源编号"}
         </Text>
         <TextWithCopy
           style={[styles.panelRightText, styles.panelThirdLineTop]}
-          text={this.props.item.fromNo}
+          text={this.props.item.sourceCode}
         />
       </View>
     );
@@ -165,9 +272,9 @@ export class CarInfoPanel extends Component {
         />
         <VehicleInfoPanel
           style={styles.carInfoVehiclePanel}
-          vehicle={this.props.item.vehicle.model}
-          vehicleType={this.props.item.vehicle.type}
-          vehicleColor={this.props.item.vehicle.color}
+          vehicle={this.props.item.modelName}
+          vehicleType={this.props.item.vehicleTypeName}
+          vehicleColor={this.props.item.exteriorColorName}
         />
 
         <Text style={[styles.panelLeftText, styles.panelSecondLineTop]}>
@@ -176,7 +283,7 @@ export class CarInfoPanel extends Component {
 
         <TextWithCopy
           style={styles.carInfoFrameNoText}
-          text={this.props.item.vehicle.frameNo}
+          text={this.props.item.frameNo}
         />
       </View>
     );
@@ -189,7 +296,7 @@ export class TaskFollower extends Component {
   }
   _renderTasks() {
     let taskItems = [];
-    let tasks = this.props.item.tasks;
+    let tasks = this.props.item;
 
     for (i = 0; i < tasks.length; i++) {
       task = tasks[i];
@@ -224,19 +331,13 @@ export class TaskFollowerItem extends Component {
       <View style={this.props.style}>
         <Image
           style={styles.taskFollowerItemStatusImg}
-          source={
-            statusDone
-              ? require("../../res/img/icon_task_done.png")
-              : step.status === "cancel"
-              ? require("../../res/img/icon_task_cancel.png")
-              : require("../../res/img/icon_task_doing.png")
-          }
+          source={this._getIcon(step.status)}
         />
         {step.notLast && (
           <View
             style={[
               styles.taskFollowerTimeLine,
-              { backgroundColor: statusDone ? "#2D72D9" : "#E5E5E5" }
+              { backgroundColor: this._getBgColor(step.status) }
             ]}
           />
         )}
@@ -244,38 +345,367 @@ export class TaskFollowerItem extends Component {
         <Text
           style={[
             styles.taskFollowerItemName,
-            { color: statusDone ? "#333333" : "#666666" }
+            { color: this._getTextColor(step.status) }
           ]}
         >
-          {step.taskName}
+          {step.operator + this._getStatus(step.status)}
         </Text>
 
-        <Text style={styles.taskFollowerTime}>{step.taskTime}</Text>
+        <Text style={styles.taskFollowerTime}>{step.changeTime}</Text>
 
         {step.notLast && (
           <Text
             style={[
               styles.taskFollowerInfo,
-              { color: statusDone ? "#2D72D9" : "#E5E5E5" }
+              { color: this._getBgColor(step.status) }
             ]}
           >
-            {step.taskInfo}
+            {step.duration}
           </Text>
         )}
       </View>
     );
   }
+
+  _getBgColor(status) {
+    switch (status) {
+      case 1:
+      // return "待整备";
+      case 8:
+      // return "整备中";
+      case 22:
+      // return "已取消";
+      case 28:
+      // return "待开票";
+      case 30:
+      // return "待退票";
+      case 32:
+      // return "处理中";
+      case 33:
+      // return "已取消";
+      case 34:
+      // return "待绑定";
+      case 36:
+      // return "待解绑";
+      case 38:
+      // return "已取消";
+      case 39:
+      // return "待确认";
+      case 40:
+      // return "待处理";
+      case 41:
+      // return "处理中";
+      case 43:
+      // return "无需处理";
+      case 44:
+      // return "已取消";
+      case 45:
+      // return "待落户";
+      case 47:
+      // return "已取消";
+      case 48:
+      // return "待过户";
+      case 50:
+      // return "已取消";
+      case 51:
+      // return "待出库";
+      case 53:
+      // return "已取消";
+      case 54:
+      // return "待入库";
+      case 56:
+      // return "已取消";
+      case 57:
+      // return "通知客户提车";
+      case 58:
+      // return "交车审核中";
+      case 60:
+      // return "已取消";
+      case 31:
+        // return "已退票";
+        return "#E5E5E5";
+
+      case 15:
+      // return "整备完毕";
+      case 29:
+      // return "已开票";
+      case 35:
+      // return "已绑定";
+      case 37:
+      // return "已解绑";
+      case 42:
+      // return "处理完毕";
+      case 46:
+      // return "已落户";
+      case 49:
+      // return "已过户";
+      case 52:
+      // return "已出库";
+      case 55:
+      // return "已入库";
+      case 59:
+        // return "交车审核通过";
+        return "#2D72D9";
+    }
+  }
+
+  _getTextColor(status) {
+    switch (status) {
+      case 1:
+      // return "待整备";
+      case 8:
+      // return "整备中";
+      case 22:
+      // return "已取消";
+      case 28:
+      // return "待开票";
+      case 30:
+      // return "待退票";
+      case 32:
+      // return "处理中";
+      case 33:
+      // return "已取消";
+      case 34:
+      // return "待绑定";
+      case 36:
+      // return "待解绑";
+      case 38:
+      // return "已取消";
+      case 39:
+      // return "待确认";
+      case 40:
+      // return "待处理";
+      case 41:
+      // return "处理中";
+      case 43:
+      // return "无需处理";
+      case 44:
+      // return "已取消";
+      case 45:
+      // return "待落户";
+      case 47:
+      // return "已取消";
+      case 48:
+      // return "待过户";
+      case 50:
+      // return "已取消";
+      case 51:
+      // return "待出库";
+      case 53:
+      // return "已取消";
+      case 54:
+      // return "待入库";
+      case 56:
+      // return "已取消";
+      case 57:
+      // return "通知客户提车";
+      case 58:
+      // return "交车审核中";
+      case 60:
+      // return "已取消";
+      case 31:
+        // return "已退票";
+        return "#666666";
+
+      case 15:
+      // return "整备完毕";
+      case 29:
+      // return "已开票";
+      case 35:
+      // return "已绑定";
+      case 37:
+      // return "已解绑";
+      case 42:
+      // return "处理完毕";
+      case 46:
+      // return "已落户";
+      case 49:
+      // return "已过户";
+      case 52:
+      // return "已出库";
+      case 55:
+      // return "已入库";
+      case 59:
+        // return "交车审核通过";
+        return "#333333";
+    }
+  }
+
+  _getIcon(status) {
+    switch (status) {
+      case 1:
+      // return "待整备";
+      case 8:
+      // return "整备中";
+      case 28:
+      // return "待开票";
+      case 30:
+      // return "待退票";
+      case 32:
+      // return "处理中";
+      case 34:
+      // return "待绑定";
+      case 36:
+      // return "待解绑";
+      case 39:
+      // return "待确认";
+      case 40:
+      // return "待处理";
+      case 41:
+      // return "处理中";
+      case 43:
+      // return "无需处理";
+      case 45:
+      // return "待落户";
+      case 48:
+      // return "待过户";
+      case 51:
+      // return "待出库";
+      case 54:
+      // return "待入库";
+      case 57:
+      // return "通知客户提车";
+      case 58:
+      // return "交车审核中";
+      case 31:
+        // return "已退票";
+        return require("../../res/img/icon_task_doing.png");
+
+      case 22:
+      // return "已取消";
+      case 33:
+      // return "已取消";
+      case 38:
+      // return "已取消";
+      case 44:
+      // return "已取消";
+      case 47:
+      // return "已取消";
+      case 50:
+      // return "已取消";
+      case 53:
+      // return "已取消";
+      case 56:
+      // return "已取消";
+      case 60:
+        // return "已取消";
+        return require("../../res/img/icon_task_cancel.png");
+
+      case 15:
+      // return "整备完毕";
+      case 29:
+      // return "已开票";
+      case 35:
+      // return "已绑定";
+      case 37:
+      // return "已解绑";
+      case 42:
+      // return "处理完毕";
+      case 46:
+      // return "已落户";
+      case 49:
+      // return "已过户";
+      case 52:
+      // return "已出库";
+      case 55:
+      // return "已入库";
+      case 59:
+        // return "交车审核通过";
+        return require("../../res/img/icon_task_done.png");
+    }
+  }
+
+  _getStatus(status) {
+    switch (status) {
+      case 1:
+        return "待整备";
+      case 8:
+        return "整备中";
+      case 15:
+        return "整备完毕";
+      case 22:
+        return "已取消";
+      case 28:
+        return "待开票";
+      case 29:
+        return "已开票";
+      case 30:
+        return "待退票";
+      case 31:
+        return "已退票";
+      case 32:
+        return "处理中";
+      case 33:
+        return "已取消";
+      case 34:
+        return "待绑定";
+      case 35:
+        return "已绑定";
+      case 36:
+        return "待解绑";
+      case 37:
+        return "已解绑";
+      case 38:
+        return "已取消";
+      case 39:
+        return "待确认";
+      case 40:
+        return "待处理";
+      case 41:
+        return "处理中";
+      case 42:
+        return "处理完毕";
+      case 43:
+        return "无需处理";
+      case 44:
+        return "已取消";
+      case 45:
+        return "待落户";
+      case 46:
+        return "已落户";
+      case 47:
+        return "已取消";
+      case 48:
+        return "待过户";
+      case 49:
+        return "已过户";
+      case 50:
+        return "已取消";
+      case 51:
+        return "待出库";
+      case 52:
+        return "已出库";
+      case 53:
+        return "已取消";
+      case 54:
+        return "待入库";
+      case 55:
+        return "已入库";
+      case 56:
+        return "已取消";
+      case 57:
+        return "通知客户提车";
+      case 58:
+        return "交车审核中";
+      case 59:
+        return "交车审核通过";
+      case 60:
+        return "已取消";
+    }
+  }
 }
 
 export class InvoicePanel extends Component {
   render() {
-    invoice = this.props.item.invoice;
+    invoice = this.props.item;
     return (
       <View style={styles.invoiceContainer}>
         <ItemTitle title="发票信息" onPress={this.props.item.titlePress} />
-        <Text style={styles.invoiceCompony}>{invoice.compony}</Text>
-        <Text style={styles.invoiceNo}>{invoice.NO}</Text>
-        <Text style={styles.invoiceValue}>{invoice.value}</Text>
+        <Text style={styles.invoiceCompony}>{invoice.purchaserName}</Text>
+        <Text style={styles.invoiceNo}>{invoice.invoiceNo}</Text>
+        <Text style={styles.invoiceValue}>
+          {"税价合计：" + invoice.totalTaxMoney}
+        </Text>
       </View>
     );
   }
@@ -291,12 +721,16 @@ export class ExpressPanel extends Component {
           <Text style={[styles.panelLeftText, styles.panelFirstLineTop]}>
             {"收件人"}
           </Text>
-          <Text style={styles.expressContract}>{express.contract}</Text>
-          <Text style={styles.expressAddress}>{express.address}</Text>
+          <Text style={styles.expressContract}>{express.expressReceiver}</Text>
+          <Text style={styles.expressAddress}>{express.expressAddress}</Text>
           <Text style={[styles.panelLeftText, styles.expressNoName]}>
             {"快递"}
           </Text>
-          <TextWithCopy style={styles.expressNo} text={express.NO} />
+          <TextWithCopy
+            style={styles.expressNo}
+            copy={express.expressNo}
+            text={express.expressCompany + " " + express.expressNo}
+          />
         </View>
       );
     }
@@ -306,7 +740,7 @@ export class ExpressPanel extends Component {
 
 export class InsurancePanel extends Component {
   render() {
-    insurance = this.props.item.insurance;
+    insurance = this.props.item;
     if (insurance) {
       return (
         <View style={styles.insuranceContainer}>
@@ -324,16 +758,16 @@ export class InsurancePanel extends Component {
             {"保险公司"}
           </Text>
           <Text style={[styles.panelRightText, styles.panelFirstLineTop]}>
-            {insurance.applicant}
+            {insurance.insurPolicyHolder}
           </Text>
           <Text style={[styles.panelRightText, styles.panelSecondLineTop]}>
-            {insurance.insured}
+            {insurance.insurInsurant}
           </Text>
           <Text style={[styles.panelRightText, styles.panelThirdLineTop]}>
-            {insurance.beneficiary}
+            {insurance.insurBeneficiary}
           </Text>
           <Text style={[styles.panelRightText, styles.panelFourthLineTop]}>
-            {insurance.company}
+            {insurance.insurCompany}
           </Text>
         </View>
       );
@@ -400,7 +834,9 @@ export class TextWithCopy extends Component {
       <TouchableOpacity
         style={[styles.textCopyContainer, this.props.style]}
         onPress={() => {
-          Clipboard.setString(this.props.text);
+          Clipboard.setString(
+            this.props.copy ? this.props.copy : this.props.text
+          );
         }}
       >
         <Text style={styles.textCopyText}>{this.props.text}</Text>
