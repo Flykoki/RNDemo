@@ -48,6 +48,7 @@ export default class InitSecurityPhoneStep1 extends Component {
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
+
   }
 
   componentWillUnmount = () => {

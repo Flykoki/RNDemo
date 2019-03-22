@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
 import { FetchUtils } from "sz-network-module";
-import DateUtil from "../utils/DateUtil";
 
 const QUERY_TASK_GROUP_FILTER = "action/task/taskGroup";
 const sortBy = "DESC"; //排序规则 “ASC”-升序 "DESC" - 降序 。默认降序

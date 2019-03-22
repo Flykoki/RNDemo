@@ -2,22 +2,16 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   View,
-  Modal,
-  CheckBox,
   Text,
-  Platform,
-  TextInput,
-  Dimensions,
+  ToastAndroid,
   TouchableOpacity,
   TouchableHighlight,
-  TouchableWithoutFeedback,
-  Image,
-  StatusBar
+  Image
 } from "react-native";
 import TextInputWithClearButton from "../../component/TextInputWithClearButton";
-
-const width = Dimensions.get("window").width;
-const feedbackContentMaxLength = 500;
+import { FetchUtils } from "sz-network-module";
+import AccountHelper from "../../login/AccountHelper";
+import { NavigationActions } from "react-navigation";
 
 export default class ModifyPwdScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -71,9 +65,9 @@ export default class ModifyPwdScreen extends Component {
             maxLength={20}
             onChangeText={text => {
               let enableCommit =
-                text.length > 0 &&
-                this.state.newPassword.length > 0 &&
-                this.state.confirmPassword.length > 0;
+                text.length > 5 &&
+                this.state.newPassword.length > 5 &&
+                this.state.confirmPassword.length > 5;
               this.setState({
                 oriPassword: text,
                 commitEnable: enableCommit
@@ -97,9 +91,9 @@ export default class ModifyPwdScreen extends Component {
             maxLength={20}
             onChangeText={text => {
               let enable =
-                text.length > 0 &&
-                this.state.oriPassword.length > 0 &&
-                this.state.confirmPassword.length > 0;
+                text.length > 5 &&
+                this.state.oriPassword.length > 5 &&
+                this.state.confirmPassword.length > 5;
 
               text.length > 0 && this.state.newPasswordClearButtonFocus;
               this.setState({
@@ -124,9 +118,9 @@ export default class ModifyPwdScreen extends Component {
             maxLength={20}
             onChangeText={text => {
               let enable =
-                text.length > 0 &&
-                this.state.newPassword.length > 0 &&
-                this.state.oriPassword.length > 0;
+                text.length > 5 &&
+                this.state.newPassword.length > 5 &&
+                this.state.oriPassword.length > 5;
 
               this.setState({
                 confirmPassword: text,
@@ -173,8 +167,41 @@ export default class ModifyPwdScreen extends Component {
     let newPwd = this.state.newPassword;
     let confirmPwd = this.state.confirmPassword;
 
-    console.warn(oriPwd, newPwd, confirmPwd);
+    if (newPwd !== confirmPwd) {
+      ToastAndroid.show("两次输入新密码不一致", ToastAndroid.SHORT);
+      return;
+    }
+
+    this._modifyPwd();
   };
+
+  _modifyPwd = () => {
+    FetchUtils.fetch({
+      params: {
+        confirmPassword: this.state.confirmPassword,
+        newPassword: this.state.newPassword,
+        oldPassword: this.state.oriPassword
+      },
+      api: "action/distributor/modifyPassword",
+      success: this._onSuccess.bind(this),
+      error: err => this._onError(err),
+      final: () => this._onFinally()
+    });
+  };
+
+  _onSuccess = response => {
+    if (response.status) {
+      AccountHelper.refreshAccountInfo(null);
+      this.props.navigation.reset(
+        [NavigationActions.navigate({ routeName: "DistributePage" })],
+        0
+      );
+    }
+  };
+  _onError = error => {
+    ToastAndroid.show(error.msg, ToastAndroid.SHORT);
+  };
+  _onFinally = () => {};
 }
 
 const styles = StyleSheet.create({

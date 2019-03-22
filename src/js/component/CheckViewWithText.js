@@ -24,7 +24,7 @@ export default class CheckViewWithText extends Component {
 
     return (
       <TouchableOpacity
-        style={this.props.Container ? this.props.Container : styles.Container}
+        style={[styles.Container, this.props.style]}
         onStartShouldSetResponder={() => true}
         onResponderGrant={evt => {
           // 事件处理申请成功
@@ -68,7 +68,7 @@ export default class CheckViewWithText extends Component {
 }
 
 const styles = StyleSheet.create({
-  Container: { flexDirection: "row", alignItems: "center", marginBottom: 18 },
+  Container: { flex:1, flexDirection: "row", alignItems: "center", marginBottom: 18 },
   imgDefault: {
     height: 20,
     width: 20

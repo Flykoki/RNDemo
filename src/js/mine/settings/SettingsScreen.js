@@ -43,7 +43,7 @@ export default class SettingsScreen extends Component {
           leftIcon: require("../../../res/img/icon_setting_phone.png"),
           type: "item",
           onPress: () => {
-            //Todo 根据当前是否设置密保手机号码来进行页面跳转
+            this.state.accountInfo.securityTelephone;
             // this.props.navigation.navigate("InitSecurityPhoneStep1");
             this.props.navigation.navigate("ChangeSecurityPhoneStep1");
           }
@@ -106,6 +106,11 @@ export default class SettingsScreen extends Component {
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
+    AccountHelper.accountInfo
+      ? (this.state.accountInfo = AccountHelper.accountInfo)
+      : AccountHelper.getAccountInfo().then(data => {
+          this.state.accountInfo = data;
+        });
   }
 
   componentWillUnmount = () => {

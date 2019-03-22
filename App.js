@@ -21,7 +21,7 @@ import { PolicyDetail } from "./src/js/strategy/policy/PolicyDetail";
 import { HomePage } from "./src/js/home/HomePage";
 import { MissionsCenterPage } from "./src/js/missionscenter/MissionsCenterPage";
 import SettingsScreen from "./src/js/mine/settings/SettingsScreen";
-import FeedbackScreen from "./src/js/mine/FeedbackScreen";
+import FeedbackScreen from "./src/js/mine/feedback/FeedbackScreen";
 import InitSecurityPhoneStep1 from "./src/js/mine/settings/initsecurityphone/InitSecurityPhoneStep1";
 import InitSecurityPhoneStep2 from "./src/js/mine/settings/initsecurityphone/InitSecurityPhoneStep2";
 import ChangeSecurityPhoneStep1 from "./src/js/mine/settings/changesecurityphone/ChangeSecurityPhoneStep1";

@@ -14,6 +14,7 @@ import { RootView } from "../component/CommonView";
 import { PullFlatList } from "urn-pull-to-refresh";
 // import { PullFlatList, PullView } from "react-native-rk-pull-to-refresh";
 import { FetchUtils } from "sz-network-module";
+import StrategyHelper from "./StrategyHelper";
 
 let _navigation;
 const screenWidth = Dimensions.get("window").width;
@@ -204,32 +205,15 @@ export default class StrategyPage extends PureComponent {
     });
     this._fetchData();
   };
-  _initData = () => {
-    setTimeout(() => {
-      this.setState({ status: "custom" });
-    }, 300);
-
-    //初始化dataSource数据
-    let tempData = this.state.dataSource;
-    tempData.push({
-      key: "banner",
-      data: this.state.bannerDisplayList
-    }); //banner图片
-    tempData.push({ key: "strategy", data: this.state.infos }); //业务入口
-    tempData.push({
-      key: "hot",
-      data: this.state.hotDisplayList
-    }); //热门活动
-    tempData.push({
-      key: "publish",
-      data: this.state.latestPublishList
-    }); //热门活动
-    this.setState({ dataSource: tempData });
-    //TODO 请求网络
-    // this._fetchData();
-  };
 
   _fetchData = () => {
+    //获取资讯列表queryExhibitionList
+    //TODO: 
+    // StrategyHelper.queryExhibitionList(
+    //   this._onQueryExhibitionListSuccess.bind(this),
+    //   this._onQueryExhibitionListError.bind(this),
+    //   this._onQueryExhibitionListFinally.bind(this)
+    // );
     FetchUtils.fetch({
       // url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
       // customCid: "502109",
@@ -284,7 +268,16 @@ export default class StrategyPage extends PureComponent {
         this.pull && this.pull.finishRefresh();
       }
     });
+
+    //TODO:获取用户未读资讯数量
   };
+
+  //获取资讯攻略成功回调
+  _onQueryExhibitionListSuccess = response => {};
+  //获取资讯攻略失败回调
+  _onQueryExhibitionListError = error => {};
+  //获取资讯攻略finally回调
+  _onQueryExhibitionListFinally = () => {};
 
   _renderItem = item => {
     let data = item.data;

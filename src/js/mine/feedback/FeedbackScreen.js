@@ -5,13 +5,16 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ToastAndroid,
   TouchableHighlight,
   Image,
   StatusBar
 } from "react-native";
-import CommonDialog from "../component/CommonDialog";
-import CheckViewWithText from "../component/CheckViewWithText";
-import TextInputWithClearButton from "../component/TextInputWithClearButton";
+import CommonDialog from "../../component/CommonDialog";
+import CheckViewWithText from "../../component/CheckViewWithText";
+import TextInputWithClearButton from "../../component/TextInputWithClearButton";
+import FeedbackHelper from "./FeedbackHelper";
+import AccountHelper from "../../login/AccountHelper";
 
 const feedbackContentMaxLength = 500;
 
@@ -28,7 +31,7 @@ export default class FeedbackScreen extends Component {
           style={styles.backButtonStyle}
         >
           <Image
-            source={require("../../res/img/icon_back.png")}
+            source={require("../../../res/img/icon_back.png")}
             resizeMode={"contain"}
             style={{ height: 14.6, width: 8.3 }}
           />
@@ -43,12 +46,9 @@ export default class FeedbackScreen extends Component {
       feedbackContentText: "",
       feedbackPhoneNum: "",
       checkBoxGroupStatus: [
-        { isChecked: true, label: "服务体验", uploadType: 0 },
-        { isChecked: false, label: "其他", uploadType: 0 },
-        { isChecked: false, label: "车源供应业务", uploadType: 0 },
-        { isChecked: false, label: "使用操作", uploadType: 0 },
-        { isChecked: false, label: "4S金融业务", uploadType: 0 },
-        { isChecked: false, label: "金融分销业务", uploadType: 0 }
+        { isChecked: true, label: "服务体验", uploadType: 1 },
+        { isChecked: false, label: "使用操作", uploadType: 2 },
+        { isChecked: false, label: "其他", uploadType: 3 }
       ],
       currentFeedbackContentLength: 0
     };
@@ -63,6 +63,12 @@ export default class FeedbackScreen extends Component {
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
+    AccountHelper.accountInfo
+      ? (this.state.accountInfo = AccountHelper.accountInfo)
+      : AccountHelper.getAccountInfo().then(data => {
+          console.log("lfj getAccountInfo", data);
+          this.state.accountInfo = data;
+        });
   }
 
   componentWillUnmount = () => {
@@ -78,52 +84,27 @@ export default class FeedbackScreen extends Component {
         <View style={styles.divider} />
         {/* ============================= CheckBox Groups start ================================== */}
         <View style={styles.checkBoxGroup}>
-          <View style={{ flex: 1, marginLeft: 15, marginTop: 15 }}>
-            <CheckViewWithText
-              text={"服务体验"}
-              defaultState={this.state.checkBoxGroupStatus[0].isChecked}
-              onValueChangeCallback={value => {
-                this._checkBoxOnPress(0, value);
-              }}
-            />
-            <CheckViewWithText
-              text={"其他"}
-              defaultState={this.state.checkBoxGroupStatus[1].isChecked}
-              onValueChangeCallback={value => {
-                this._checkBoxOnPress(1, value);
-              }}
-            />
-            <CheckViewWithText
-              text={"车源供应业务"}
-              defaultState={this.state.checkBoxGroupStatus[2].isChecked}
-              onValueChangeCallback={value => {
-                this._checkBoxOnPress(2, value);
-              }}
-            />
-          </View>
-          <View style={{ flex: 1, marginTop: 15 }}>
-            <CheckViewWithText
-              text={"使用操作"}
-              defaultState={this.state.checkBoxGroupStatus[3].isChecked}
-              onValueChangeCallback={value => {
-                this._checkBoxOnPress(3, value);
-              }}
-            />
-            <CheckViewWithText
-              text={"4S金融业务"}
-              defaultState={this.state.checkBoxGroupStatus[4].isChecked}
-              onValueChangeCallback={value => {
-                this._checkBoxOnPress(4, value);
-              }}
-            />
-            <CheckViewWithText
-              text={"金融分销业务"}
-              defaultState={this.state.checkBoxGroupStatus[5].isChecked}
-              onValueChangeCallback={value => {
-                this._checkBoxOnPress(5, value);
-              }}
-            />
-          </View>
+          <CheckViewWithText
+            text={"服务体验"}
+            defaultState={this.state.checkBoxGroupStatus[0].isChecked}
+            onValueChangeCallback={value => {
+              this._checkBoxOnPress(0, value);
+            }}
+          />
+          <CheckViewWithText
+            text={"使用操作"}
+            defaultState={this.state.checkBoxGroupStatus[1].isChecked}
+            onValueChangeCallback={value => {
+              this._checkBoxOnPress(1, value);
+            }}
+          />
+          <CheckViewWithText
+            text={"其他"}
+            defaultState={this.state.checkBoxGroupStatus[2].isChecked}
+            onValueChangeCallback={value => {
+              this._checkBoxOnPress(2, value);
+            }}
+          />
         </View>
         {/* ============================= CheckBox Groups end ================================== */}
 
@@ -149,7 +130,7 @@ export default class FeedbackScreen extends Component {
         {/* ============================= phone start ================================== */}
         <TextInputWithClearButton
           bodyStyle={{ marginLeft: 18, marginRight: 18 }}
-          leftImg={require("../../res/img/app_feedback_icon_phone.png")}
+          leftImg={require("../../../res/img/app_feedback_icon_phone.png")}
           multiline={true}
           blurOnSubmit={false}
           keyboardType={"number-pad"}
@@ -172,7 +153,9 @@ export default class FeedbackScreen extends Component {
           disabled={this.state.commitEnable ? false : true}
           underlayColor="white"
           onPress={() => {
-            this._showConfirm();
+            if (this._validateData()) {
+              this._showConfirm();
+            }
           }}
         >
           <Text
@@ -193,7 +176,16 @@ export default class FeedbackScreen extends Component {
   }
 
   //========================= 自定义方法 =================================
-
+  //校验请求数据合法性
+  _validateData = () => {
+    phoneLength = this.state.feedbackPhoneNum.length;
+    if (phoneLength == 0 || phoneLength == 11) {
+      return true;
+    } else {
+      ToastAndroid.show("手机格式不正确", ToastAndroid.SHORT);
+      return false;
+    }
+  };
   //反馈内容文本框回调
   _onFeedbackTextContentChange = text => {
     //判断commit button是否高亮
@@ -226,21 +218,13 @@ export default class FeedbackScreen extends Component {
       ]
     };
     this.refs.commonDialog.show(options);
-
-    console.warn(this.state.checkBoxGroupStatus);
   }
   // 反馈类型item点击事件
   _checkBoxOnPress = (index, value) => {
     let arr = this.state.checkBoxGroupStatus;
     arr[index].isChecked = value;
 
-    let checkBoxEnable =
-      arr[0].isChecked |
-      arr[1].isChecked |
-      arr[2].isChecked |
-      arr[3].isChecked |
-      arr[4].isChecked |
-      arr[5].isChecked;
+    let checkBoxEnable = arr[0].isChecked | arr[1].isChecked | arr[2].isChecked;
     let enable = this.state.feedbackContentText.length > 0 && checkBoxEnable;
     this.setState({
       checkBoxGroupStatus: arr,
@@ -248,9 +232,35 @@ export default class FeedbackScreen extends Component {
     });
   };
   _onCommonDialogConfirm() {
-    //TODO 调用后台接口
     this.refs.commonDialog.hide();
+    let accountInfo = this.state.accountInfo;
+    FeedbackHelper.feedBackSubmit({
+      accountId: accountInfo.accountId,
+      accountName: accountInfo.accountName,
+      accountType: accountInfo.accountType,
+      contactPhone: this.state.feedbackPhoneNum,
+      content: this.state.feedbackContentText,
+      feedBackType: this._getFeedBackType(),
+      onSuccess: this._onFeedbackCommitSuccess.bind(this),
+      onError: this._onFeedbackCommitError.bind(this),
+      onFinally: this._onFeedbackCommitFinally.bind(this)
+    });
   }
+
+  _onFeedbackCommitSuccess = response => {};
+
+  _onFeedbackCommitError = error => {};
+  _onFeedbackCommitFinally = () => {};
+
+  _getFeedBackType = () => {
+    let array = this.state.checkBoxGroupStatus;
+    let result = [];
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].isChecked === true) {
+        result.push(array[i].uploadType);
+      }
+    }
+  };
 }
 
 const styles = StyleSheet.create({
@@ -358,7 +368,10 @@ const styles = StyleSheet.create({
   },
   checkBoxGroup: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    marginLeft: 15,
+    marginRight: 15,
+    marginTop: 15,
+    justifyContent: "space-between",
     alignItems: "flex-start"
   },
   checkBox: {},
