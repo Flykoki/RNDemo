@@ -115,7 +115,7 @@ export default class InstallmentSalesOfNewCars extends Component {
           onPress={() => {
             this.props.navigation.navigate(
               "CarInfoScreen",
-              (params = { carInfo: this.state.assetInfo })
+              (params = { data: this.state.assetInfo })
             );
           }}
           carInfo={this.state.assetInfo}

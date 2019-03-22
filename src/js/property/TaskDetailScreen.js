@@ -56,8 +56,8 @@ export default class TaskDetailScreen extends Component {
       FetchUtils.fetch({
         api: "action/task/taskInfo",
         params: {
-          taskId: 596,
-          taskType: 4,
+          taskId: data.taskId,
+          taskType: data.taskType,
           accountId: accountInfo.accountId,
           execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
         },
@@ -118,6 +118,11 @@ export default class TaskDetailScreen extends Component {
     vinsInfo = content.vinsInfo;
     if (vinsInfo) {
       vinsInfo.type = "insuranceInfo";
+      vinsInfo.titlePress = () => {
+        this.props.navigation.navigate("InsuranceDetailScreen", {
+          data: vinsInfo
+        });
+      };
       data.push(vinsInfo);
       insuranceAccessories = content.insuranceAccessories;
       if (insuranceAccessories) {

@@ -5,6 +5,7 @@ import { RootView } from "../component/CommonView";
 import SettingsList from "../component/SettingsList";
 import AccountHelper from "../login/AccountHelper";
 import { FetchUtils } from "../../../modules/sz-network-module/src/js/network/Network";
+import { getTaskStatus, getInsurStatus } from "./TaskUtils";
 
 class InfoBaseScreen extends Component {
   constructor(props) {
@@ -43,25 +44,26 @@ export class TaskBasicInfo extends InfoBaseScreen {
   };
 
   _initData() {
-    setTimeout(() => {
-      this.setState({
-        status: "custom",
-        data: this._fetchData({
-          NO: "SD283238923472283789320",
-          status: "待整备",
-          applyDepartment: "长沙",
-          applyReason: "新车分期销售",
-          handoverDepartment: "资产",
-          from: "ASFDGRT45342EWFASH46",
-          integratedNo: "FDGDT3423",
-          cancelReason: "按施工方突然收到"
-        })
-      });
-    }, 500);
+    data = this.props.navigation.getParam("data");
+    console.log("TaskBasicInfo data = ", data);
+
+    this.setState({
+      status: "custom",
+      data: this._fetchData({
+        NO: data.taskNo,
+        status: getTaskStatus(data.taskStatus),
+        applyDepartment: data.applyDept,
+        applyReason: data.applyReason,
+        handoverDepartment: data.attributionDept,
+        from: data.sourceCode,
+        integratedNo: data.groupNo,
+        cancelReason: data.cancelReason
+      })
+    });
   }
 
   _fetchData(taskInfo) {
-    return [
+    data = [
       {
         key: "0",
         type: "margin",
@@ -140,18 +142,21 @@ export class TaskBasicInfo extends InfoBaseScreen {
         onPress: () => {
           Clipboard.setString("22233232");
         }
-      },
-      {
+      }
+    ];
+    if (taskInfo.cancelReason) {
+      data.push({
         key: "13",
         type: "divider"
-      },
-      {
+      });
+      data.push({
         key: "6",
         name: "取消原因",
         value: taskInfo.cancelReason,
         type: "item"
-      }
-    ];
+      });
+    }
+    return data;
   }
 }
 
@@ -164,24 +169,25 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
   };
 
   _initData() {
-    setTimeout(() => {
-      this.setState({
-        status: "custom",
-        data: this._fetchData({
-          status: "正常",
-          NO: "SD283238923472283789320",
-          type: "三方保险",
-          insured: "李二狗",
-          company: "中国平安保险北京分公司",
-          startTime: "2019-3-5",
-          endTime: "2020-3-4",
-          applicant: "李二狗",
-          beneficiary: "李二狗",
-          value: "5000",
-          tax: "85"
-        })
-      });
-    }, 500);
+    data = this.props.navigation.getParam("data");
+    console.log("InsuranceDetailScreen data ", data);
+
+    this.setState({
+      status: "custom",
+      data: this._fetchData({
+        status: getInsurStatus(data.insurPolicyStatus),
+        NO: data.insurPolicyNo,
+        type: data.insurType,
+        insured: data.insurInsurant,
+        company: data.insurCompany,
+        startTime: data.insurStart,
+        endTime: data.insurEnd,
+        applicant: data.insurPolicyHolder,
+        beneficiary: data.insurBeneficiary,
+        value: data.insurCost,
+        tax: data.insurVehicleVesselsTax
+      })
+    });
   }
 
   _fetchData(insuranceInfo) {
@@ -301,20 +307,24 @@ export class CarInfoScreen extends InfoBaseScreen {
   };
 
   _initData() {
-    carInfo = this.props.navigation.getParam("carInfo");
+    carInfo = this.props.navigation.getParam("data");
     console.log("CarInfoScreen carinfo", carInfo);
 
     this.setState({
       status: "custom",
       data: this._fetchData({
-        type: carInfo.carTypeName,
+        type: carInfo.carTypeName
+          ? carInfo.carTypeName
+          : carInfo.vehicleTypeName,
         frameNo: carInfo.frameNo,
         plateNo: carInfo.vehicleNo,
         engineNo: carInfo.engineNo,
         brand: carInfo.brandName,
-        series: carInfo.carSeries,
+        series: carInfo.carSeries ? carInfo.carSeries : carInfo.seriesName,
         model: carInfo.modelName,
         color: carInfo.outColorName
+          ? carInfo.outColorName
+          : carInfo.exteriorColorName
       })
     });
   }
@@ -405,23 +415,24 @@ export class InvoiceInfoScreen extends InfoBaseScreen {
   };
 
   _initData() {
-    setTimeout(() => {
-      this.setState({
-        status: "custom",
-        data: this._fetchLines({
-          purchaser: "北京神州汽车租赁有限公司",
-          licenseNo: "23232119999091122",
-          valueWithTax: "2342353.12",
-          valueWithOutTax: "2435463.22",
-          seller: "北京神州汽车租赁有限公司",
-          phone: "010-33193944",
-          taxPayerNo: "3243546576543524",
-          address: "北京市海淀区中关村东路118号",
-          account: "6226123243546576534",
-          bank: "中国民生银行北京市海淀区支行"
-        })
-      });
-    }, 500);
+    data = this.props.navigation.getParam("data");
+    console.log("InvoiceInfoScreen data ", data);
+
+    this.setState({
+      status: "custom",
+      data: this._fetchLines({
+        purchaser: data.purchaserName,
+        licenseNo: data.idCard,
+        valueWithTax: data.totalTaxMoney,
+        valueWithOutTax: "2435463.22",
+        seller: "北京神州汽车租赁有限公司",
+        phone: data.phone,
+        taxPayerNo: "3243546576543524",
+        address: data.address,
+        account: data.account,
+        bank: data.bank
+      })
+    });
   }
 
   _fetchLines(returnData) {
