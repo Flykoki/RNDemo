@@ -80,6 +80,7 @@ export class MissionsCenterPage extends PureComponent {
       dataArray: [],
       showHeader: 0, //控制header 0:隐藏 1：显示加载中
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
+      isFilterRefreshing: false, //条件筛选标志位
       isRefreshing: false //下拉控制
     };
     _navigation = this.props.navigation;
@@ -149,6 +150,7 @@ export class MissionsCenterPage extends PureComponent {
             this.normalFilterItems = filterMaps;
             this.filterResponseCallback = callback; //筛选结果通过此函数回调给view
             this.fetchData(filterMaps);
+            this.setState({ status: "loading" });
           }}
           rightTitleText={"筛选"}
           response={this.state.searchResponseData}
@@ -256,8 +258,8 @@ export class MissionsCenterPage extends PureComponent {
       foot = 1; //listView底部显示没有更多数据了
     }
 
-    //如果是下拉刷新就清空数据源
-    if (this.state.isRefreshing) {
+    //如果是下拉刷新/筛选条件 => 清空数据源
+    if (this.state.isRefreshing || this.normalFilterItems.length > 0) {
       this.state.dataArray = [];
     }
 

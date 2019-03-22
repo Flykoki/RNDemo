@@ -25,11 +25,12 @@ export default class MissionItemView extends Component {
       <View style={styles.container}>
         {/* ==================== title ========================== */}
         <View style={styles.title}>
-          <Text style={styles.missionName}>
-            {missionItem.taskGroupName + missionItem.taskGroupCode}
-          </Text>
+          <Text style={styles.missionName}>{missionItem.taskGroupName}</Text>
           <Text style={styles.missionCreateTime}>
-            {"创建时间:" + missionItem.createTime}
+            {"创建时间:" +
+              missionItem.createTime
+                .substring(5, missionItem.createTime.length - 3)
+                .replace("-", "/")}
           </Text>
         </View>
         {this._getDividerView()}
@@ -42,6 +43,7 @@ export default class MissionItemView extends Component {
 
   _getContentView = missionItem => {
     let assetInfos = missionItem.assetInfos;
+    let sourceCode = missionItem.sourceCode;
     return assetInfos.map((item, index, assetInfos) => {
       return (
         <View>
@@ -55,12 +57,20 @@ export default class MissionItemView extends Component {
             }}
           >
             <View style={styles.sourceNumber}>
-              <Text style={styles.contentTextKey}>车牌号</Text>
-              <Text style={styles.contentTextValue}>{item.vehicleNo}</Text>
+              <Text style={styles.contentTextKey}>来源单号</Text>
+              <Text style={styles.contentTextValue}>{sourceCode}</Text>
               <Text style={this._getMissionStatusStyle(missionItem.status)}>
                 {this._getMissionStatusLabel(missionItem.status)}
               </Text>
             </View>
+            {item.vehicleNo.length > 0 ? (
+              <View style={styles.sourceNumber}>
+                <Text style={styles.contentTextKey}>车牌号</Text>
+                <Text style={styles.contentTextValue}>{item.vehicleNo}</Text>
+              </View>
+            ) : (
+              <View />
+            )}
             <View style={styles.sourceNumber}>
               <Text style={styles.contentTextKey}>车架号</Text>
               <Text style={styles.contentTextValue}>{item.frameNo}</Text>
@@ -131,11 +141,12 @@ export default class MissionItemView extends Component {
             source={require("../../res/img/icon_app_date.png")}
           />
           <Text style={styles.concurrentMissionItemUpdateTime}>
-            {item.modifyTime}
+            {item.modifyTime
+              .substring(5, item.modifyTime.length - 3)
+              .replace("-", "/")}
           </Text>
           <Text style={styles.concurrentMissionItemTask}>
-            {item.taskName + item.taskCode + item.secondStatusName}
-            {/* {item.taskName + item.taskCode + "(" + item.secondStatusName + ")"} */}
+            {item.taskName + "(" + item.secondStatusName + ")"}
           </Text>
           <Image
             resizeMode={"contain"}

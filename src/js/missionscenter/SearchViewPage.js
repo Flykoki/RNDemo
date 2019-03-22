@@ -57,7 +57,7 @@ export default class SearchViewPage extends Component {
 
   render() {
     return (
-      <View style={{flex:1,}}>
+      <View style={{ flex: 1 }}>
         <SearchView
           ref="confirmPassText"
           placeholder={"请输入车架号或车牌号"}
@@ -78,6 +78,7 @@ export default class SearchViewPage extends Component {
 
   _fetchData = (text, pageSize, page, onSuccess, onError, onFinally) => {
     //请求接口
+    console.log("lfj fetchData");
     MissionCenterSearchHelper.searchTaskGroup(
       text,
       this.state.accountInfo,

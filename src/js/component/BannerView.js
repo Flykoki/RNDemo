@@ -75,9 +75,7 @@ export default class BannerView extends Component {
       },
 
       onPanResponderTerminationRequest: (evt, gestureState) => false,
-      onPanResponderRelease: (evt, gestureState) => {
-        this.setState({ pressed: false });
-      },
+      onPanResponderRelease: (evt, gestureState) => {},
       onPanResponderTerminate: (evt, gestureState) => {
         // 另一个组件已经成为了新的响应者，所以当前手势将被取消。
         console.log("lfj panresponder terminate");
@@ -130,6 +128,11 @@ export default class BannerView extends Component {
           //   onScroll={e => this._onScroll(e)}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
+          onStartShouldSetPanResponderCapture={e => true}
+          onStartShouldSetPanResponder={e => true}
+          onMoveShouldSetPanResponder={e => true}
+          onMoveShouldSetPanResponderCapture={e => true}
+          onPanResponderTerminationRequest={e => false}
         >
           {this._renderBannerItems()}
         </ScrollView>

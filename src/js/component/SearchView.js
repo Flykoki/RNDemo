@@ -77,22 +77,8 @@ export default class SearchView extends Component {
               onSubmitEditing={Keyboard.dismiss}
               onChangeText={text => {
                 console.log("lfj text", text);
-                this.setState({ searchText: text, panelState: 1 });
-                if (text) {
-                  this._onSearchTextChange(text);
-                } else {
-                  this.state.historyData.length > 0
-                    ? this.setState({
-                        searchText: "",
-                        panelState: 4,
-                        searchResponseData: []
-                      })
-                    : this.setState({
-                        searchText: "",
-                        panelState: 0,
-                        searchResponseData: []
-                      });
-                }
+                this.setState({ searchText: text });
+                this._onSearchTextChange(text);
               }}
               value={this.state.searchText}
             />
@@ -324,8 +310,6 @@ export default class SearchView extends Component {
    * panelState:4 ，展示历史记录
    */
   _getSearchHistory = () => {
-    console.log("lfj render history view", this.state);
-    let tempData;
     return (
       <View style={styles.searchHistoryContainer}>
         <View style={styles.searchHistoryTitle}>
@@ -550,35 +534,41 @@ export default class SearchView extends Component {
    * textInput 文本变化事件
    */
   _onSearchTextChange = text => {
-    //todo 间隔1s没文本变化就搜索
-    if (text) {
-      this.setState({ searchText: text, panelState: 1 });
-      this._startFetchData(text);
-    } else {
-      this.setState({ searchText: "", panelState: 0, searchResponseData: [] });
+    clearTimeout(this.timerId); //如搜索的内容变化在1秒之中，可以清除变化前的fetch请求，继而减少fetch请求。但不能中断fetch请求
+    console.log("lfj textresult======================>", text);
+    this.timerId =
+      text &&
+      setTimeout(() => {
+        this.setState({ panelState: 1 });
+        this.props.fetchData
+          ? this.props.fetchData(
+              text,
+              this.state.pageSize,
+              this.state.page,
+              response => this._onSuccess(response),
+              error => this._onError(error),
+              () => this._onFinally()
+            )
+          : this.props.onChangeText
+          ? this.props.onChangeText(text)
+          : this._getMockData(text);
+      }, 500); //让每次要进行fetch请求时先延迟1秒在进行
+
+    if (text.length == 0) {
+      this.state.historyData.length > 0
+        ? this.setState({
+            searchText: "",
+            panelState: 4,
+            searchResponseData: []
+          })
+        : this.setState({
+            searchText: "",
+            panelState: 0,
+            searchResponseData: []
+          });
     }
   };
 
-  /**
-   * 网络请求
-   */
-  _startFetchData = text => {
-    clearTimeout(this.timerId); //如搜索的内容变化在1秒之中，可以清除变化前的fetch请求，继而减少fetch请求。但不能中断fetch请求
-    this.timerId = setTimeout(() => {
-      this.props.fetchData
-        ? this.props.fetchData(
-            text,
-            this.state.pageSize,
-            this.state.page,
-            response => this._onSuccess(response),
-            error => this._onError(error),
-            () => this._onFinally()
-          )
-        : this.props.onChangeText
-        ? this.props.onChangeText(text)
-        : this._getMockData(text);
-    }, 1000); //让每次要进行fetch请求时先延迟1秒在进行
-  };
   /**
    * 默认 网络请求 mock数据
    */

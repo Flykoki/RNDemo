@@ -5,6 +5,7 @@ import {
   Image,
   StatusBar,
   Dimensions,
+  PanResponder,
   TouchableOpacity,
   StyleSheet
 } from "react-native";
@@ -22,6 +23,7 @@ export default class StrategyPage extends PureComponent {
     _navigation = navigation;
     return {
       title: "咨询攻略",
+      header: null,
       headerTitleStyle: { flex: 1, textAlign: "center" }
     };
   };
@@ -86,20 +88,50 @@ export default class StrategyPage extends PureComponent {
     this._navListener = this.props.navigation.addListener("didFocus", () => {
       console.log("lfj currentHeight", StatusBar.currentHeight);
       _statusBarHeight = StatusBar.currentHeight;
-      // StatusBar.setBarStyle("dark-content");
-      // StatusBar.setBackgroundColor("#FFFFFF");
-      StatusBar.setTranslucent(true); //是否沉浸式
-      StatusBar.setBackgroundColor("transparent");
+      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBackgroundColor("#FFFFFF");
+      // StatusBar.setBackgroundColor("transparent");
+      // StatusBar.setTranslucent(true); //是否沉浸式
     });
 
     this._fetchData();
-    // this._initData();
+
+    this._panResponder = PanResponder.create({
+      // 要求成为响应者：
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onPanResponderGrant: (evt, gestureState) => {
+        // 开始手势操作。给用户一些视觉反馈，让他们知道发生了什么事情！
+        // gestureState.{x,y} 现在会被设置为0
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // 最近一次的移动距离为gestureState.move{X,Y}
+        // 从成为响应者开始时的累计手势移动距离为gestureState.d{x,y}
+      },
+      onPanResponderTerminationRequest: (evt, gestureState) => false,
+      onPanResponderRelease: (evt, gestureState) => {},
+      onPanResponderTerminate: (evt, gestureState) => {
+        // 另一个组件已经成为了新的响应者，所以当前手势将被取消。
+      },
+      onShouldBlockNativeResponder: (evt, gestureState) => {
+        // 返回一个布尔值，决定当前组件是否应该阻止原生组件成为JS响应者
+        // 默认返回true。目前暂时只支持android。
+        return true;
+      }
+    });
   }
   componentWillUnmount = () => {
     this._navListener.remove();
   };
 
   render() {
+    console.log("lfj render strategy");
     return (
       <RootView
         style={{ flex: 1, backgroundColor: "#F8F8F8" }}
@@ -143,18 +175,20 @@ export default class StrategyPage extends PureComponent {
             this.pageX = e.nativeEvent.pageX;
             this.pageY = e.nativeEvent.pageY;
           }}
-          onTouchMove={e => {
-            if (
-              Math.abs(this.pageY - e.nativeEvent.pageY) >
-              Math.abs(this.pageX - e.nativeEvent.pageX)
-            ) {
-              //下拉
-              this.setState({ refreshEnable: true });
-            } else {
-              //左右
-              this.setState({ refreshEnable: false });
-            }
-          }}
+          // onTouchMove={e => {
+          //   if (
+          //     Math.abs(this.pageY - e.nativeEvent.pageY) >
+          //     Math.abs(this.pageX - e.nativeEvent.pageX)
+          //   ) {
+          //     //下拉
+          //     console.log('lfj pull list 下拉')
+          //     this.setState({ refreshEnable: true });
+          //   } else {
+          //     //左右
+          //     console.log('lfj pull list 左右')
+          //     this.setState({ refreshEnable: false });
+          //   }
+          // }}
         />
       </View>
     );
@@ -265,6 +299,12 @@ export default class StrategyPage extends PureComponent {
                 onBannerItemPress={onBannerItemPress =>
                   this._onBannerPress(onBannerItemPress)
                 }
+                onStartShouldSetPanResponderCapture={e => true}
+                onStartShouldSetPanResponder={e => true}
+                onMoveShouldSetPanResponder={e => true}
+                onMoveShouldSetPanResponderCapture={e => true}
+                onPanResponderTerminationRequest={e => false}
+                // {...this._panResponder.panHandlers}
               />
             </View>
           )

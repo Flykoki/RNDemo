@@ -112,12 +112,8 @@ export class PolicyList extends PureComponent {
   }
   //刷新时
   _handleRefresh = () => {
-    this.setState({
-      page: 1,
-      isRefreshing: true //tag,下拉刷新中，加载完全，就设置成flase
-      // status:'loading',
-      // dataArray: []
-    });
+    this.state.page = 1;
+    this.state.isRefreshing = true;
     this.fetchData();
   };
   //滑动到底部
@@ -279,13 +275,14 @@ export class PolicyList extends PureComponent {
 
         //如果是下拉刷新就清空数据源
         if (this.state.isRefreshing) {
+          console.log("lfj refershing clear data");
           this.state.dataArray = [];
         }
 
         this.setState({
           //复制数据源
-          //  dataArray:this.state.dataArray.concat( responseData.results),
-          dataArray: dataList,
+          dataArray: this.state.dataArray.concat(dataList),
+          // dataArray: dataList,
           showFoot: foot,
           isRefreshing: false,
           isLastPage: lastPage,
