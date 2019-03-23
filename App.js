@@ -49,9 +49,10 @@ import {
   TaskBasicInfo,
   InvoiceInfoScreen
 } from "./src/js/property/TaskInfoDetailsScreen";
+import Workbench from "./src/js/workbench/Workbench";
 const TabNavigator = createBottomTabNavigator(
   {
-    首页: HomePage,
+    工作台: Workbench,
     咨询攻略: StrategyPage,
     我的: MineScreen
   },
@@ -60,7 +61,7 @@ const TabNavigator = createBottomTabNavigator(
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
-        if (routeName === "首页") {
+        if (routeName === "工作台") {
           iconName = focused
             ? require("./src/res/img/app_info_tab_pre.png")
             : require("./src/res/img/app_info_tab_nor.png");
@@ -81,7 +82,7 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: "tomato",
       inactiveTintColor: "gray"
     },
-    initialRouteName: "首页"
+    initialRouteName: "工作台"
   }
 );
 
@@ -121,12 +122,7 @@ const StackContainer = createStackNavigator(
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {
         const { index } = navigation.state;
-        if (index == 1 || index === 2) {
-          return { header: null };
-        }
-        if (index === 0) {
-          return HomePage.navigationOptions(navigation);
-        }
+        return { header: null };
       }
     }
   },

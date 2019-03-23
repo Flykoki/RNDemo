@@ -44,7 +44,7 @@ export class MineScreen extends Component {
           onPress: () => {
             this.props.navigation.navigate("Settings");
           }
-        },
+        }
         // { key: "5", type: "divider" },
         // {
         //   key: "6",
@@ -55,50 +55,50 @@ export class MineScreen extends Component {
         //     this.props.navigation.navigate("CityList");
         //   }
         // },
-        { key: "7", type: "divider" },
-        {
-          key: "8",
-          type: "item",
-          name: "新车分期销售",
-          showArrow: "1",
-          onPress: () => {
-            this.props.navigation.navigate("InstallmentSalesOfNewCars");
-          }
-        },
-        { key: "7", type: "divider" },
-        {
-          key: "8",
-          type: "item",
-          name: "全部任务",
-          showArrow: "1",
-          onPress: () => {
-            this.props.navigation.navigate("MissionsCenterPage");
-          }
-        },
-        { key: "9", type: "divider" },
-        {
-          key: "10",
-          type: "item",
-          name: "测试item",
-          showArrow: "1",
-          onPress: () => {
-            this.props.navigation.navigate("TestPage");
-          }
-        },
-        { key: "9", type: "divider" },
-        {
-          key: "10",
-          type: "item",
-          name: "日历",
-          showArrow: "1",
-          onPress: () => {
-            this.props.navigation.navigate("CalenderScreen", {
-              onConfirm: item => {
-                console.log("item = ", item);
-              }
-            });
-          }
-        }
+        // { key: "7", type: "divider" },
+        // {
+        //   key: "8",
+        //   type: "item",
+        //   name: "新车分期销售",
+        //   showArrow: "1",
+        //   onPress: () => {
+        //     this.props.navigation.navigate("InstallmentSalesOfNewCars");
+        //   }
+        // },
+        // { key: "7", type: "divider" },
+        // {
+        //   key: "8",
+        //   type: "item",
+        //   name: "全部任务",
+        //   showArrow: "1",
+        //   onPress: () => {
+        //     this.props.navigation.navigate("MissionsCenterPage");
+        //   }
+        // },
+        // { key: "9", type: "divider" },
+        // {
+        //   key: "10",
+        //   type: "item",
+        //   name: "测试item",
+        //   showArrow: "1",
+        //   onPress: () => {
+        //     this.props.navigation.navigate("TestPage");
+        //   }
+        // },
+        // { key: "9", type: "divider" },
+        // {
+        //   key: "10",
+        //   type: "item",
+        //   name: "日历",
+        //   showArrow: "1",
+        //   onPress: () => {
+        //     this.props.navigation.navigate("CalenderScreen", {
+        //       onConfirm: item => {
+        //         console.log("item = ", item);
+        //       }
+        //     });
+        //   }
+        // }
       ]
     };
   }

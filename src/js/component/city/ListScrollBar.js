@@ -116,7 +116,7 @@ export default class ListScrollBar extends Component {
 
   render() {
     data = this.props.data;
-    this.rightIndex = data ? data : defaultIndex;
+    this.rightIndex = data ? data : [];
     let rightData = [
       this.rightIndex.map((item, index) => {
         let currentIndex = this.state.currentIndex;

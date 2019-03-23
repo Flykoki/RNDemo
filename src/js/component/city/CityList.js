@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, Text, SectionList, Dimensions, StyleSheet } from "react-native";
 import ListScrollBar from "./ListScrollBar";
 import CityListData from "../../../../assets/citylist";
+import { FetchUtils } from "sz-network-module";
 
 const { width, height } = Dimensions.get("window");
 const ITEM_HEIGHT = 47;
@@ -19,11 +20,11 @@ export default class CityList extends Component {
     return (
       <View style={styles.itemContainer}>
         <Text style={styles.itemLeftText} key={index}>
-          {item.city_child}
+          {item.cityName}
         </Text>
 
         <Text style={styles.itemRightText} key={index}>
-          {item.city_child}
+          {item.cityName}
         </Text>
       </View>
     );
@@ -38,35 +39,53 @@ export default class CityList extends Component {
   }
 
   async getCityInfos() {
-    let data = await require("../../../../assets/citylist");
-    let jsonData = data.data;
-    //每组的开头在列表中的位置
-    let totalSize = 0;
-    //SectionList的数据源
-    let cityInfos = [];
-    //分组头的数据源
-    let citySection = [];
-    //分组头在列表中的位置
-    let citySectionSize = [];
-    for (let i = 0; i < jsonData.length; i++) {
-      citySectionSize[i] = totalSize;
-      //给右侧的滚动条进行使用的
-      citySection[i] = { title: jsonData[i].title };
-      let section = {};
-      section.title = jsonData[i].title;
-      section.data = jsonData[i].city;
-      section.key = i.toString();
-      for (let j = 0; j < section.data.length; j++) {
-        section.data[j].key = (i * 1000 + j).toString();
+    FetchUtils.fetch({
+      params: {},
+      api: "action/employee/queryStoresInfo",
+      success: response => {
+        console.log("getCityInfos response = ", response);
+        cityInfos = response.cityInfo;
+        citySections = new Map();
+        citySections.set("全部", {
+          title: "全部",
+          data: [{ cityName: "全部", cityId: 1 }]
+        });
+        sections = [];
+        sections.push({ title: "↑" });
+        cityInfos.forEach(cityInfo => {
+          capital = cityInfo.capital;
+          citySection = citySections.get(capital);
+          if (citySection) {
+          } else {
+            citySection = { title: capital };
+            citySections.set(capital, citySection);
+            sections.push({ title: capital });
+          }
+          sectionData = citySection.data;
+          if (sectionData) {
+          } else {
+            sectionData = [];
+            citySection.data = sectionData;
+          }
+          sectionData.push({
+            cityName: cityInfo.cityName,
+            cityId: cityInfo.cityId
+          });
+        });
+        // citySections.
+        citySectionList = [];
+        citySections.forEach(element => {
+          console.log("map for each ", element);
+          citySectionList.push(element);
+        });
+        this.setState({
+          data: citySectionList,
+          sections: sections
+        });
+      },
+      error: err => {
+        console.log("getCityInfos err = ", err);
       }
-      cityInfos[i] = section;
-      //每一项的header的index
-      totalSize += section.data.length + 1;
-    }
-    this.setState({
-      data: cityInfos,
-      sections: citySection,
-      sectionSize: citySectionSize
     });
   }
 
