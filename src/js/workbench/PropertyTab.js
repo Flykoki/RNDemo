@@ -7,19 +7,87 @@ import {
   TouchableOpacity,
   Dimensions
 } from "react-native";
-import Workbench from "./Workbench";
+import Workbench, { TopBarItem } from "./Workbench";
+import { FetchUtils } from "sz-network-module";
+const Pubsub = require("pubsub-js");
 
 export default class PropertyTab extends Component {
+  static hasTips = false;
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "资产"
+      title: "资产",
+      tabBarLabel: "资产",
+      tabBarIcon: ({ focused, tintColor }) => (
+        <TopBarItem
+          focused={focused}
+          text={"资产"}
+          tips={PropertyTab.hasTips}
+        />
+      )
     };
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      schedule: []
+    };
+  }
+
+  componentDidMount() {
+    FetchUtils.fetch({
+      api: "action/employee/homeInfo",
+      params: { businessId: "ZC", storeId: "-1", deptType: "-1" },
+      success: response => {
+        console.log("PropertyTab response = ", response);
+        businessInfos = response.businessInfos;
+        if (businessInfos) {
+          businessInfos.forEach(element => {
+            if (element.businessId === "ZC") {
+              if (element.menuInfos) {
+                this.setState({
+                  schedule: element.menuInfos,
+                  storeInfo: element.storeInfo
+                });
+                return;
+              }
+            }
+          });
+        }
+      },
+      error: err => {
+        console.log("PropertyTab response = ", response);
+      }
+    });
+  }
+
+  _renderPanels() {
+    itemView = [];
+    this.state.schedule.forEach(menuInfo => {
+      itemView.push(this._renderSchedulePanels(menuInfo));
+    });
+    return itemView;
+  }
+
+  _renderSchedulePanels(menuInfo) {
+    if (menuInfo) {
+      return (
+        <SchedulePanel
+          style={{ marginTop: 10 }}
+          schedule={menuInfo.subMenuInfos}
+          title={menuInfo.menuGroupName}
+          topRightText={this.state.storeInfo.storeName}
+          topRightIcon={require("../../res/img/icon_store_select.png")}
+        />
+      );
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <SearchPanel style={{ marginTop: 14 }} />
-        <SchedulePanel style={{ marginTop: 10 }} />
+        {this._renderPanels()}
         <TouchableOpacity onPress={this._jumpToMissionCenter.bind(this)}>
           <Text style={styles.missionCenterContainer}>{"任务查询中心"}</Text>
         </TouchableOpacity>
@@ -33,35 +101,60 @@ export default class PropertyTab extends Component {
 }
 
 class SchedulePanel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { show: true };
+  }
+  _renderItems(scheduleList) {
+    itemView = [];
+    scheduleList.forEach(element => {
+      if (element.count > 0) {
+        PubSub.publish("资产", true);
+      }
+      itemView.push(
+        <ScheduleItem
+          icon={element.icon}
+          text={element.menuName}
+          count={element.count + ""}
+          showCount={element.count > 0}
+        />
+      );
+    });
+    return itemView;
+  }
+
+  showHiddenPanel() {
+    show = this.state.show;
+    this.setState({ show: !show });
+  }
+
   render() {
     return (
       <View style={[this.props.style, styles.scheduleContainer]}>
-        <Text style={styles.scheduleTitle}>{"待办任务"}</Text>
-        <ScheduleItem
-          icon={require("../../res/img/icon_car_put_storage.png")}
-          text="车辆入库"
-          count="0"
-        />
-        <ScheduleItem
-          icon={require("../../res/img/icon_car_settle.png")}
-          text="车辆落户"
-          count="1"
-        />
-        <ScheduleItem
-          icon={require("../../res/img/icon_gps_manager.png")}
-          text="gps管理"
-          count="0"
-        />
-        <ScheduleItem
-          icon={require("../../res/img/icon_car_out_storage.png")}
-          text="车辆出库"
-          count="0"
-        />
-        <ScheduleItem
-          icon={require("../../res/img/icon_car_transfer.png")}
-          text="车辆过户"
-          count="0"
-        />
+        <Text style={styles.scheduleTitle}>{this.props.title}</Text>
+        <TouchableOpacity
+          style={styles.schedulePanelTopRightContainer}
+          onPress={
+            this.props.topRightPress
+              ? this.props.topRightPress
+              : this.showHiddenPanel.bind(this)
+          }
+        >
+          <Text style={styles.schedulePanelTopRightText}>
+            {this.props.topRightText}
+          </Text>
+          <Image
+            style={styles.schedulePanelTopRightIcon}
+            source={
+              this.props.topRightIcon
+                ? this.props.topRightIcon
+                : this.state.show
+                ? require("../../res/img/icon_items_hidden.png")
+                : require("../../res/img/icon_items_show.png")
+            }
+          />
+        </TouchableOpacity>
+        {this.state.show && this._renderItems(this.props.schedule)}
       </View>
     );
   }
@@ -71,9 +164,12 @@ class ScheduleItem extends Component {
   render() {
     return (
       <TouchableOpacity style={styles.scheduleItemContainer}>
-        <Image style={styles.scheduleItemIcon} source={this.props.icon} />
+        <Image
+          style={styles.scheduleItemIcon}
+          source={{ uri: this.props.icon }}
+        />
         <Text style={styles.scheduleItemText}>{this.props.text}</Text>
-        {this.props.count && this.props.count != "0" && (
+        {this.props.showCount && (
           <Text style={styles.scheduleItemCount}>{this.props.count}</Text>
         )}
       </TouchableOpacity>
@@ -104,7 +200,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     backgroundColor: "white",
-
     paddingLeft: 16,
     height: 32,
     flexDirection: "row",
@@ -156,6 +251,16 @@ const styles = StyleSheet.create({
     fontSize: 7,
     borderRadius: 6
   },
+  schedulePanelTopRightContainer: {
+    position: "absolute",
+    top: 21,
+    right: 15,
+    height: 21,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  schedulePanelTopRightText: { color: "#333333", fontSize: 14, marginRight: 4 },
+  schedulePanelTopRightIcon: { height: 14, width: 14, resizeMode: "center" },
   missionCenterContainer: {
     height: 39,
     marginTop: 10,
