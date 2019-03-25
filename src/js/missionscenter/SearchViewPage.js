@@ -64,7 +64,7 @@ export default class SearchViewPage extends Component {
           onCancelCallback={() => {
             _navigation.goBack();
           }}
-          searchType={0}
+          businessType={0}
           renderItem={(item, onItemClick) =>
             this._renderItem(item, onItemClick)
           }

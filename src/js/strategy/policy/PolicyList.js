@@ -12,18 +12,18 @@ import {
 } from "react-native";
 // import { PullFlatList } from "react-native-rk-pull-to-refresh";
 import { PullFlatList } from "urn-pull-to-refresh";
-import reactNavigation from "react-navigation";
+import StrategyHelper from "../StrategyHelper";
 import { FetchUtils } from "sz-network-module";
 import { RootView } from "../../component/CommonView";
 
 const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
 let _navigation;
-let imageUrlIndex = 0;
+let type = 0;
 export class PolicyList extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "政策公告",
+      title: PolicyList._getTitle(navigation),
       headerTitleStyle: { flex: 1, textAlign: "center" },
       headerRight: <View />,
       headerLeft: (
@@ -45,6 +45,7 @@ export class PolicyList extends PureComponent {
 
   constructor(props) {
     super(props);
+    _navigation = this.props.navigation;
     this.state = {
       page: 1, //当前第几页
       pageSize: 10, //每页记录条数
@@ -56,18 +57,17 @@ export class PolicyList extends PureComponent {
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
       isRefreshing: false //下拉控制
     };
-    _navigation = this.props.navigation;
     // this._onPress.bind(this);
   }
 
   componentDidMount() {
     //设置statusbar样式
-    this._navListener = this.props.navigation.addListener("didFocus", () => {
+    this._navListener = this.props.navigation.addListener("willFocus", () => {
       StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
+      this.fetchData();
     });
-    this.fetchData();
   }
 
   componentWillUnmount = () => {
@@ -91,6 +91,28 @@ export class PolicyList extends PureComponent {
   }
 
   // ======================================= 自定义方法 =======================================
+
+  static _getTitle(navigation) {
+    switch (navigation.getParam("data")) {
+      case 0:
+        type = 0;
+        return "政策公告";
+        break;
+      case 1:
+        type = 1;
+        return "营销攻略";
+        break;
+
+      case 2:
+        type = 2;
+        return "新闻资讯";
+        break;
+
+      default:
+        break;
+    }
+  }
+
   //加载数据显示FlatList
   _renderData() {
     return (
@@ -103,7 +125,7 @@ export class PolicyList extends PureComponent {
         onEndReached={this._onEndReached}
         ListFooterComponent={this._renderFooter}
         refreshing={this.state.isRefreshing}
-        renderItem={this._renderItemView}
+        renderItem={this._renderItemView.bind(this)}
         ItemSeparatorComponent={() => (
           <View style={{ flex: 1, height: 0.5, backgroundColor: "#cbcbcb" }} />
         )}
@@ -208,13 +230,21 @@ export class PolicyList extends PureComponent {
     const ret = _navigation.navigate("PolicyDetail");
     console.log("policylist item onpress result:", ret);
   };
-
+  _onReadInformationSuccess = response => {};
+  _onReadInformationError = error => {};
+  _onGetInformationUnreadCountFinally = () => {};
   //init itemView
   _renderItemView({ item }) {
     //跳转并传值
     return (
       <TouchableNativeFeedback
         onPress={() => {
+          StrategyHelper.readInformation(
+            item.infoId,
+            response => this._onReadInformationSuccess(response),
+            error => this._onReadInformationError(error),
+            () => this._onReadInformationFinally()
+          );
           _navigation.navigate("PolicyDetail", { data: item });
         }}
       >
@@ -240,7 +270,36 @@ export class PolicyList extends PureComponent {
               justifyContent: "space-between"
             }}
           >
-            <Text style={styles.title}>{item.title}</Text>
+            <View
+              style={{
+                marginTop: 16,
+                marginLeft: 15,
+                marginRight: 19,
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center"
+              }}
+            >
+              {item.readStatus == 0 && (
+                <Image
+                  style={{ width: 8, height: 8, marginRight: 2 }}
+                  resizeMode={"contain"}
+                  source={require("../../../res/img/icon_app_unread_count.png")}
+                />
+              )}
+              <Text style={styles.title}>{item.title}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                marginLeft: 15,
+                marginRight: 19
+              }}
+            >
+              {this._getBusinessLineTag(item.businessLine)}
+              {this._getConsultingType(item.consultingType)}
+            </View>
             <Text
               style={{
                 marginLeft: 15,
@@ -258,9 +317,11 @@ export class PolicyList extends PureComponent {
   //获取数据
   fetchData() {
     FetchUtils.fetch({
-      // url: "http://mapiproxytest.maimaiche.com/ucarmapiproxy/",
-      // customCid: "502109",
-      params: { pageIndex: this.state.page, pageSize: this.state.pageSize },
+      params: {
+        pageIndex: this.state.page,
+        pageSize: this.state.pageSize,
+        type: type
+      },
       api: "action/cmt/queryInformationList",
       success: content => {
         console.log("公告列表 success = ", content);
@@ -304,6 +365,68 @@ export class PolicyList extends PureComponent {
     });
   }
 
+  _getBusinessLineTag(businessLine) {
+    if (businessLine) {
+      businessLine = businessLine + "";
+      let array = businessLine.includes(";")
+        ? businessLine.split(";")
+        : [businessLine];
+      return array.map((item, index, array) => {
+        let img;
+        switch (item) {
+          case "1":
+            img = require("../../../res/img/app_mine_label_4s_finance.png");
+            break;
+          case "3":
+            img = require("../../../res/img/icon_app_mine_label_finance_distribution.png");
+            break;
+          case "4":
+            img = require("../../../res/img/icon_app_mine_label_car_supply.png");
+            break;
+
+          default:
+            break;
+        }
+        return (
+          <Image
+            style={{ height: 17, width: 50, marginRight: 5 }}
+            resizeMode={"stretch"}
+            source={img}
+          />
+        );
+      });
+    } else {
+      return null;
+    }
+  }
+  _getConsultingType = type => {
+    type = type + "";
+    let array = type.includes(";") ? type.split(";") : [type];
+    return array.map((item, index, array) => {
+      let img;
+      switch (item) {
+        case "0":
+          img = require("../../../res/img/icon_app_info_label_policy_statement.png");
+          break;
+        case "1":
+          img = require("../../../res/img/icon_app_info_label_marketing_strategy.png");
+          break;
+        case "2":
+          img = require("../../../res/img/icon_app_info_label_sz_information.png");
+          break;
+
+        default:
+          break;
+      }
+      return (
+        <Image
+          style={{ height: 17, width: 50, marginRight: 5 }}
+          resizeMode={"stretch"}
+          source={img}
+        />
+      );
+    });
+  };
   // ======================================= 自定义方法 =======================================
 }
 
@@ -328,9 +451,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    marginTop: 16,
-    marginRight: 19,
-    marginLeft: 15,
     color: "#333333"
   },
   footer: {

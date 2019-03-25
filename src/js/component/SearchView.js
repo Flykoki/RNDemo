@@ -30,15 +30,18 @@ export default class SearchView extends Component {
       pageSize: 10,
       errorMsg: "",
       isLastPage: false,
+      placeholder: this.props.placeholder
+        ? this.props.placeholder
+        : "请输入车架号或车牌号",
       searchResponseData: this.props.searchResponseData
         ? this.props.searchResponseData
         : [], //即时搜索结果 { key: string, object: obj }
       panelState: this.props.panelState ? this.props.panelState : 0, //当前panel状态{0:"默认",1:"搜索中",2:"未找到结果",3:"搜索结果",4:"历史搜索记录"}
       selectedItem: {}, //选中的搜索结果
       showClearHistoryConfirm: false, //显示删除历史记录确认按钮
-      historyType: 0, // 历史搜索类型{0:"资产",1:"买买车",2:"闪贷"}
+      businessType: this.props.businessType ? this.props.businessType : 0, // 历史搜索类型{0:"资产",1:"买买车",2:"闪贷"}
       showHistoryData: new Set(), //默认显示不重复的8条历史记录
-      historyData: [] //历史搜索记录[{type:historyType,data:itemData},{type:historyType,data:itemData}] 由于AsynStorage中数组转为字符串存入后取出转为数组有问题，暂时先用JsonString保存历史记录
+      historyData: [] //历史搜索记录[{type:businessType,data:itemData},{type:businessType,data:itemData}] 由于AsynStorage中数组转为字符串存入后取出转为数组有问题，暂时先用JsonString保存历史记录
     };
   }
 
@@ -72,7 +75,7 @@ export default class SearchView extends Component {
               style={styles.topInputText}
               autoFocus={true}
               maxLength={20}
-              placeholder={"请输入车架号或车牌号"}
+              placeholder={this.state.placeholder}
               selectionColor={"#CCCCCC"}
               onSubmitEditing={Keyboard.dismiss}
               onChangeText={text => {
@@ -164,7 +167,7 @@ export default class SearchView extends Component {
    */
   _getHistoryData = async () => {
     try {
-      return await AsyncStorage.getItem(String(this.state.historyType));
+      return await AsyncStorage.getItem(String(this.state.businessType));
     } catch (error) {
       // Error retrieving data
       console.log(error);
@@ -179,7 +182,7 @@ export default class SearchView extends Component {
     //保存
     for (let i = 0; i < array.length; i++) {
       array[i].length > 0
-        ? lastData.unshift({ type: this.state.historyType, data: array[i] })
+        ? lastData.unshift({ type: this.state.businessType, data: array[i] })
         : {};
     }
     //去重
@@ -194,7 +197,7 @@ export default class SearchView extends Component {
     this.state.historyData = lastData;
     let jsonStr = JSON.stringify(lastData);
     try {
-      await AsyncStorage.setItem(String(this.state.historyType), jsonStr);
+      await AsyncStorage.setItem(String(this.state.businessType), jsonStr);
     } catch (error) {
       // Error saving data
       console.log(error);
@@ -206,7 +209,7 @@ export default class SearchView extends Component {
    */
   _deleteHistoryData = () => {
     try {
-      AsyncStorage.removeItem(this.state.historyType + "");
+      AsyncStorage.removeItem(this.state.businessType + "");
     } catch (e) {
       console.log(e);
     }
@@ -607,16 +610,11 @@ export default class SearchView extends Component {
   };
 }
 SearchView.Prototype = {
-  searchResultCallback: PropTypes.func, //搜索结果回调
   onCancelCallback: PropTypes.func, //取消事件回调
-  onSearchCallback: PropTypes.func, //搜索事件回调
   onChangeText: PropTypes.func, //搜索框文本变化事件回调
-  searchResponseData: PropTypes.array, //搜索结果,外部根据自己业务传入搜索结果，searchView来显示
-  onItemViewClick: PropTypes.func, //搜索结果item点击事件，将item内容保存到 historyView中
-  onHistoryItemCallback: PropTypes.func, //历史记录中item的点击事件
-  panelState: PropTypes.number, //当前panel状态{0:"默认",1:"搜索中",2:"未找到结果",3:"搜索结果",4:"历史搜索记录"}
-  selectedItem: PropTypes.object, //搜索结果中选中的item，存于historyData数组中用于历史记录展示
-  historyType: PropTypes.number, // 历史搜索类型{0:"资产",1:"买买车",2:"闪贷"}
+  businessType: PropTypes.number, // 历史搜索类型{0:"资产",1:"买买车",2:"闪贷"}
+  fetchData: PropTypes.func, // 搜索回调 (text:搜索文本, pageSize:每页条目, page:当前页数, onSuccess:成功回调, onError:失败回调, onFinally:finally) =>
+  placeholder: PropTypes.string, //搜索框hint内容
   renderItem: PropTypes.func //搜索结果展示默认flatList展示
 };
 const styles = StyleSheet.create({
