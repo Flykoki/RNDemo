@@ -103,7 +103,7 @@ export default class PullRoot extends PureComponent {
 
   defaultTopSetting = () => {
     if (this.props.topIndicatorRender == null) {
-      console.log('lfj pullstate',this.pullState)
+      // console.log('lfj pullstate',this.pullState)
       //没有就自己来
       if (this.pullState == "pulling") {
         this.setState({ pullOk: false, pulling: true, pullRelease: false });

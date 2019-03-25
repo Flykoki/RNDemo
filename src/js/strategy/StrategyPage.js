@@ -41,22 +41,9 @@ export default class StrategyPage extends PureComponent {
       showType: 0, //页面展示类型。 0：默认加载中，1，加载完成，显示数据，2，加载失败显示失败页面
       dataSource: [], //
       refreshEnable: true, //是否支持下拉刷新，解决banner左右滑动时与 pullFlatList冲突
-      bannerDisplayList: [
-        // {
-        //   banner:
-        //     "http://udfstest02.10101111.com/ucarudfs/resource/V2/201811/1/6-002dd72a8fa6479d8b5eb14c587d5ec1-g-sr-scale.jpg"
-        // },
-      ], //头部banner数据源
+      bannerDisplayList: [], //头部banner数据源
       hotDisplayList: {}, //热门活动数据源
-      latestPublishList: [
-        // {
-        //   key: "1",
-        //   banner: "",
-        //   publishTimeStr: "2017/05/25",
-        //   businessLine: "1;2",
-        //   title: "神州买买车荣获“2017诚信消费品牌”奖"
-        // }
-      ], //最新发布数据源
+      latestPublishList: [], //最新发布数据源
 
       infos: [
         {
@@ -156,7 +143,6 @@ export default class StrategyPage extends PureComponent {
   _getCustomView = () => {
     let showBanner =
       this.state.bannerDisplayList && this.state.bannerDisplayList.length > 0;
-    console.log("lfj showBanner", showBanner, _statusBarHeight);
     return (
       <View
         style={
@@ -174,25 +160,26 @@ export default class StrategyPage extends PureComponent {
           data={this.state.dataSource}
           topIndicatorHeight={50}
           refreshing={this.state.isRefreshing}
+          onStartShouldSetPanResponderCapture={e => true}
+          onMoveShouldSetPanResponderCapture={e => true}
           renderItem={({ item, index, separators }) => this._renderItem(item)}
           onTouchStart={e => {
             this.pageX = e.nativeEvent.pageX;
             this.pageY = e.nativeEvent.pageY;
           }}
-          // onTouchMove={e => {
-          //   if (
-          //     Math.abs(this.pageY - e.nativeEvent.pageY) >
-          //     Math.abs(this.pageX - e.nativeEvent.pageX)
-          //   ) {
-          //     //下拉
-          //     console.log('lfj pull list 下拉')
-          //     this.setState({ refreshEnable: true });
-          //   } else {
-          //     //左右
-          //     console.log('lfj pull list 左右')
-          //     this.setState({ refreshEnable: false });
-          //   }
-          // }}
+          onTouchMove={e => {
+            console.log("lfj full list onTouchMove");
+            if (
+              Math.abs(this.pageY - e.nativeEvent.pageY) >
+              Math.abs(this.pageX - e.nativeEvent.pageX)
+            ) {
+              //下拉
+              this.setState({ refreshEnable: true });
+            } else {
+              //左右
+              this.setState({ refreshEnable: false });
+            }
+          }}
         />
       </View>
     );
@@ -309,11 +296,12 @@ export default class StrategyPage extends PureComponent {
                 onBannerItemPress={onBannerItemPress =>
                   this._onBannerPress(onBannerItemPress)
                 }
-                onStartShouldSetPanResponderCapture={e => true}
-                onStartShouldSetPanResponder={e => true}
-                onMoveShouldSetPanResponder={e => true}
-                onMoveShouldSetPanResponderCapture={e => true}
-                onPanResponderTerminationRequest={e => false}
+                onTouchMove={e => console.log("lfj banner onTouchMove ")}
+                // onStartShouldSetPanResponderCapture={e => true}
+                // onStartShouldSetPanResponder={e => true}
+                // onMoveShouldSetPanResponder={e => true}
+                // onMoveShouldSetPanResponderCapture={e => true}
+                // onPanResponderTerminationRequest={e => true}
                 // {...this._panResponder.panHandlers}
               />
             </View>
@@ -369,9 +357,7 @@ export default class StrategyPage extends PureComponent {
         break;
     }
   };
-  _onBannerPress = item => {
-    console.warn("banner item", item);
-  };
+  _onBannerPress = item => {};
   _onHotDisplayPress = data => {
     _navigation.navigate("PolicyDetail", { data: data });
   };

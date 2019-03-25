@@ -74,7 +74,7 @@ export default class BannerView extends Component {
         // this.props.onScroll(index);
       },
 
-      onPanResponderTerminationRequest: (evt, gestureState) => false,
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {},
       onPanResponderTerminate: (evt, gestureState) => {
         // 另一个组件已经成为了新的响应者，所以当前手势将被取消。
@@ -132,7 +132,7 @@ export default class BannerView extends Component {
           onStartShouldSetPanResponder={e => true}
           onMoveShouldSetPanResponder={e => true}
           onMoveShouldSetPanResponderCapture={e => true}
-          onPanResponderTerminationRequest={e => false}
+          onPanResponderTerminationRequest={e => true}
         >
           {this._renderBannerItems()}
         </ScrollView>
@@ -199,7 +199,7 @@ export default class BannerView extends Component {
           onPress={() => {
             this.props.onBannerItemPress
               ? this.props.onBannerItemPress(item, index)
-              : console.warn("banner item on press", item, index);
+              : {};
           }}
         >
           <Image
