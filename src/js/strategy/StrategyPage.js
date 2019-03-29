@@ -144,7 +144,6 @@ export default class StrategyPage extends PureComponent {
   }
 
   _getCustomView = () => {
-
     return (
       <View style={{ height: screenHeight }}>
         <PullFlatList
@@ -293,12 +292,6 @@ export default class StrategyPage extends PureComponent {
                   this._onBannerPress(onBannerItemPress)
                 }
                 onTouchMove={e => console.log("lfj banner onTouchMove ")}
-                // onStartShouldSetPanResponderCapture={e => true}
-                // onStartShouldSetPanResponder={e => true}
-                // onMoveShouldSetPanResponder={e => true}
-                // onMoveShouldSetPanResponderCapture={e => true}
-                // onPanResponderTerminationRequest={e => true}
-                // {...this._panResponder.panHandlers}
               />
             </View>
           )
@@ -306,15 +299,7 @@ export default class StrategyPage extends PureComponent {
         break;
       case "strategy":
         return (
-          <View
-            style={[
-              styles.strategyList
-              // ,
-              // this.state.bannerDisplayList.length == 0
-              //   ? { marginTop: StatusBar.currentHeight }
-              //   : {}
-            ]}
-          >
+          <View style={[styles.strategyList]}>
             {this._renderStrategyList(data)}
           </View>
         );
@@ -645,6 +630,7 @@ export default class StrategyPage extends PureComponent {
         _navigation.navigate("PolicyList", { data: 2 });
         break;
       case "业务介绍":
+      //TODO: 调用获取app端配置信息接口http://10.104.113.244:3000/repository/editor?id=22&mod=160&itf=613 获取uri
         break;
       case "操作指南":
         _navigation.navigate("PolicyDetail", {
