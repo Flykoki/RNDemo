@@ -33,11 +33,7 @@ export default class MissionCenterHelper extends Component {
       // customCid: "691100",
       params: {
         accountId: accountInfo.accountId,
-<<<<<<< HEAD
         execDeptIds: [],
-=======
-        execDeptIds: [37668],
->>>>>>> add store select
         pageSize: pageSize,
         pageNum: page,
         sortBy: sortBy,
