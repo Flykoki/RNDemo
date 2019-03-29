@@ -152,7 +152,6 @@ export class HomePage extends PureComponent {
   //item点击事件
   _onPress = ({ item }) => {
     console.log("home item onpress,", item);
-    // const ret = _navigation.navigate("PolicyDetail", { data: item });
     const ret = _navigation.navigate("PolicyList");
   };
 

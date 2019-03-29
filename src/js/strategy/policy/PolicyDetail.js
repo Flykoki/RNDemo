@@ -10,23 +10,24 @@ import {
   TouchableNativeFeedback,
   Dimensions
 } from "react-native";
-import { fetchRequest } from "../../utils/FetchUtil";
 import {
   RootView,
   LoadFailedView,
   LoadingView
 } from "../../component/CommonView";
-import reactNavigation from "react-navigation";
 import { WebView } from "react-native-gesture-handler";
-const width = Dimensions.get("window").width;
-const topIndicatorHeight = 50;
+import Const from "../Const";
+
 let _navigation;
-let imageUrlIndex = 0;
+let BaseUri = "https://h5test.alspark.cn";
+
 export class PolicyDetail extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     _navigation = navigation;
+    let title = _navigation.getParam("title", {});
+
     return {
-      title: "政策公告详情",
+      title: title,
       headerTitleStyle: { flex: 1, textAlign: "center" },
       headerRight: <View />,
       headerLeft: (
@@ -61,7 +62,6 @@ export class PolicyDetail extends PureComponent {
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
     });
-
     let data = _navigation.getParam("data", {});
     this.state.data = data;
   }
@@ -84,7 +84,7 @@ export class PolicyDetail extends PureComponent {
             onLoadStart={() => {
               this.setState({ status: "loading" });
             }}
-            source={{ uri: this.state.data.linkAddress }}
+            source={{ uri: this._getUri() }}
           />
         )}
         {this.state.status === "loading" && (
@@ -103,6 +103,24 @@ export class PolicyDetail extends PureComponent {
       </View>
     );
   }
+
+  _getUri = () => {
+    let item = this.state.data;
+    let uri;
+    if (item.contentType == 1) {
+      if (item.consultingType == 0) {
+        uri = Const.H5_PATH_CAR_OPERATIONAL_POLICY;
+      } else if (item.consultingType == 1) {
+        uri = Const.H5_PATH_CAR_OPERATIONAL_DISTRIBUTE;
+      } else {
+        uri = Const.H5_PATH_CAR_OPERATIONAL_NEWSINFO;
+      }
+    } else {
+      uri = item.linkAddress;
+    }
+
+    return uri;
+  };
 }
 const styles = StyleSheet.create({
   backButtonStyle: { marginLeft: 20, width: 50 },

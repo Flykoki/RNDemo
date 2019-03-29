@@ -20,10 +20,13 @@ const width = Dimensions.get("window").width;
 const topIndicatorHeight = 50;
 let _navigation;
 let type = 0;
+let title;
+
 export class PolicyList extends PureComponent {
   static navigationOptions = ({ navigation }) => {
+    title = PolicyList._getTitle(navigation);
     return {
-      title: PolicyList._getTitle(navigation),
+      title: title,
       headerTitleStyle: { flex: 1, textAlign: "center" },
       headerRight: <View />,
       headerLeft: (
@@ -57,7 +60,6 @@ export class PolicyList extends PureComponent {
       showFoot: 0, // 控制foot， 0：隐藏footer  1：已加载完成,没有更多数据   2 ：显示加载中
       isRefreshing: false //下拉控制
     };
-    // this._onPress.bind(this);
   }
 
   componentDidMount() {
@@ -66,6 +68,7 @@ export class PolicyList extends PureComponent {
       StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
+      this.state.dataArray=[];
       this.fetchData();
     });
   }
@@ -224,12 +227,6 @@ export class PolicyList extends PureComponent {
     this._handleRefresh();
   };
 
-  //item 点击事件
-  _onPress = item => {
-    console.log("policylist item onpress", item);
-    const ret = _navigation.navigate("PolicyDetail");
-    console.log("policylist item onpress result:", ret);
-  };
   _onReadInformationSuccess = response => {};
   _onReadInformationError = error => {};
   _onGetInformationUnreadCountFinally = () => {};
@@ -245,7 +242,7 @@ export class PolicyList extends PureComponent {
             error => this._onReadInformationError(error),
             () => this._onReadInformationFinally()
           );
-          _navigation.navigate("PolicyDetail", { data: item });
+          _navigation.navigate("PolicyDetail", { data: item, title: title });
         }}
       >
         <View style={styles.flatListItemWithShadow}>

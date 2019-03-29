@@ -128,7 +128,6 @@ export default class BannerView extends Component {
           //   onScroll={e => this._onScroll(e)}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
-          
           onStartShouldSetPanResponderCapture={e => true}
           onStartShouldSetPanResponder={e => true}
           onMoveShouldSetPanResponder={e => true}
@@ -218,20 +217,22 @@ export default class BannerView extends Component {
   };
   //绘制圆点
   _renderCircle = () => {
-    return this.state.data.map((item, i) => {
-      return (
-        <Text
-          key={`item${i}`}
-          style={
-            i === this.state.currentPage
-              ? styles.bannerItemShow
-              : styles.bannerItemHide
-          }
-        >
-          •
-        </Text>
-      );
-    });
+    return this.state.data.length > 2
+      ? this.state.data.map((item, i) => {
+          return (
+            <Text
+              key={`item${i}`}
+              style={
+                i === this.state.currentPage
+                  ? styles.bannerItemShow
+                  : styles.bannerItemHide
+              }
+            >
+              •
+            </Text>
+          );
+        })
+      : null;
   };
 }
 

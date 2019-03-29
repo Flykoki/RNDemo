@@ -13,12 +13,15 @@ import BannerView from "../component/BannerView";
 import { RootView } from "../component/CommonView";
 import { PullFlatList } from "urn-pull-to-refresh";
 // import { PullFlatList, PullView } from "react-native-rk-pull-to-refresh";
-import { FetchUtils } from "sz-network-module";
+import Const from "./Const";
 import StrategyHelper from "./StrategyHelper";
 
 let _navigation;
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 let _statusBarHeight;
+let detailTitle;
+
 export default class StrategyPage extends PureComponent {
   static navigationOptions = ({ navigation }) => {
     _navigation = navigation;
@@ -79,10 +82,10 @@ export default class StrategyPage extends PureComponent {
     this._navListener = this.props.navigation.addListener("willFocus", () => {
       console.log("lfj currentHeight", StatusBar.currentHeight);
       _statusBarHeight = StatusBar.currentHeight;
-      StatusBar.setBarStyle("dark-content");
-      StatusBar.setBackgroundColor("#FFFFFF");
-      // StatusBar.setBackgroundColor("transparent");
-      // StatusBar.setTranslucent(true); //是否沉浸式
+      // StatusBar.setBarStyle("dark-content");
+      // StatusBar.setBackgroundColor("#FFFFFF");
+      StatusBar.setBackgroundColor("transparent");
+      StatusBar.setTranslucent(true); //是否沉浸式
 
       this._fetchData();
     });
@@ -141,16 +144,9 @@ export default class StrategyPage extends PureComponent {
   }
 
   _getCustomView = () => {
-    let showBanner =
-      this.state.bannerDisplayList && this.state.bannerDisplayList.length > 0;
+
     return (
-      <View
-        style={
-          showBanner
-            ? { height: "100%" }
-            : { height: "100%", marginTop: _statusBarHeight }
-        }
-      >
+      <View style={{ height: screenHeight }}>
         <PullFlatList
           ref={c => (this.pull = c)}
           isContentScroll={true}
@@ -359,7 +355,10 @@ export default class StrategyPage extends PureComponent {
   };
   _onBannerPress = item => {};
   _onHotDisplayPress = data => {
-    _navigation.navigate("PolicyDetail", { data: data });
+    _navigation.navigate("PolicyDetail", {
+      data: data,
+      title: this._getDetailTitle(data.consultingType)
+    });
   };
   _keyExtractor = (item, index) => {
     return item.key;
@@ -413,7 +412,10 @@ export default class StrategyPage extends PureComponent {
                 error => this._onReadInformationError(error),
                 () => this._onReadInformationFinally()
               );
-              _navigation.navigate("PolicyDetail", { data: item });
+              _navigation.navigate("PolicyDetail", {
+                data: item,
+                title: this._getDetailTitle(item.consultingType)
+              });
             }}
           >
             <Image
@@ -465,8 +467,8 @@ export default class StrategyPage extends PureComponent {
                   marginRight: 19
                 }}
               >
-                {this._getBusinessLineTag(item.businessLine)}
                 {this._getConsultingType(item.consultingType)}
+                {this._getBusinessLineTag(item.businessLine)}
               </View>
               <Text
                 style={{
@@ -559,6 +561,25 @@ export default class StrategyPage extends PureComponent {
       );
     });
   };
+  _getDetailTitle = type => {
+    type = type + "";
+    let array = type.includes(";") ? type.split(";") : [type];
+    let item = array[0];
+    switch (item) {
+      case "0":
+        return (detailTitle = "政策公告");
+        break;
+      case "1":
+        return (detailTitle = "营销攻略");
+        break;
+      case "2":
+        return (detailTitle = "新闻资讯");
+        break;
+
+      default:
+        break;
+    }
+  };
 
   _renderStrategyListItem = ({ item }) => {
     return (
@@ -622,6 +643,24 @@ export default class StrategyPage extends PureComponent {
         break;
       case "新闻资讯":
         _navigation.navigate("PolicyList", { data: 2 });
+        break;
+      case "业务介绍":
+        break;
+      case "操作指南":
+        _navigation.navigate("PolicyDetail", {
+          data: {
+            linkAddress: Const.H5_PATH_CAR_OPERATIONAL_OPERATIONMANUAL
+          },
+          title: "操作指南"
+        });
+        break;
+      case "常见问题":
+        _navigation.navigate("PolicyDetail", {
+          data: {
+            linkAddress: Const.H5_PATH_CAR_OPERATIONAL_COMMONPROLIST
+          },
+          title: "常见问题"
+        });
         break;
       default:
         break;
