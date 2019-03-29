@@ -17,9 +17,10 @@ import FeedbackHelper from "./FeedbackHelper";
 import AccountHelper from "../../login/AccountHelper";
 
 const feedbackContentMaxLength = 500;
-
+let _navigation;
 export default class FeedbackScreen extends Component {
   static navigationOptions = ({ navigation }) => {
+    _navigation = navigation;
     return {
       title: "意见反馈",
       headerRight: <View />,
@@ -213,7 +214,7 @@ export default class FeedbackScreen extends Component {
           txt: "确定",
           txtStyle: styles.commonDialogBtnContentText,
           btnStyle: styles.commonDialogButton,
-          onClick: this._onCommonDialogConfirm()
+          onClick: () => this._onCommonDialogConfirm()
         }
       ]
     };
@@ -245,6 +246,7 @@ export default class FeedbackScreen extends Component {
       onError: this._onFeedbackCommitError.bind(this),
       onFinally: this._onFeedbackCommitFinally.bind(this)
     });
+    _navigation.goBack();
   }
 
   _onFeedbackCommitSuccess = response => {};

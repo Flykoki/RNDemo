@@ -128,6 +128,7 @@ export default class BannerView extends Component {
           //   onScroll={e => this._onScroll(e)}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
+          
           onStartShouldSetPanResponderCapture={e => true}
           onStartShouldSetPanResponder={e => true}
           onMoveShouldSetPanResponder={e => true}

@@ -32,7 +32,7 @@ export default class StrategyPage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      infomationUnreadCount: 0, //神州资讯未读数量
+      infomationUnreadCount: 0, //新闻资讯未读数量
       marketingUnreadCount: 0, //营销的资讯未读数量
       policyUnreadCount: 0, //政策的资讯未读数量
       status: "loading",
@@ -612,7 +612,7 @@ export default class StrategyPage extends PureComponent {
   };
 
   _onStrategyListItemPress = item => {
-    // 0政策公告1营销攻略2神州资讯
+    // 0政策公告1营销攻略2新闻资讯
     switch (item.key) {
       case "政策公告":
         _navigation.navigate("PolicyList", { data: 0 });

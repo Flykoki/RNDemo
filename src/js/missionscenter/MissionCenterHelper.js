@@ -26,14 +26,14 @@ export default class MissionCenterHelper extends Component {
       cancelDateStart,
       cancelDateEnd,
       sortBy = "DESC",
-      createTimeSort
+      createTimeSort = "DESC"
     } = MissionCenterHelper._iteratorMaps(map);
     FetchUtils.fetch({
       // url: "http://ampmapiproxytest.ucarinc.com/",
       // customCid: "691100",
       params: {
         accountId: accountInfo.accountId,
-        execDeptIds: accountInfo.roleList,
+        execDeptIds: [],
         pageSize: pageSize,
         pageNum: page,
         sortBy: sortBy,

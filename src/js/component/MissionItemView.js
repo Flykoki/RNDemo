@@ -29,7 +29,7 @@ export default class MissionItemView extends Component {
           <Text style={styles.missionCreateTime}>
             {"创建时间:" +
               missionItem.createTime
-                .substring(5, missionItem.createTime.length - 3)
+                .substring(5, missionItem.createTime.length)
                 .replace("-", "/")}
           </Text>
         </View>
@@ -142,7 +142,7 @@ export default class MissionItemView extends Component {
           />
           <Text style={styles.concurrentMissionItemUpdateTime}>
             {item.modifyTime
-              .substring(5, item.modifyTime.length - 3)
+              .substring(5, item.modifyTime.length)
               .replace("-", "/")}
           </Text>
           <Text style={styles.concurrentMissionItemTask}>

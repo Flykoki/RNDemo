@@ -116,7 +116,7 @@ export class MissionsCenterPage extends PureComponent {
     return (
       <View style={styles.flatListContain}>
         <RootView
-          style={{ flex: 1, marginTop: this.topClickViewHight }}
+          style={{ height: windowHeight, marginTop: this.topClickViewHight }}
           status={this.state.status}
           failed={{
             tips: this.state.errorMsg,
@@ -136,6 +136,9 @@ export class MissionsCenterPage extends PureComponent {
             this.sortDataLabel = index == 0 ? "新建时间正序" : "新建时间倒序";
             createTimeSort = index == 0 ? "ASC" : "DESC";
             this.normalFilterItems.set("createTimeSort", createTimeSort);
+            //清空原先数据
+            this.state.isFilterRefreshing = true;
+            this.state.page = 1;
             this.fetchData(this.normalFilterItems);
             onBackHandler(); //关闭面板
             this.setState({ status: "loading" });
@@ -149,6 +152,9 @@ export class MissionsCenterPage extends PureComponent {
           onNormalFilterCallback={(filterMaps, callback) => {
             this.normalFilterItems = filterMaps;
             this.filterResponseCallback = callback; //筛选结果通过此函数回调给view
+            //清空原先数据
+            this.state.isFilterRefreshing = true;
+            this.state.page = 1;
             this.fetchData(filterMaps);
             this.setState({ status: "loading" });
           }}
@@ -208,7 +214,7 @@ export class MissionsCenterPage extends PureComponent {
         onPullRelease={this._onPullRelease}
         data={this.state.dataArray}
         onEndReached={this._onEndReached}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.01}
         ListFooterComponent={this._renderFooter}
         ListEmptyComponent={this._renderEmpty}
         refreshing={this.state.isRefreshing}
@@ -249,23 +255,21 @@ export class MissionsCenterPage extends PureComponent {
   //请求成功回调
   _onQueryTaskGroupWithFilterSuccess = response => {
     this.filterResponseCallback && this.filterResponseCallback(response.list);
-    console.log("missionCenter success = ", response);
     let foot = 0;
     let lastPage = false;
-    if (response.total < this.state.pageSize && response.list.length > 0) {
-      // if (this.state.page >= data.pageCount) {
+    if (response.total < this.state.pageSize) {
       lastPage = true;
       foot = 1; //listView底部显示没有更多数据了
     }
 
-    //如果是下拉刷新/筛选条件 => 清空数据源
-    if (this.state.isRefreshing || this.normalFilterItems.length > 0) {
+    if (this.state.isFilterRefreshing || this.state.isRefreshing) {
       this.state.dataArray = [];
+      this.state.isFilterRefreshing = false;
     }
 
     this.setState({
       //复制数据源
-      dataArray: this.state.dataArray.concat(response.list),
+      dataArray: [...this.state.dataArray, ...response.list],
       isLoading: false,
       showFoot: foot,
       isLastPage: lastPage,
@@ -324,6 +328,7 @@ export class MissionsCenterPage extends PureComponent {
 
   //滑动到底部
   _onEndReached = () => {
+
     //如果是正在加载中或没有更多数据了，则返回
     if (this.state.showFoot != 0) {
       return;
@@ -339,7 +344,6 @@ export class MissionsCenterPage extends PureComponent {
     //获取数据，在componentDidMount()已经请求过数据了
     if (this.state.page > 1) {
       this.fetchData(this.normalFilterItems);
-      this.isCanLoadMore = false; // 加载更多时，不让再次的加载更多
     }
   };
 
@@ -440,6 +444,7 @@ export class MissionsCenterPage extends PureComponent {
   }
   //刷新时
   handleRefresh = () => {
+    this.state.page = 1;
     this.setState({
       page: 1,
       showHeader: 1,
