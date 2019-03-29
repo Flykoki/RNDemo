@@ -42,6 +42,7 @@ import DistributePage from "./src/js/login/DistributePage";
 import SplashView from "./src/js/splash/SplashView";
 import BusinessInfoScreen from "./src/js/mine/business/BusinessInfoScreen";
 import QrCodeInfoScreen from "./src/js/mine/personal/QrCodeInfoScreen";
+import StoreSelectionScreen from "./src/js/store/StoreSelectionScreen";
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -118,6 +119,7 @@ const StackContainer = createStackNavigator(
     CalenderScreen: CalenderScreen,
     BusinessInfoScreen: BusinessInfoScreen,
     QrCodeInfoScreen: QrCodeInfoScreen,
+    StoreSelectionScreen: StoreSelectionScreen,
     HomeTab: {
       screen: TabNavigator,
       navigationOptions: ({ navigation }) => {

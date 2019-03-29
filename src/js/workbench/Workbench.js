@@ -110,6 +110,11 @@ export default class Workbench extends Component {
   static jumptoMissionCenter() {
     Workbench._navigation.navigate("MissionsCenterPage");
   }
+
+  static getAppNavigation() {
+    return Workbench._navigation;
+  }
+
   render() {
     return <AppContainer />;
   }

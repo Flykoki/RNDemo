@@ -35,9 +35,14 @@ export default class PropertyTab extends Component {
   }
 
   componentDidMount() {
+    this._fetchData({ businessId: "ZC" });
+  }
+
+  _fetchData(params) {
     FetchUtils.fetch({
+      customCid: "650100",
       api: "action/employee/homeInfo",
-      params: { businessId: "ZC", storeId: "-1", deptType: "-1" },
+      params: params,
       success: response => {
         console.log("PropertyTab response = ", response);
         businessInfos = response.businessInfos;
@@ -76,8 +81,22 @@ export default class PropertyTab extends Component {
           style={{ marginTop: 10 }}
           schedule={menuInfo.subMenuInfos}
           title={menuInfo.menuGroupName}
-          topRightText={this.state.storeInfo.storeName}
+          topRightText={
+            this.state.storeInfo ? this.state.storeInfo.storeName : "全部"
+          }
           topRightIcon={require("../../res/img/icon_store_select.png")}
+          topRightPress={() => {
+            Workbench.getAppNavigation().navigate("StoreSelectionScreen", {
+              storeInfo: this.state.storeInfo,
+              returnTag: storeInfo => {
+                console.log("return tag ", storeInfo);
+                this._fetchData({
+                  businessId: "ZC",
+                  storeId: storeInfo.storeId
+                });
+              }
+            });
+          }}
         />
       );
     }

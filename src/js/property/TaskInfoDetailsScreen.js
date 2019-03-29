@@ -558,7 +558,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
           params: {
             taskGroupId: taskGroupId,
             accountId: accountInfo.accountId,
-            execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
+            execDeptIds: [37668]
           },
           success: response => {
             console.log("IntegratedTaskInfo init data", response);

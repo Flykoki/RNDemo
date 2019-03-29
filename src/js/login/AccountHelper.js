@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
 import { FetchUtils } from "sz-network-module";
 const ACCOUNT_KEY = "account_key";
+const STORE_ID_KEY = "store_id_key";
 export const ACCOUNT_TYPE_EMPLOYEE = 0;
 export const ACCOUNT_TYPE_DISTRIBUTOR = 1;
 const LOGIN_BASE_URL = "http://apiproxytest.ucarinc.com/ucarincapiproxy/";
@@ -175,6 +176,25 @@ export default class AccountHelper extends Component {
       } else {
         AccountHelper.accountInfo = null;
       }
+    });
+  }
+
+  static saveStoreId(storeId) {
+    AsyncStorage.setItem(STORE_ID_KEY, storeId, error => {
+      console.log("clearAccountInfo() result = ", error);
+    });
+  }
+
+  static getStoreId() {
+    return new Promise((resolve, reject) => {
+      AsyncStorage.getItem(STORE_ID_KEY, (error, result) => {
+        console.log("getSavedAccountInfo() ", result, " e = ", error);
+        if (result) {
+          resolve(result);
+        } else {
+          resolve(null);
+        }
+      });
     });
   }
 }

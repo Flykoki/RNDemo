@@ -59,7 +59,7 @@ export default class TaskDetailScreen extends Component {
           taskId: data.taskId,
           taskType: data.taskType,
           accountId: accountInfo.accountId,
-          execDeptIds: this._parsetRoleListToDeptIdList(accountInfo.roleList)
+          execDeptIds: []
         },
         success: response => {
           console.log("TaskDetailScreen init data", response);
