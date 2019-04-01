@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
 import { FetchUtils } from "sz-network-module";
+import AccountHelper from "../login/AccountHelper";
 
 const QUERY_TASK_GROUP_FILTER = "action/task/taskGroup";
 const sortBy = "DESC"; //排序规则 “ASC”-升序 "DESC" - 降序 。默认降序
@@ -33,7 +34,7 @@ export default class MissionCenterHelper extends Component {
       // customCid: "691100",
       params: {
         accountId: accountInfo.accountId,
-        execDeptIds: [],
+        execDeptIds: AccountHelper.getExecDeptIds(),
         pageSize: pageSize,
         pageNum: page,
         sortBy: sortBy,

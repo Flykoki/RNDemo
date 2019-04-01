@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   rightContainer: { backgroundColor: "transparent" },
   indexBox: {
     height: 16,
-    width: 35,
+    width: 16,
     backgroundColor: "transparent",
     borderRadius: 8
   },

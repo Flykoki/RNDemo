@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Workbench, { TopBarItem } from "./Workbench";
 import { FetchUtils } from "sz-network-module";
+import AccountHelper from "../login/AccountHelper";
 const Pubsub = require("pubsub-js");
 
 export default class PropertyTab extends Component {
@@ -50,6 +51,7 @@ export default class PropertyTab extends Component {
           businessInfos.forEach(element => {
             if (element.businessId === "ZC") {
               if (element.menuInfos) {
+                AccountHelper.saveExecDeptIds(element.storeInfo.storeId);
                 this.setState({
                   schedule: element.menuInfos,
                   storeInfo: element.storeInfo

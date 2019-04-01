@@ -57,9 +57,10 @@ export default class TaskDetailScreen extends Component {
         api: "action/task/taskInfo",
         params: {
           taskId: data.taskId,
-          taskType: data.taskType,
+          // taskType: data.taskType,
+          taskType: 1,
           accountId: accountInfo.accountId,
-          execDeptIds: []
+          execDeptIds: AccountHelper.getExecDeptIds()
         },
         success: response => {
           console.log("TaskDetailScreen init data", response);
