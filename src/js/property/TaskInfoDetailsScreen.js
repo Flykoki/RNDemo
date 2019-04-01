@@ -549,7 +549,7 @@ export class IntegratedTaskInfo extends InfoBaseScreen {
 
   _initData() {
     // taskGroupId = 1674;
-    this.props.navigation.getParam("taskGroupId");
+    taskGroupId = this.props.navigation.getParam("taskGroupId");
 
     if (taskGroupId) {
       AccountHelper.getAccountInfo().then(accountInfo => {
