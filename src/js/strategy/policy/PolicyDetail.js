@@ -5,7 +5,7 @@ import {
   Image,
   StatusBar,
   StyleSheet,
-  ActivityIndicator,
+  Platform,
   TouchableOpacity,
   TouchableNativeFeedback,
   Dimensions
@@ -74,6 +74,7 @@ export class PolicyDetail extends PureComponent {
       <View style={{ flex: 1 }}>
         {this.state.status !== "loadingFailed" && (
           <WebView
+            scalesPageToFit={Platform.OS === "ios" ? true : false}
             style={{ flex: 1 }}
             onError={() => {
               this.setState({ status: "loadingFailed" });

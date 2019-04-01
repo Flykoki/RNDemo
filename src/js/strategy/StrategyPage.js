@@ -442,7 +442,13 @@ export default class StrategyPage extends PureComponent {
                     source={require("../../res/img/icon_app_unread_count.png")}
                   />
                 )}
-                <Text style={styles.latestPublishIemTitle}>{item.title}</Text>
+                <Text
+                  ellipsizeMode={"tail"}
+                  numberOfLines={1}
+                  style={styles.latestPublishIemTitle}
+                >
+                  {item.title}
+                </Text>
               </View>
               <View
                 style={{
@@ -630,7 +636,7 @@ export default class StrategyPage extends PureComponent {
         _navigation.navigate("PolicyList", { data: 2 });
         break;
       case "业务介绍":
-      //TODO: 调用获取app端配置信息接口http://10.104.113.244:3000/repository/editor?id=22&mod=160&itf=613 获取uri
+        _navigation.navigate("PolicyIntroduction");
         break;
       case "操作指南":
         _navigation.navigate("PolicyDetail", {

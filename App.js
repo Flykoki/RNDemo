@@ -43,6 +43,9 @@ import SplashView from "./src/js/splash/SplashView";
 import BusinessInfoScreen from "./src/js/mine/business/BusinessInfoScreen";
 import QrCodeInfoScreen from "./src/js/mine/personal/QrCodeInfoScreen";
 import StoreSelectionScreen from "./src/js/store/StoreSelectionScreen";
+import PolicyIntroduction from "./src/js/strategy/policy/PolicyIntroduction";
+
+
 import {
   InsuranceDetailScreen,
   CarInfoScreen,
@@ -98,6 +101,7 @@ const StackContainer = createStackNavigator(
     Feedback: FeedbackScreen,
     PolicyList: PolicyList,
     MissionsCenterPage: MissionsCenterPage,
+    PolicyIntroduction: PolicyIntroduction,
     PolicyDetail: PolicyDetail,
     ChangeSecurityPhoneStep1: ChangeSecurityPhoneStep1,
     ChangeSecurityPhoneStep2: ChangeSecurityPhoneStep2,

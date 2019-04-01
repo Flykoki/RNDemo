@@ -68,7 +68,7 @@ export class PolicyList extends PureComponent {
       StatusBar.setTranslucent(false); //关闭沉浸式
       StatusBar.setBarStyle("dark-content");
       StatusBar.setBackgroundColor("#FFFFFF");
-      this.state.dataArray=[];
+      this.state.dataArray = [];
       this.fetchData();
     });
   }
@@ -205,7 +205,6 @@ export class PolicyList extends PureComponent {
         </View>
       );
     } else if (this.state.showFoot === 2) {
-      console.log("lfj showfoot===2");
       return (
         <View style={styles.footer}>
           <ActivityIndicator />
@@ -213,7 +212,6 @@ export class PolicyList extends PureComponent {
         </View>
       );
     } else if (this.state.showFoot === 0) {
-      console.log("lfj showfoot===0");
       return (
         <View style={styles.footer}>
           <Text />
@@ -284,7 +282,13 @@ export class PolicyList extends PureComponent {
                   source={require("../../../res/img/icon_app_unread_count.png")}
                 />
               )}
-              <Text style={styles.title}>{item.title}</Text>
+              <Text
+                ellipsizeMode={"tail"}
+                numberOfLines={1}
+                style={styles.title}
+              >
+                {item.title}
+              </Text>
             </View>
             <View
               style={{
@@ -294,8 +298,8 @@ export class PolicyList extends PureComponent {
                 marginRight: 19
               }}
             >
+              {/* {this._getConsultingType(item.consultingType)} */}
               {this._getBusinessLineTag(item.businessLine)}
-              {this._getConsultingType(item.consultingType)}
             </View>
             <Text
               style={{
@@ -321,7 +325,6 @@ export class PolicyList extends PureComponent {
       },
       api: "action/cmt/queryInformationList",
       success: content => {
-        console.log("公告列表 success = ", content);
         let dataList = content.dataList; //dataList
         let foot = 0;
         let lastPage = false;
@@ -333,7 +336,6 @@ export class PolicyList extends PureComponent {
 
         //如果是下拉刷新就清空数据源
         if (this.state.isRefreshing) {
-          console.log("lfj refershing clear data");
           this.state.dataArray = [];
         }
 
@@ -348,7 +350,6 @@ export class PolicyList extends PureComponent {
         });
       },
       error: err => {
-        console.log("公告列表.js error = ", err);
         this.setState({
           errorMsg: err.msg,
           status: "loadingFailed",
@@ -356,7 +357,6 @@ export class PolicyList extends PureComponent {
         });
       },
       final: () => {
-        console.log("公告列表 final");
         this.pull && this.pull.finishRefresh();
       }
     });
@@ -372,7 +372,7 @@ export class PolicyList extends PureComponent {
         let img;
         switch (item) {
           case "1":
-            img = require("../../../res/img/app_mine_label_4s_finance.png");
+            img = require("../../../res/img/icon_app_strategy_4s_finance.png");
             break;
           case "3":
             img = require("../../../res/img/icon_app_mine_label_finance_distribution.png");
