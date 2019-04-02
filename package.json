@@ -4,12 +4,15 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "build": "mkdir dist && cp -f src/index.html dist/index.html && ./node_modules/.bin/webpack-cli --config ./webpack.config.js"
   },
   "dependencies": {
+    "@babel/runtime": "^7.2.0",
     "pubsub-js": "^1.7.0",
     "react": "16.6.3",
-    "react-native": "^0.58.6",
+    "react-dom": "^16.5.1",
+    "react-native": "^0.59.2",
     "react-native-fs": "^2.13.3",
     "react-native-gesture-handler": "^1.0.12",
     "react-native-qrcode": "^0.2.7",
@@ -18,6 +21,7 @@
     "react-native-svg": "^9.2.4",
     "react-native-vector-icons": "^6.2.0",
     "react-native-view-shot": "^2.5.0",
+    "react-native-web": "0.11.2",
     "react-navigation": "^3.0.9",
     "rn-fetch-blob": "^0.10.15",
     "sz-network-module": "file:modules/sz-network-module",
@@ -26,9 +30,20 @@
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "24.1.0",
+    "babel-loader": "^7.1.2",
+    "style-loader": "^0.23.1",
+    "css-loader": "^2.1.1",
     "jest": "24.1.0",
     "metro-react-native-babel-preset": "0.51.1",
-    "react-test-renderer": "16.6.3"
+    "react-test-renderer": "16.6.3",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "babel-plugin-react-native-web": "0.11.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "file-loader": "^1.1.11",
+    "make-dir-cli": "^2.0.0",
+    "webpack": "^4.28.3",
+    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-cli": "^3.1.2"
   },
   "jest": {
     "preset": "react-native"
