@@ -28,7 +28,17 @@ export default class StoreSelectionScreen extends Component {
           onCityPress={() => {
             navigation.navigate("CityList", {
               cityInfo: navigation.getParam("cityInfo"),
-              cityList: navigation.getParam("cityList")
+              cityList: navigation.getParam("cityList"),
+              returnTag: cityInfo => {
+                console.log("return tag ", cityInfo);
+                // this.props.setState({});
+                navigation.setParams({
+                  cityInfo: {
+                    cityId: cityInfo.cityId,
+                    cityName: cityInfo.cityName
+                  }
+                });
+              }
             });
           }}
         />
@@ -53,6 +63,25 @@ export default class StoreSelectionScreen extends Component {
 
   componentDidMount() {
     this._fetchStoreData();
+    this.didBlurSubscription = this.props.navigation.addListener(
+      "willFocus",
+      () => {
+        storeInfo = this.props.navigation.getParam("storeInfo");
+        cityInfo = this.props.navigation.getParam("cityInfo");
+        console.debug(
+          "willFocus storeInfo = ",
+          storeInfo,
+          " cityInfo = ",
+          cityInfo
+        );
+        if (cityInfo) {
+          this._processStoreData(
+            this.props.navigation.getParam("cityList"),
+            cityInfo
+          );
+        }
+      }
+    );
   }
 
   _fetchStoreData() {
@@ -83,7 +112,7 @@ export default class StoreSelectionScreen extends Component {
   }
 
   _processStoreData(response, storeInfo) {
-    storeInfos = [];
+    storeInfos = [{ type: 1 }];
     cityInfos = response.cityInfo;
 
     cityInfos.forEach(cityInfo => {
@@ -108,8 +137,6 @@ export default class StoreSelectionScreen extends Component {
   render() {
     return (
       <View style={{ backgroundColor: "#F8F8F8", flex: 1 }}>
-        <StoreHistoryPanel />
-
         <FlatList
           renderItem={this._renderStoreItems.bind(this)}
           data={this.state.data}
@@ -122,17 +149,20 @@ export default class StoreSelectionScreen extends Component {
   _renderItemSeparatorComponent() {
     return <View style={styles.storeListDivider} />;
   }
+
   _renderStoreItems({ item }) {
+    if (item.type) {
+      return <StoreHistoryPanel onItemPress={this._onItemClicked.bind(this)} />;
+    }
     return (
-      <StoreItem
-        store={item}
-        onItemPress={item => {
-          saveStoreHistory(item);
-          this.props.navigation.state.params.returnTag(item);
-          this.props.navigation.goBack();
-        }}
-      />
+      <StoreItem store={item} onItemPress={this._onItemClicked.bind(this)} />
     );
+  }
+
+  _onItemClicked(item) {
+    saveStoreHistory(item);
+    this.props.navigation.state.params.returnTag(item);
+    this.props.navigation.goBack();
   }
 }
 
@@ -215,7 +245,9 @@ class StoreHistoryPanel extends Component {
   _renderHistoryItems(historys) {
     itemViews = [];
     historys.forEach(store => {
-      itemViews.push(<StoreHistoryItem store={store} />);
+      itemViews.push(
+        <StoreHistoryItem store={store} onItemPress={this.props.onItemPress} />
+      );
     });
     return itemViews;
   }
@@ -292,7 +324,12 @@ class StoreHistoryClearButton extends Component {
 class StoreHistoryItem extends Component {
   render() {
     return (
-      <TouchableOpacity style={styles.historyPanelItemContainer}>
+      <TouchableOpacity
+        style={styles.historyPanelItemContainer}
+        onPress={() => {
+          this.props.onItemPress(this.props.store);
+        }}
+      >
         <Text style={styles.historyPanelItemText}>
           {this.props.store.storeName}
         </Text>

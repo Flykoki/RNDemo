@@ -16,6 +16,8 @@ const EMPLOYEE_USER_INFO = "action/employee/getEmployeeInfo";
 export default class AccountHelper extends Component {
   static accountInfo;
 
+  static execDeptIds = [];
+
   static employeeLogin(name, password, success, error) {
     AccountHelper._login(
       ACCOUNT_TYPE_EMPLOYEE,
@@ -177,6 +179,14 @@ export default class AccountHelper extends Component {
         AccountHelper.accountInfo = null;
       }
     });
+  }
+
+  static saveExecDeptIds(storeId) {
+    AccountHelper.execDeptIds = [storeId];
+  }
+
+  static getExecDeptIds() {
+    return AccountHelper.execDeptIds;
   }
 
   static saveStoreId(storeId) {
