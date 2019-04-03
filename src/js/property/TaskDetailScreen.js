@@ -337,13 +337,13 @@ export class TaskFollowerItem extends Component {
       <View style={this.props.style}>
         <Image
           style={styles.taskFollowerItemStatusImg}
-          source={this._getIcon(step.status)}
+          source={this._getIcon(step.dataStatus)}
         />
         {step.notLast && (
           <View
             style={[
               styles.taskFollowerTimeLine,
-              { backgroundColor: this._getBgColor(step.status) }
+              { backgroundColor: this._getBgColor(step.dataStatus) }
             ]}
           />
         )}
@@ -351,19 +351,21 @@ export class TaskFollowerItem extends Component {
         <Text
           style={[
             styles.taskFollowerItemName,
-            { color: this._getTextColor(step.status) }
+            { color: this._getTextColor(step.dataStatus) }
           ]}
         >
-          {step.operator + this._getStatus(step.status)}
+          {step.status}
         </Text>
 
-        <Text style={styles.taskFollowerTime}>{step.changeTime}</Text>
+        <Text style={styles.taskFollowerTime}>
+          {step.operator + " " + step.changeTime}
+        </Text>
 
         {step.notLast && (
           <Text
             style={[
               styles.taskFollowerInfo,
-              { color: this._getBgColor(step.status) }
+              { color: this._getBgColor(step.dataStatus) }
             ]}
           >
             {step.duration}
@@ -373,250 +375,47 @@ export class TaskFollowerItem extends Component {
     );
   }
 
+  /**
+   * 0:未完成，1：完成，2：取消
+   * @param {0:未完成，1：完成，2：取消 } status
+   */
   _getBgColor(status) {
     switch (status) {
-      case 1:
-      // return "待整备";
-      case 8:
-      // return "整备中";
-      case 22:
-      // return "已取消";
-      case 28:
-      // return "待开票";
-      case 30:
-      // return "待退票";
-      case 32:
-      // return "处理中";
-      case 33:
-      // return "已取消";
-      case 34:
-      // return "待绑定";
-      case 36:
-      // return "待解绑";
-      case 38:
-      // return "已取消";
-      case 39:
-      // return "待确认";
-      case 40:
-      // return "待处理";
-      case 41:
-      // return "处理中";
-      case 43:
-      // return "无需处理";
-      case 44:
-      // return "已取消";
-      case 45:
-      // return "待落户";
-      case 47:
-      // return "已取消";
-      case 48:
-      // return "待过户";
-      case 50:
-      // return "已取消";
-      case 51:
-      // return "待出库";
-      case 53:
-      // return "已取消";
-      case 54:
-      // return "待入库";
-      case 56:
-      // return "已取消";
-      case 57:
-      // return "通知客户提车";
-      case 58:
-      // return "交车审核中";
-      case 60:
-      // return "已取消";
-      case 31:
-        // return "已退票";
+      case 0:
+      default:
         return "#E5E5E5";
 
-      case 15:
-      // return "整备完毕";
-      case 29:
-      // return "已开票";
-      case 35:
-      // return "已绑定";
-      case 37:
-      // return "已解绑";
-      case 42:
-      // return "处理完毕";
-      case 46:
-      // return "已落户";
-      case 49:
-      // return "已过户";
-      case 52:
-      // return "已出库";
-      case 55:
-      // return "已入库";
-      case 59:
-        // return "交车审核通过";
+      case 1:
         return "#2D72D9";
     }
   }
-
+  /**
+   * 0:未完成，1：完成，2：取消
+   */
   _getTextColor(status) {
     switch (status) {
-      case 1:
-      // return "待整备";
-      case 8:
-      // return "整备中";
-      case 22:
-      // return "已取消";
-      case 28:
-      // return "待开票";
-      case 30:
-      // return "待退票";
-      case 32:
-      // return "处理中";
-      case 33:
-      // return "已取消";
-      case 34:
-      // return "待绑定";
-      case 36:
-      // return "待解绑";
-      case 38:
-      // return "已取消";
-      case 39:
-      // return "待确认";
-      case 40:
-      // return "待处理";
-      case 41:
-      // return "处理中";
-      case 43:
-      // return "无需处理";
-      case 44:
-      // return "已取消";
-      case 45:
-      // return "待落户";
-      case 47:
-      // return "已取消";
-      case 48:
-      // return "待过户";
-      case 50:
-      // return "已取消";
-      case 51:
-      // return "待出库";
-      case 53:
-      // return "已取消";
-      case 54:
-      // return "待入库";
-      case 56:
-      // return "已取消";
-      case 57:
-      // return "通知客户提车";
-      case 58:
-      // return "交车审核中";
-      case 60:
-      // return "已取消";
-      case 31:
-        // return "已退票";
+      case 0:
+      default:
         return "#666666";
 
-      case 15:
-      // return "整备完毕";
-      case 29:
-      // return "已开票";
-      case 35:
-      // return "已绑定";
-      case 37:
-      // return "已解绑";
-      case 42:
-      // return "处理完毕";
-      case 46:
-      // return "已落户";
-      case 49:
-      // return "已过户";
-      case 52:
-      // return "已出库";
-      case 55:
-      // return "已入库";
-      case 59:
-        // return "交车审核通过";
+      case 1:
         return "#333333";
     }
   }
 
+  /**
+   * 0:未完成，1：完成，2：取消
+   * @param {*} status
+   */
   _getIcon(status) {
     switch (status) {
-      case 1:
-      // return "待整备";
-      case 8:
-      // return "整备中";
-      case 28:
-      // return "待开票";
-      case 30:
-      // return "待退票";
-      case 32:
-      // return "处理中";
-      case 34:
-      // return "待绑定";
-      case 36:
-      // return "待解绑";
-      case 39:
-      // return "待确认";
-      case 40:
-      // return "待处理";
-      case 41:
-      // return "处理中";
-      case 43:
-      // return "无需处理";
-      case 45:
-      // return "待落户";
-      case 48:
-      // return "待过户";
-      case 51:
-      // return "待出库";
-      case 54:
-      // return "待入库";
-      case 57:
-      // return "通知客户提车";
-      case 58:
-      // return "交车审核中";
-      case 31:
-        // return "已退票";
+      case 0:
         return require("../../res/img/icon_task_doing.png");
 
-      case 22:
-      // return "已取消";
-      case 33:
-      // return "已取消";
-      case 38:
-      // return "已取消";
-      case 44:
-      // return "已取消";
-      case 47:
-      // return "已取消";
-      case 50:
-      // return "已取消";
-      case 53:
-      // return "已取消";
-      case 56:
-      // return "已取消";
-      case 60:
-        // return "已取消";
+      case 2:
         return require("../../res/img/icon_task_cancel.png");
 
-      case 15:
-      // return "整备完毕";
-      case 29:
-      // return "已开票";
-      case 35:
-      // return "已绑定";
-      case 37:
-      // return "已解绑";
-      case 42:
-      // return "处理完毕";
-      case 46:
-      // return "已落户";
-      case 49:
-      // return "已过户";
-      case 52:
-      // return "已出库";
-      case 55:
-      // return "已入库";
-      case 59:
-        // return "交车审核通过";
+      case 1:
         return require("../../res/img/icon_task_done.png");
     }
   }

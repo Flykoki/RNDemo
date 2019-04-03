@@ -73,7 +73,7 @@ export class TaskBasicInfo extends InfoBaseScreen {
         key: "1",
         name: "任务编号",
         type: "item",
-        value: taskInfo.NO
+        value: taskInfo.NO ? taskInfo.NO : "--"
       },
       {
         key: "10",
@@ -82,7 +82,7 @@ export class TaskBasicInfo extends InfoBaseScreen {
       {
         key: "2",
         name: "任务状态",
-        value: taskInfo.status,
+        value: taskInfo.status ? taskInfo.status : "--",
         type: "item"
       },
       {
@@ -92,7 +92,7 @@ export class TaskBasicInfo extends InfoBaseScreen {
       {
         key: "3",
         name: "申请部门",
-        value: taskInfo.applyDepartment,
+        value: taskInfo.applyDepartment ? taskInfo.applyDepartment : "--",
         type: "item"
       },
       {
@@ -102,7 +102,7 @@ export class TaskBasicInfo extends InfoBaseScreen {
       {
         key: "4",
         name: "申请原因",
-        value: taskInfo.applyReason,
+        value: taskInfo.applyReason ? taskInfo.applyReason : "--",
         type: "item"
       },
       {
@@ -112,7 +112,7 @@ export class TaskBasicInfo extends InfoBaseScreen {
       {
         key: "5",
         name: "归属部门",
-        value: taskInfo.handoverDepartment,
+        value: taskInfo.handoverDepartment ? taskInfo.handoverDepartment : "--",
         type: "item"
       },
       {
@@ -122,11 +122,11 @@ export class TaskBasicInfo extends InfoBaseScreen {
       {
         key: "6",
         name: "来源单据号",
-        value: taskInfo.from,
+        value: taskInfo.from ? taskInfo.from : "--",
         rightIcon: require("../../res/img/copy.png"),
         type: "item",
         onPress: () => {
-          Clipboard.setString("22233232");
+          Clipboard.setString(taskInfo.from);
         }
       },
       {
@@ -136,11 +136,11 @@ export class TaskBasicInfo extends InfoBaseScreen {
       {
         key: "6",
         name: "任务集合编号",
-        value: taskInfo.integratedNo,
+        value: taskInfo.integratedNo ? taskInfo.integratedNo : "--",
         rightIcon: require("../../res/img/copy.png"),
         type: "item",
         onPress: () => {
-          Clipboard.setString("22233232");
+          Clipboard.setString(taskInfo.integratedNo);
         }
       }
     ];
@@ -197,14 +197,14 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
         key: "11",
         type: "item",
         name: "保单状态",
-        value: insuranceInfo.status
+        value: insuranceInfo.status ? insuranceInfo.status : "--"
       },
       { key: "01", type: "divider" },
       {
         key: "12",
         type: "item",
         name: "保险单号",
-        value: insuranceInfo.NO,
+        value: insuranceInfo.NO ? insuranceInfo.NO : "--",
         rightIcon: require("../../res/img/copy.png"),
         onPress: () => {
           Clipboard.setString(insuranceInfo.frameNo);
@@ -227,7 +227,7 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
       {
         key: "14",
         name: "被保险人",
-        value: insuranceInfo.insured,
+        value: insuranceInfo.insured ? insuranceInfo.insured : "--",
         type: "item"
       },
       {
@@ -237,7 +237,7 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
       {
         key: "15",
         name: "保险公司名称",
-        value: insuranceInfo.company,
+        value: insuranceInfo.company ? insuranceInfo.company : "--",
         type: "item"
       },
       {
@@ -247,14 +247,14 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
       {
         key: "16",
         name: "起保日期",
-        value: insuranceInfo.startTime,
+        value: insuranceInfo.startTime ? insuranceInfo.startTime : "--",
         type: "item"
       },
       { key: "06", type: "divider" },
       {
         key: "17",
         name: "止保日期",
-        value: insuranceInfo.endTime,
+        value: insuranceInfo.endTime ? insuranceInfo.endTime : "--",
         type: "item"
       },
       {
@@ -264,7 +264,7 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
       {
         key: "18",
         name: "投保人",
-        value: insuranceInfo.applicant,
+        value: insuranceInfo.applicant ? insuranceInfo.applicant : "--",
         type: "item"
       },
       {
@@ -274,7 +274,7 @@ export class InsuranceDetailScreen extends InfoBaseScreen {
       {
         key: "18",
         name: "受益人",
-        value: insuranceInfo.beneficiary,
+        value: insuranceInfo.beneficiary ? insuranceInfo.beneficiary : "--",
         type: "item"
       },
       {
@@ -338,7 +338,7 @@ export class CarInfoScreen extends InfoBaseScreen {
         key: "12",
         type: "item",
         name: "车架号",
-        value: carInfo.frameNo,
+        value: carInfo.frameNo ? carInfo.frameNo : "--",
         rightIcon: require("../../res/img/copy.png"),
         onPress: () => {
           Clipboard.setString(carInfo.frameNo);
@@ -351,7 +351,7 @@ export class CarInfoScreen extends InfoBaseScreen {
       {
         key: "13",
         name: "车牌号",
-        value: carInfo.plateNo,
+        value: carInfo.plateNo ? carInfo.plateNo : "--",
         type: "item"
       },
       {
@@ -361,7 +361,7 @@ export class CarInfoScreen extends InfoBaseScreen {
       {
         key: "14",
         name: "发动机号",
-        value: carInfo.engineNo,
+        value: carInfo.engineNo ? carInfo.engineNo : "--",
         type: "item",
         rightIcon: require("../../res/img/copy.png"),
         onPress: () => {
@@ -446,7 +446,7 @@ export class InvoiceInfoScreen extends InfoBaseScreen {
         key: "1",
         name: "购买方名称",
         type: "item",
-        value: returnData.purchaser
+        value: returnData.purchaser ? returnData.purchaser : "--"
       },
       {
         key: "10",
@@ -455,7 +455,7 @@ export class InvoiceInfoScreen extends InfoBaseScreen {
       {
         key: "2",
         name: "身份证号码/组织机构代码",
-        value: returnData.licenseNo,
+        value: returnData.licenseNo ? returnData.licenseNo : "--",
         type: "item"
       },
       {
@@ -485,7 +485,7 @@ export class InvoiceInfoScreen extends InfoBaseScreen {
       {
         key: "5",
         name: "销货单位名称",
-        value: returnData.seller,
+        value: returnData.seller ? returnData.seller : "--",
         type: "item"
       },
       {
