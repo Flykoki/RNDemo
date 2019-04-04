@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import ListScrollBar from "./ListScrollBar";
 import CityListData from "../../../../assets/citylist";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 
 const { width, height } = Dimensions.get("window");
 const ITEM_HEIGHT = 47;

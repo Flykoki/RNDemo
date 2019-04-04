@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Dimensions, StatusBar } from "react-native";
 import AccountHelper from "../login/AccountHelper";
 import { NavigationActions } from "react-navigation";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 
 const { width, height } = Dimensions.get("window");
 

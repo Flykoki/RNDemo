@@ -8,7 +8,7 @@ import {
   Dimensions
 } from "react-native";
 import Workbench, { TopBarItem } from "./Workbench";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 import AccountHelper from "../login/AccountHelper";
 const Pubsub = require("pubsub-js");
 

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 
-const  CUS_CID="650100";
+const CUS_CID = "650100";
 
 export default class StrategyHelper extends Component {
   /**
@@ -13,7 +13,7 @@ export default class StrategyHelper extends Component {
    */
   static queryExhibitionList(onSuccess, onError, onFinally) {
     FetchUtils.fetch({
-      customCid:CUS_CID,
+      customCid: CUS_CID,
       params: {},
       api: "action/cmt/queryExhibitionList",
       success: response => onSuccess(response),
@@ -30,7 +30,7 @@ export default class StrategyHelper extends Component {
    */
   static getInformationUnreadCount(onSuccess, onError, onFinally) {
     FetchUtils.fetch({
-      customCid:CUS_CID,
+      customCid: CUS_CID,
       params: {},
       api: "action/cmt/getInformationUnreadCount",
       success: response => onSuccess(response),
@@ -46,7 +46,7 @@ export default class StrategyHelper extends Component {
    */
   static readInformation(id, onSuccess, onError, onFinally) {
     FetchUtils.fetch({
-      customCid:CUS_CID,
+      customCid: CUS_CID,
       params: { articleId: id },
       api: "action/cmt/readInformation",
       success: response => onSuccess(response),

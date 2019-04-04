@@ -10,7 +10,7 @@ import {
   ToastAndroid,
   Dimensions
 } from "react-native";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 
 let _navigation;
 export default class PolicyIntroduction extends Component {

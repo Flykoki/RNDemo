@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 
 const URI = "action/personal/feedBackSubmit";
 

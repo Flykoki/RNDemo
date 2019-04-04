@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 const ACCOUNT_KEY = "account_key";
 const STORE_ID_KEY = "store_id_key";
 export const ACCOUNT_TYPE_EMPLOYEE = 0;

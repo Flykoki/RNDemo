@@ -13,7 +13,7 @@ import {
 import { titleOptions } from "../component/Titie";
 import VehicleInfoPanel from "./VehicleInofPanel";
 import AccountHelper from "../login/AccountHelper";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 
 export default class TaskDetailScreen extends Component {
   static navigationOptions = ({ navigation }) => {

@@ -12,7 +12,7 @@
     "pubsub-js": "^1.7.0",
     "react": "16.6.3",
     "react-dom": "^16.5.1",
-    "react-native": "^0.59.2",
+    "react-native": "^0.58.6",
     "react-native-fs": "^2.13.3",
     "react-native-gesture-handler": "^1.0.12",
     "react-native-qrcode": "^0.2.7",
@@ -24,8 +24,8 @@
     "react-native-web": "0.11.2",
     "react-navigation": "^3.0.9",
     "rn-fetch-blob": "^0.10.15",
-    "sz-network-module": "file:modules/sz-network-module",
-    "urn-pull-to-refresh": "file:modules/urn-pull-to-refresh"
+    "urn-pull-to-refresh": "file:modules/urn-pull-to-refresh",
+    "react-native-sz-network": "file:modules/react-native-sz-network"
   },
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",

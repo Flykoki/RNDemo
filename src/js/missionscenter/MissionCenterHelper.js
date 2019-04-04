@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AsyncStorage } from "react-native";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 import AccountHelper from "../login/AccountHelper";
 
 const QUERY_TASK_GROUP_FILTER = "action/task/taskGroup";

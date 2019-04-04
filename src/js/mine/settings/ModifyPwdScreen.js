@@ -9,7 +9,7 @@ import {
   Image
 } from "react-native";
 import TextInputWithClearButton from "../../component/TextInputWithClearButton";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 import AccountHelper from "../../login/AccountHelper";
 import { NavigationActions } from "react-navigation";
 

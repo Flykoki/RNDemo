@@ -10,7 +10,7 @@ import {
   StyleSheet,
   AsyncStorage
 } from "react-native";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 import AccountHelper from "../login/AccountHelper";
 const { width, height } = Dimensions.get("screen");
 const STORE_HISTORY_KEY = "store_history_key";

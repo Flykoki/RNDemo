@@ -49,6 +49,7 @@
 		0E716D3693434C09A201B39A /* NetworkModuleTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 45D4E2AA7E1F49CFA580C3D7 /* NetworkModuleTests.xctest */; };
 		7D861F1E37C34380A308D93F /* NetworkModule-tvOS.app in Resources */ = {isa = PBXBuildFile; fileRef = 0D1A9C58FC834B1EA36330D6 /* NetworkModule-tvOS.app */; };
 		BB5E6D2CD8A84A549B2ED77D /* NetworkModule-tvOSTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 0245D5F491B74085AE239ED1 /* NetworkModule-tvOSTests.xctest */; };
+		7D27CA3581E64E11A4E92516 /* libRNNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56CA83C2525E43D085AD11F3 /* libRNNetwork.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -372,6 +373,8 @@
 		45D4E2AA7E1F49CFA580C3D7 /* NetworkModuleTests.xctest */ = {isa = PBXFileReference; name = "NetworkModuleTests.xctest"; path = "NetworkModuleTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
 		0D1A9C58FC834B1EA36330D6 /* NetworkModule-tvOS.app */ = {isa = PBXFileReference; name = "NetworkModule-tvOS.app"; path = "NetworkModule-tvOS.app"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.application; explicitFileType = undefined; includeInIndex = 0; };
 		0245D5F491B74085AE239ED1 /* NetworkModule-tvOSTests.xctest */ = {isa = PBXFileReference; name = "NetworkModule-tvOSTests.xctest"; path = "NetworkModule-tvOSTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
+		3773E7127233415BB9FAE87D /* RNNetwork.xcodeproj */ = {isa = PBXFileReference; name = "RNNetwork.xcodeproj"; path = "../node_modules/react-native-sz-network/ios/RNNetwork.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		56CA83C2525E43D085AD11F3 /* libRNNetwork.a */ = {isa = PBXFileReference; name = "libRNNetwork.a"; path = "libRNNetwork.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -407,6 +410,7 @@
 				3A5BCB4A90D34DC8BD418654 /* libRNViewShot.a in Frameworks */,
 				53B2CCA3C463459A999ADB65 /* NetworkModule.app in Resources */,
 				0E716D3693434C09A201B39A /* NetworkModuleTests.xctest in Resources */,
+				7D27CA3581E64E11A4E92516 /* libRNNetwork.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -605,6 +609,7 @@
 				3E13007833C1497988FAC78E /* RNFetchBlob.xcodeproj */,
 				EA2A0E8D3AB74C0FBB86ECAA /* RNViewShot.xcodeproj */,
 				1D842943D52B460E87BD27AE /* NetworkModule.xcodeproj */,
+				3773E7127233415BB9FAE87D /* RNNetwork.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1242,6 +1247,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1251,6 +1257,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Debug;
@@ -1282,6 +1289,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1291,6 +1299,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Release;
@@ -1319,6 +1328,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Debug;
@@ -1346,6 +1356,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Release;
@@ -1385,6 +1396,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1394,6 +1406,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Debug;
@@ -1433,6 +1446,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1442,6 +1456,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Release;
@@ -1480,6 +1495,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1489,6 +1505,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Debug;
@@ -1527,6 +1544,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1536,6 +1554,7 @@
 					"$(SRCROOT)\..\node_modules\rn-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\sz-network-module\ios\NetworkModule",
+					"$(SRCROOT)\..\node_modules\react-native-sz-network\ios",
 				);
 			};
 			name = Release;

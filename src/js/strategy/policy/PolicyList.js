@@ -13,7 +13,7 @@ import {
 // import { PullFlatList } from "react-native-rk-pull-to-refresh";
 import { PullFlatList } from "urn-pull-to-refresh";
 import StrategyHelper from "../StrategyHelper";
-import { FetchUtils } from "sz-network-module";
+import { FetchUtils } from "react-native-sz-network";
 import { RootView } from "../../component/CommonView";
 
 const width = Dimensions.get("window").width;

@@ -134,8 +134,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-sz-network')
     // implementation project(':react-native-rk-pull-to-refresh')
-    implementation project(':sz-network-module')
     implementation project(':react-native-view-shot')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-fs')

@@ -4,7 +4,7 @@ import { titleOptions } from "../component/Titie";
 import { RootView } from "../component/CommonView";
 import SettingsList from "../component/SettingsList";
 import AccountHelper from "../login/AccountHelper";
-import { FetchUtils } from "../../../modules/sz-network-module/src/js/network/Network";
+import { FetchUtils } from "../../../modules/react-native-sz-network/src/js/network/Network";
 import { getTaskStatus, getInsurStatus } from "./TaskUtils";
 
 class InfoBaseScreen extends Component {
