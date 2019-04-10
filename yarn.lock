@@ -6266,7 +6266,7 @@ react-native-web@0.11.2:
     prop-types "^15.6.0"
     react-timer-mixin "^0.13.4"
 
-react-native@0.58.6, react-native@^0.58.6:
+react-native@^0.58.6:
   version "0.58.6"
   resolved "http://registry.npm.taobao.org/react-native/download/react-native-0.58.6.tgz#a6d273cd2f51b0e3b141dad5f19622e0000497b3"
   integrity sha1-ptJzzS9RsOOxQdrV8ZYi4AAEl7M=
@@ -7280,12 +7280,6 @@ symbol-tree@^3.2.2:
   version "3.2.2"
   resolved "http://registry.npm.taobao.org/symbol-tree/download/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
   integrity sha1-rifbOPZgp64uHDt9G8KQgZuFGeY=
-
-"sz-network-module@file:modules/sz-network-module":
-  version "0.0.1"
-  dependencies:
-    react "16.6.3"
-    react-native "0.58.6"
 
 tapable@^1.0.0, tapable@^1.1.0:
   version "1.1.1"

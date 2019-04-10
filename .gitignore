@@ -65,4 +65,5 @@ build/
 *.classpath
 bin/
 sz-network-module
+react-native-sz-network
 modules/urn-pull-to-refresh.rar
